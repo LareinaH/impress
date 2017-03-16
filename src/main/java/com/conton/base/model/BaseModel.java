@@ -1,6 +1,9 @@
 package com.conton.base.model;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.GeneratedValue;
@@ -34,5 +37,10 @@ public class BaseModel implements Serializable {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getCreatedAtString(){
+		SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return dateformat.format(this.createdAt);
 	}
 }

@@ -6,10 +6,13 @@
       WARNING - @mbggenerated
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="cellphone" jdbcType="VARCHAR" property="cellphone" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="ticket" jdbcType="VARCHAR" property="ticket" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="headPortrait" jdbcType="VARCHAR" property="headPortrait" />
+    <result column="cellphone" jdbcType="VARCHAR" property="cellphone" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
   </resultMap>

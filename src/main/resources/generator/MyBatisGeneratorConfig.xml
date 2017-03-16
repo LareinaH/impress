@@ -26,7 +26,31 @@
 
 		<javaClientGenerator targetPackage="com.conton.impress.mapper" targetProject="${basedir.src.main.java}" type="XMLMAPPER" />
 
+		<table tableName="diary">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="diary_comment">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="diary_content">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="diary_record">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
 		<table tableName="member">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="member_friend">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="message">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>

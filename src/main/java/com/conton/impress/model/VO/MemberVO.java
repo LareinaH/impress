@@ -1,11 +1,13 @@
-package com.conton.impress.model;
+package com.conton.impress.model.VO;
 
 import com.conton.base.model.BaseModel;
-import java.util.Date;
-import javax.persistence.*;
 
-@Table(name = "member")
-public class Member extends BaseModel {
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.util.Date;
+
+public class MemberVO extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,25 +37,6 @@ public class Member extends BaseModel {
      */
     private String cellphone;
 
-    /**
-     * 密码
-     */
-    private String password;
-
-    /**
-     * 会员状态【normal 正常 cancle 注销 delete 删除】
-     */
-    private String status;
-
-    /**
-     * 创建时间
-     */
-    private Date createdAt;
-
-    /**
-     * 修改时间
-     */
-    private Date updateAt;
 
     /**
      * @return id
@@ -159,75 +142,4 @@ public class Member extends BaseModel {
         this.cellphone = cellphone == null ? null : cellphone.trim();
     }
 
-    /**
-     * 获取密码
-     *
-     * @return password - 密码
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * 设置密码
-     *
-     * @param password 密码
-     */
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
-
-    /**
-     * 获取会员状态【normal 正常 cancle 注销 delete 删除】
-     *
-     * @return status - 会员状态【normal 正常 cancle 注销 delete 删除】
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * 设置会员状态【normal 正常 cancle 注销 delete 删除】
-     *
-     * @param status 会员状态【normal 正常 cancle 注销 delete 删除】
-     */
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
-    }
-
-    /**
-     * 获取创建时间
-     *
-     * @return createdAt - 创建时间
-     */
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    /**
-     * 设置创建时间
-     *
-     * @param createdAt 创建时间
-     */
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * 获取修改时间
-     *
-     * @return updateAt - 修改时间
-     */
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    /**
-     * 设置修改时间
-     *
-     * @param updateAt 修改时间
-     */
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
-    }
 }
