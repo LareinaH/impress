@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.conton.impress.mapper.MemberFriendMapper">
+  <resultMap id="BaseResultMap" type="com.conton.impress.model.MemberFriend">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="memberId" jdbcType="BIGINT" property="memberId" />
+    <result column="friendMemberId" jdbcType="BIGINT" property="friendMemberId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
+  </resultMap>
+</mapper>
