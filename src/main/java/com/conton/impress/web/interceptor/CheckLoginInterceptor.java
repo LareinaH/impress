@@ -1,6 +1,7 @@
 package com.conton.impress.web.interceptor;
 
 import com.conton.base.common.RestResponse;
+import com.conton.impress.model.Member;
 import com.conton.impress.service.MemberService;
 
 import com.conton.impress.web.PermissionContext;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.Permission;
 import java.util.List;
 
 public class CheckLoginInterceptor implements HandlerInterceptor {
@@ -38,6 +40,18 @@ public class CheckLoginInterceptor implements HandlerInterceptor {
             return false;
         }
         //根据ticket 获取用户
+
+        Member model = new Member();
+        model.setTicket(appSessionTicket);
+
+        List<Member> memberList = memberService.queryList(model);
+
+        if(memberList.isEmpty()){
+            setReLogin(httpServletRequest,httpServletResponse);
+            return false;
+        }
+
+        PermissionContext.setMember(memberList.get(0));
 
         return true;
     }

@@ -1,5 +1,7 @@
 package com.conton.impress.web;
 
+import com.conton.impress.model.Member;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,19 +18,19 @@ public class PermissionContext {
             threadLocal.remove();
         }
 
-        public static void setUser(Long userId) {
+        public static void setMember(Member member) {
             Map map = (Map) threadLocal.get();
             if (map == null) {
                 map = new HashMap();
             }
-            map.put(WebConstants.LOGIN_SESSION_ID_USER, userId);
+            map.put(WebConstants.LOGIN_SESSION_ID_USER, member);
             threadLocal.set(map);
         }
 
-        public static Long getUserId() {
+        public static Member getMember() {
             Map map = (Map) threadLocal.get();
             if (map != null) {
-                return (Long) map.get(WebConstants.LOGIN_SESSION_ID_USER);
+                return (Member) map.get(WebConstants.LOGIN_SESSION_ID_USER);
             }
             return null;
         }
