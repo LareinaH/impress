@@ -10,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,16 +28,17 @@ public class MemberController {
 
     /**
      * 手机登录
+     *
      * @param cellphone 手机号
-     * @param passWord 密码
-     * @param code  验证码
+     * @param passWord  密码
+     * @param code      验证码
      * @return
      */
     @RequestMapping(value = "/un/login")
     @ResponseBody
-    public RestResponse<MemberVO> login(@RequestParam(required=true)String cellphone,
-                                      @RequestParam(required=true)String passWord,
-                                      @RequestParam(required=true)String code) {
+    public RestResponse<MemberVO> login(@RequestParam(required = true) String cellphone,
+                                        @RequestParam(required = true) String passWord,
+                                        @RequestParam(required = true) String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         //TODO: 验证验证码
@@ -49,12 +49,12 @@ public class MemberController {
         model.setStatus("normal");
         List<Member> memberList = memberService.queryList(model);
 
-        if(!memberList.isEmpty()){
+        if (!memberList.isEmpty()) {
             MemberVO memberVO = new MemberVO();
-            BeanUtils.copyProperties(memberList.get(0),memberVO);
+            BeanUtils.copyProperties(memberList.get(0), memberVO);
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(memberVO);
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("用户名或密码错误!");
         }
@@ -65,6 +65,7 @@ public class MemberController {
 
     /**
      * 手机注册
+     *
      * @param cellphone
      * @param passWord
      * @param code
@@ -72,9 +73,9 @@ public class MemberController {
      */
     @RequestMapping(value = "/un/register")
     @ResponseBody
-    public RestResponse<MemberVO> register(@RequestParam(required=true)String cellphone,
-                                       @RequestParam(required=true)String passWord,
-                                       @RequestParam(required=true)String code) {
+    public RestResponse<MemberVO> register(@RequestParam(required = true) String cellphone,
+                                           @RequestParam(required = true) String passWord,
+                                           @RequestParam(required = true) String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         //TODO: 验证验证码
@@ -84,7 +85,7 @@ public class MemberController {
         model.setStatus("normal");
         List<Member> memberList = memberService.queryList(model);
 
-        if(!memberList.isEmpty()){
+        if (!memberList.isEmpty()) {
             restResponse.setCode("error");
             restResponse.setMessage("该手机号已经注册!");
             return restResponse;
@@ -94,14 +95,15 @@ public class MemberController {
         member.setCellphone(cellphone);
         member.setPassword(passWord);
         member.setStatus("normal");
+        member.setSex("unknow");
         member.setTicket(RandomStringUtils.randomAlphanumeric(15));
 
-        if(memberService.insert(member)){
+        if (memberService.insert(member)) {
             MemberVO memberVO = new MemberVO();
-            BeanUtils.copyProperties(member,memberVO);
+            BeanUtils.copyProperties(member, memberVO);
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(memberVO);
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("注册用户失败!");
         }
@@ -114,15 +116,16 @@ public class MemberController {
 
     /**
      * 绑定手机号
+     *
      * @param cellphone
      * @param code
      * @return
      */
     @RequestMapping(value = "/bindCellphone")
     @ResponseBody
-    public RestResponse<Void> bindCellphone(@RequestParam(required=true)String cellphone,
-                                        @RequestParam(required=true)String code) {
-        RestResponse<Void> restResponse = new RestResponse<Void>();
+    public RestResponse<MemberVO> bindCellphone(@RequestParam(required = true) String cellphone,
+                                                @RequestParam(required = true) String code) {
+        RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         //TODO: 验证验证码
 
@@ -131,7 +134,7 @@ public class MemberController {
         model.setStatus("normal");
         List<Member> memberList = memberService.queryList(model);
 
-        if(!memberList.isEmpty()){
+        if (!memberList.isEmpty()) {
             restResponse.setCode("error");
             restResponse.setMessage("该手机号已经注册!");
             return restResponse;
@@ -139,7 +142,7 @@ public class MemberController {
 
         Member member = PermissionContext.getMember();
 
-        if(!member.getCellphone().isEmpty()){
+        if (!member.getCellphone().isEmpty()) {
 
             restResponse.setCode("error");
             restResponse.setMessage("改用户已经绑定手机!");
@@ -147,11 +150,14 @@ public class MemberController {
         }
         member.setCellphone(cellphone);
 
-        if(memberService.update(member)){
+        if (memberService.update(member)) {
 
+            MemberVO memberVO = new MemberVO();
+            BeanUtils.copyProperties(member, memberVO);
             restResponse.setCode(RestResponse.OK);
+            restResponse.setData(memberVO);
 
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("手机号绑定失败!");
         }
@@ -162,26 +168,24 @@ public class MemberController {
     //修改密码
     @RequestMapping(value = "/editPassword")
     @ResponseBody
-    public RestResponse<Void> editPassword(@RequestParam(required=true)String oldPassWord,
-                                            @RequestParam(required=true)String newPassWord,
-                                            @RequestParam(required=true)String code) {
+    public RestResponse<Void> editPassword(@RequestParam(required = true) String oldPassword,
+                                           @RequestParam(required = true) String newPassword) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
-
-        //TODO: 验证验证码
 
         Member member = PermissionContext.getMember();
 
-        if(!member.getPassword().equals(oldPassWord)){
+        if (!member.getPassword().equals(oldPassword)) {
             restResponse.setCode("error");
             restResponse.setMessage("原密码错误!");
+            return restResponse;
         }
-        member.setPassword(newPassWord);
+        member.setPassword(newPassword);
 
-        if(memberService.update(member)){
+        if (memberService.update(member)) {
 
             restResponse.setCode(RestResponse.OK);
 
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("修改密码失败!");
         }
@@ -190,28 +194,32 @@ public class MemberController {
 
     /**
      * 修改个人资料
+     *
      * @param name
      * @param headPortrait
      * @return
      */
     @RequestMapping(value = "/editMemberInfo")
     @ResponseBody
-    public RestResponse<Void> editMemberInfo(String name, String headPortrait) {
-        RestResponse<Void> restResponse = new RestResponse<Void>();
+    public RestResponse<MemberVO> editMemberInfo(String name, String headPortrait) {
+        RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         Member member = PermissionContext.getMember();
-        if(!StringUtils.isEmpty(name)) {
+        if (!StringUtils.isEmpty(name)) {
             member.setName(name);
         }
-        if(!StringUtils.isEmpty(headPortrait)){
+        if (!StringUtils.isEmpty(headPortrait)) {
             member.setHeadPortrait(headPortrait);
         }
 
-        if(memberService.update(member)){
+        if (memberService.update(member)) {
 
+            MemberVO memberVO = new MemberVO();
+            BeanUtils.copyProperties(member, memberVO);
             restResponse.setCode(RestResponse.OK);
+            restResponse.setData(memberVO);
 
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("修改个人资料失败!");
         }
@@ -220,22 +228,23 @@ public class MemberController {
 
     /**
      * 设置性别
+     *
      * @param sex
      * @return
      */
     @RequestMapping(value = "/setSex")
     @ResponseBody
-    public RestResponse<Void> setSex(@RequestParam(required=true)String sex) {
+    public RestResponse<Void> setSex(@RequestParam(required = true) String sex) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
         Member member = PermissionContext.getMember();
-        if(!StringUtils.isEmpty(sex)) {
+        if (!StringUtils.isEmpty(sex)) {
             member.setSex(sex);
         }
-        if(memberService.update(member)){
+        if (memberService.update(member)) {
             restResponse.setCode(RestResponse.OK);
 
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("设置性别!");
         }
