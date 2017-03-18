@@ -45,71 +45,43 @@ public class MemberController {
 
         Member model = new Member();
         model.setCellphone(cellphone);
-        model.setPassword(passWord);
-        model.setStatus("normal");
         List<Member> memberList = memberService.queryList(model);
 
-        if (!memberList.isEmpty()) {
-            MemberVO memberVO = new MemberVO();
-            BeanUtils.copyProperties(memberList.get(0), memberVO);
-            restResponse.setCode(RestResponse.OK);
-            restResponse.setData(memberVO);
+        if (memberList.isEmpty()) {
+
+            //该用户不存在 注册新用户
+            Member member = new Member();
+            member.setCellphone(cellphone);
+            member.setPassword(passWord);
+            member.setStatus("normal");
+            member.setSex("unknow");
+            member.setTicket(RandomStringUtils.randomAlphanumeric(15));
+
+            if (memberService.insert(member)) {
+                MemberVO memberVO = new MemberVO();
+                BeanUtils.copyProperties(member, memberVO);
+                restResponse.setCode(RestResponse.OK);
+                restResponse.setData(memberVO);
+            } else {
+                restResponse.setCode("error");
+                restResponse.setMessage("注册用户失败!");
+            }
+
         } else {
-            restResponse.setCode("error");
-            restResponse.setMessage("用户名或密码错误!");
+            if (memberList.get(0).getPassword().equals(passWord) && memberList.get(0).getStatus().equals("normal")) {
+                MemberVO memberVO = new MemberVO();
+                BeanUtils.copyProperties(memberList.get(0), memberVO);
+                restResponse.setCode(RestResponse.OK);
+                restResponse.setData(memberVO);
+            } else {
+                restResponse.setCode("error");
+                restResponse.setMessage("用户名或者密码错误!");
+            }
         }
 
         return restResponse;
     }
 
-
-    /**
-     * 手机注册
-     *
-     * @param cellphone
-     * @param passWord
-     * @param code
-     * @return
-     */
-    @RequestMapping(value = "/un/register")
-    @ResponseBody
-    public RestResponse<MemberVO> register(@RequestParam(required = true) String cellphone,
-                                           @RequestParam(required = true) String passWord,
-                                           @RequestParam(required = true) String code) {
-        RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
-
-        //TODO: 验证验证码
-
-        Member model = new Member();
-        model.setCellphone(cellphone);
-        model.setStatus("normal");
-        List<Member> memberList = memberService.queryList(model);
-
-        if (!memberList.isEmpty()) {
-            restResponse.setCode("error");
-            restResponse.setMessage("该手机号已经注册!");
-            return restResponse;
-        }
-
-        Member member = new Member();
-        member.setCellphone(cellphone);
-        member.setPassword(passWord);
-        member.setStatus("normal");
-        member.setSex("unknow");
-        member.setTicket(RandomStringUtils.randomAlphanumeric(15));
-
-        if (memberService.insert(member)) {
-            MemberVO memberVO = new MemberVO();
-            BeanUtils.copyProperties(member, memberVO);
-            restResponse.setCode(RestResponse.OK);
-            restResponse.setData(memberVO);
-        } else {
-            restResponse.setCode("error");
-            restResponse.setMessage("注册用户失败!");
-        }
-
-        return restResponse;
-    }
 
     //发送验证码
 

@@ -7,13 +7,15 @@
 </head>
 <body>
 <h1>左右印象接口列表</h1>
+  <p style="color: red">如果没有特殊说明，接口为get请求，入参必填</p>
 
 <h2>不需要登录的接口</h2>
 <ol>
     <li>手机登录
-           <p> 接口地址：http://23.244.68.15:8081/member/un/login?cellphone=18551178309&passWord=123456&code=3214</p></li>
-    <li>手机注册
-        <p> 接口地址：http://23.244.68.15:8081/member/un/register?cellphone=13188888888&passWord=123456&code=3214</p></li>
+        <p> 接口地址：http://23.244.68.15:8081/member/un/login?cellphone=18551178309&passWord=123456&code=3214</p>
+        <p> 接口说明：如果手机未注册过，直接使用该手机号、密码注册</p>
+    </li>
+
 </ol>
 
 <h2>需要登录的接口</h2>
@@ -29,7 +31,9 @@
     <li>修改密码
         <p> 接口地址：http://23.244.68.15:8081/member/editPassword?oldPassword=1234567&newPassword=123456</p></li>
     <li>修改个人信息
-        <p> 接口地址：http://23.244.68.15:8081/member/editMemberInfo?name=冯巩&headPortrait=xxx</p></li>
+        <p> 接口地址：http://23.244.68.15:8081/member/editMemberInfo?name=冯巩&headPortrait=xxx</p>
+        <p style="color: red"> 接口说明：name headPortrait 两个入参为选填</p>
+    </li>
 
     <li>设置性别
         <p> 接口地址：http://23.244.68.15:8081/member/setSex?sex=male</p></li>
@@ -40,7 +44,9 @@
 <h4>日记相关</h4>
 <ol>
     <li>左右印象列表
-        <p> 接口地址：http://23.244.68.15:8081/diary/aboutDiarys?lbsX=120.219185&lbsY=30.296899&radius=30000&pageNum=1&pageSize=20</p></li>
+        <p> 接口地址：http://23.244.68.15:8081/diary/aboutDiarys?lbsX=120.219185&lbsY=30.296899&radius=30000&pageNum=1&pageSize=20</p>
+        <p style="color: red"> 接口说明：pageNum pageSize 两个入参如果不填写 被默认设置成 1 | 20 </p>
+    </li>
 </ol>
 
 
