@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
 
-public class MemberVO extends BaseModel {
+public class MemberVO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

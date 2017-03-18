@@ -39,8 +39,4 @@ public class BaseModel implements Serializable {
 		this.createdAt = createdAt;
 	}
 
-	public String getCreatedAtString(){
-		SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return dateformat.format(this.createdAt);
-	}
 }
