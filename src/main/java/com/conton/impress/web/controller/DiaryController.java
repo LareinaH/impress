@@ -2,6 +2,7 @@ package com.conton.impress.web.controller;
 
 import com.conton.base.common.RestResponse;
 import com.conton.impress.model.Diary;
+import com.conton.impress.model.VO.DiaryDetailVO;
 import com.conton.impress.model.VO.DiaryVO;
 import com.conton.impress.model.VO.MemberVO;
 import com.conton.impress.service.DiaryService;
@@ -28,14 +29,14 @@ public class DiaryController {
 
     @RequestMapping(value = "/aboutDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> register(@RequestParam(required = true) String lbsX,
+    public RestResponse<List<DiaryVO>> aboutDiarys(@RequestParam(required = true) String lbsX,
                                                 @RequestParam(required = true) String lbsY,
                                                 @RequestParam(required = true) String radius,
                                                 @RequestParam(defaultValue = "1") int pageNum,
                                                 @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
-        PageInfo<Diary> diaryPageInfo = diaryService.query(0, Integer.valueOf(pageSize));
+        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
 
         if (diaryPageInfo != null) {
             List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
@@ -51,6 +52,24 @@ public class DiaryController {
         } else {
             restResponse.setCode("error");
             restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
+    @RequestMapping(value = "/getDiaryDetail")
+    @ResponseBody
+    public RestResponse<DiaryDetailVO> getDiaryDetail(@RequestParam(required = true) long diaryId) {
+        RestResponse<DiaryDetailVO> restResponse = new RestResponse<DiaryDetailVO>();
+
+        DiaryDetailVO diaryDetailVO = diaryService.getDiaryDetailVObyId(diaryId);
+
+        if (diaryDetailVO != null) {
+
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(diaryDetailVO);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("读取日记详情失败！");
         }
         return restResponse;
     }

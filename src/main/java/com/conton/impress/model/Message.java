@@ -4,7 +4,6 @@ import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "message")
 public class Message extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class Message extends BaseModel {
     /**
      * 消息处理状态【unprocessed：未处理，processed：已处理】
      */
-    private Long processStatus;
+    private String processStatus;
 
     /**
      * 状态【normal：正常，delete：删除】
@@ -118,7 +117,7 @@ public class Message extends BaseModel {
      *
      * @return processStatus - 消息处理状态【unprocessed：未处理，processed：已处理】
      */
-    public Long getProcessStatus() {
+    public String getProcessStatus() {
         return processStatus;
     }
 
@@ -127,8 +126,8 @@ public class Message extends BaseModel {
      *
      * @param processStatus 消息处理状态【unprocessed：未处理，processed：已处理】
      */
-    public void setProcessStatus(Long processStatus) {
-        this.processStatus = processStatus;
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus == null ? null : processStatus.trim();
     }
 
     /**

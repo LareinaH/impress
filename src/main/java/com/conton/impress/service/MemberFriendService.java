@@ -8,4 +8,6 @@ import com.conton.impress.model.MemberFriend;
  */
 public interface MemberFriendService extends BaseService<MemberFriend> {
 
+    public boolean addFriend(long memberId, long friendMemberId);
+
 }

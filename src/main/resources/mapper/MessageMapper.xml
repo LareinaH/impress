@@ -9,7 +9,7 @@
     <result column="category" jdbcType="VARCHAR" property="category" />
     <result column="fromMemberId" jdbcType="BIGINT" property="fromMemberId" />
     <result column="toMemberId" jdbcType="BIGINT" property="toMemberId" />
-    <result column="processStatus" jdbcType="BIGINT" property="processStatus" />
+    <result column="processStatus" jdbcType="VARCHAR" property="processStatus" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />

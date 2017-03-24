@@ -52,6 +52,72 @@ public class DiaryVO {
      */
     private Double lbsY;
 
+    /**
+     * 是否阅读状态
+     */
+    String readStatus;
+
+    /**
+     * 是否是好友日记
+     */
+    boolean bFriendDiary;
+
+    /**
+     * 好友姓名
+     */
+    String friendName;
+
+    /**
+     * 头像
+     */
+    String headPortrait;
+
+    /**
+     * 影响力
+     */
+    String influence;
+
+
+    public boolean isbFriendDiary() {
+        return bFriendDiary;
+    }
+
+    public void setbFriendDiary(boolean bFriendDiary) {
+        this.bFriendDiary = bFriendDiary;
+    }
+
+    public String getFriendName() {
+        return friendName;
+    }
+
+    public void setFriendName(String friendName) {
+        this.friendName = friendName;
+    }
+
+    public String getHeadPortrait() {
+        return headPortrait;
+    }
+
+    public void setHeadPortrait(String headPortrait) {
+        this.headPortrait = headPortrait;
+    }
+
+    public String getInfluence() {
+        return influence;
+    }
+
+    public void setInfluence(String influence) {
+        this.influence = influence;
+    }
+
+    public String getReadStatus() {
+        return "unRead";
+    }
+
+    public void setReadStatus(String readStatus) {
+        this.readStatus = readStatus;
+    }
+
     public Long getId() {
         return id;
     }

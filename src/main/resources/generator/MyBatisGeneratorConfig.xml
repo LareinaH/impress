@@ -26,7 +26,7 @@
 
 		<javaClientGenerator targetPackage="com.conton.impress.mapper" targetProject="${basedir.src.main.java}" type="XMLMAPPER" />
 
-		<table tableName="diary">
+<!--		<table tableName="diary">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>
@@ -49,7 +49,7 @@
 		<table tableName="member_friend">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
-		</table>
+		</table>-->
 		<table tableName="message">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />

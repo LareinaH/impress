@@ -2,9 +2,14 @@ package com.conton.impress.web.controller;
 
 import com.conton.base.common.RestResponse;
 import com.conton.impress.model.Member;
+import com.conton.impress.model.MemberFriend;
+import com.conton.impress.model.Message;
 import com.conton.impress.model.VO.MemberVO;
+import com.conton.impress.service.MemberFriendService;
 import com.conton.impress.service.MemberService;
+import com.conton.impress.service.MessageService;
 import com.conton.impress.web.PermissionContext;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +18,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,6 +32,11 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private MemberFriendService memberFriendService;
+    @Autowired
+    private MessageService messageService;
+
 
     /**
      * 手机登录
@@ -221,7 +233,148 @@ public class MemberController {
             restResponse.setMessage("设置性别!");
         }
         return restResponse;
+
     }
-    //我的好友（分页）
+
+    /**
+     * 我的好友（分页）
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/myFriends")
+    @ResponseBody
+    public RestResponse<PageInfo<MemberVO>> register(@RequestParam(defaultValue = "1") int pageNum,
+                                                     @RequestParam(defaultValue = "20") int pageSize) {
+        RestResponse<PageInfo<MemberVO>> restResponse = new RestResponse<PageInfo<MemberVO>>();
+
+        Member member = PermissionContext.getMember();
+
+        MemberFriend model = new MemberFriend();
+        model.setMemberId(member.getId());
+        model.setStatus("normal");
+        PageInfo<MemberFriend> memberFriendInfo = memberFriendService.query(pageNum, pageSize, model);
+
+        if (memberFriendInfo != null) {
+            List<Long> friendMemberIdList = new LinkedList<Long>();
+
+            for (MemberFriend memberFriend : memberFriendInfo.getList()) {
+                friendMemberIdList.add(memberFriend.getFriendMemberId());
+            }
+
+            Example example = new Example(Member.class);
+            example.or().andIn(Member.ID, friendMemberIdList);
+
+            List<Member> memberList = memberService.queryList(example);
+
+            List<MemberVO> memberVOList = new LinkedList<MemberVO>();
+
+            for (Member member1 : memberList) {
+                MemberVO memberVO = new MemberVO();
+                BeanUtils.copyProperties(member1, memberVO);
+                memberVOList.add(memberVO);
+            }
+            PageInfo<MemberVO> result = new PageInfo<MemberVO>();
+            result.setPageSize(pageSize);
+            result.setPageNum(pageNum);
+            result.setList(memberVOList);
+
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(result);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 申请添加好友（本质是发送了一条消息在messageController）
+     *
+     * @param friendId
+     * @return
+     */
+    @RequestMapping(value = "/applyAddFriends")
+    @ResponseBody
+    public RestResponse<Void> applyAddFriends(@RequestParam(required = true) long friendId) {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        Member member = PermissionContext.getMember();
+
+        Message message = new Message();
+        message.setStatus("normal");
+        message.setCategory("friend");
+        message.setFromMemberId(member.getId());
+        message.setToMemberId(friendId);
+        message.setProcessStatus("unprocessed");
+
+        if (messageService.insert(message)) {
+            restResponse.setCode(RestResponse.OK);
+
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("添加好友成功!");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 添加好友
+     *
+     * @param friendId
+     * @return
+     */
+    @RequestMapping(value = "/addFriends")
+    @ResponseBody
+    public RestResponse<Void> addFriends(@RequestParam(required = true) long friendId) {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        Member member = PermissionContext.getMember();
+
+        if (memberFriendService.addFriend(member.getId(), friendId)) {
+            restResponse.setCode(RestResponse.OK);
+
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("添加好友成功!");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 删除好友
+     *
+     * @param friendId
+     * @return
+     */
+    @RequestMapping(value = "/deleteFriends")
+    @ResponseBody
+    public RestResponse<Void> deleteFriends(@RequestParam(required = true) long friendId) {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        Member member = PermissionContext.getMember();
+
+        MemberFriend model = new MemberFriend();
+        model.setMemberId(member.getId());
+        model.setFriendMemberId(friendId);
+        model.setStatus("normal");
+
+        List<MemberFriend> memberFriendList = memberFriendService.queryList(model);
+
+        if (memberFriendList != null) {
+
+            for (MemberFriend memberFriend : memberFriendList) {
+                memberFriend.setStatus("delete");
+                memberFriendService.update(memberFriend);
+                restResponse.setCode(RestResponse.OK);
+            }
+
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("没有该好友!");
+        }
+        return restResponse;
+    }
 
 }
