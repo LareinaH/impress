@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -256,35 +257,38 @@ public class MemberController {
         model.setStatus("normal");
         PageInfo<MemberFriend> memberFriendInfo = memberFriendService.query(pageNum, pageSize, model);
 
-        if (memberFriendInfo != null) {
-            List<Long> friendMemberIdList = new LinkedList<Long>();
+        if (memberFriendInfo != null ) {
 
-            for (MemberFriend memberFriend : memberFriendInfo.getList()) {
-                friendMemberIdList.add(memberFriend.getFriendMemberId());
-            }
-
-            Example example = new Example(Member.class);
-            example.or().andIn(Member.ID, friendMemberIdList);
-
-            List<Member> memberList = memberService.queryList(example);
-
-            List<MemberVO> memberVOList = new LinkedList<MemberVO>();
-
-            for (Member member1 : memberList) {
-                MemberVO memberVO = new MemberVO();
-                BeanUtils.copyProperties(member1, memberVO);
-                memberVOList.add(memberVO);
-            }
             PageInfo<MemberVO> result = new PageInfo<MemberVO>();
             result.setPageSize(pageSize);
             result.setPageNum(pageNum);
-            result.setList(memberVOList);
 
+            if(!memberFriendInfo.getList().isEmpty()) {
+                List<Long> friendMemberIdList = new LinkedList<Long>();
+
+                for (MemberFriend memberFriend : memberFriendInfo.getList()) {
+                    friendMemberIdList.add(memberFriend.getFriendMemberId());
+                }
+
+                Example example = new Example(Member.class);
+                example.or().andIn(Member.ID, friendMemberIdList);
+
+                List<Member> memberList = memberService.queryList(example);
+
+                List<MemberVO> memberVOList = new LinkedList<MemberVO>();
+
+                for (Member member1 : memberList) {
+                    MemberVO memberVO = new MemberVO();
+                    BeanUtils.copyProperties(member1, memberVO);
+                    memberVOList.add(memberVO);
+                }
+                result.setList(memberVOList);
+            }
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(result);
         } else {
             restResponse.setCode("error");
-            restResponse.setMessage("读取日记失败！");
+            restResponse.setMessage("读取好友列表失败！");
         }
         return restResponse;
     }
@@ -308,6 +312,7 @@ public class MemberController {
         message.setFromMemberId(member.getId());
         message.setToMemberId(friendId);
         message.setProcessStatus("unprocessed");
+        message.setUpdateAt(new Date());
 
         if (messageService.insert(message)) {
             restResponse.setCode(RestResponse.OK);

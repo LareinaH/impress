@@ -47,16 +47,16 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         DiaryComment model2 = new DiaryComment();
         model2.setDiaryId(id);
         List<DiaryComment> diaryCommentList = diaryCommentMapper.select(model2);
-        if(diaryContentList != null && diaryCommentList.size()>0){
+        if (diaryContentList != null && diaryCommentList.size() > 0) {
             List<DiaryCommentVO> diaryCommentVOList = new LinkedList<DiaryCommentVO>();
-            for(DiaryComment diaryComment : diaryCommentList){
+            for (DiaryComment diaryComment : diaryCommentList) {
                 DiaryCommentVO diaryCommentVO = new DiaryCommentVO();
-                BeanUtils.copyProperties(diaryComment,diaryCommentVO);
-                if(diaryComment.getParentId() != null){
+                BeanUtils.copyProperties(diaryComment, diaryCommentVO);
+                if (diaryComment.getParentId() != null) {
                     DiaryComment parentComment = diaryCommentMapper.selectByPrimaryKey(diaryComment.getParentId());
-                    if(parentComment!= null){
+                    if (parentComment != null) {
                         DiaryCommentVO parentVO = new DiaryCommentVO();
-                        BeanUtils.copyProperties(parentComment,parentVO);
+                        BeanUtils.copyProperties(parentComment, parentVO);
                         diaryCommentVO.setParentDiaryComment(parentVO);
                     }
                 }
@@ -66,5 +66,30 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
             diaryDetailVO.setDiaryCommentVOList(diaryCommentVOList);
         }
         return diaryDetailVO;
+    }
+
+    @Override
+    public boolean addDiary(long memberId, String publishTime, String tag, String brief, String firstImage, Integer anonymous, String accessRight, double lbsX, double lbsY, String content) {
+
+        Diary diary = new Diary();
+        diary.setMemberId(memberId);
+        diary.setPublishTime(publishTime);
+        diary.setTag(tag);
+        diary.setBrief(brief);
+        diary.setFirstImage(firstImage);
+        diary.setAnonymous(anonymous);
+        diary.setAccessRight(accessRight);
+        diary.setLbsX(lbsX);
+        diary.setLbsY(lbsY);
+        diary.setStatus("normal");
+        mapper.insert(diary);
+
+        DiaryContent diaryContent = new DiaryContent();
+        diaryContent.setDiaryId(diary.getId());
+        diaryContent.setContent(content);
+        diaryContent.setStatus("normal");
+        diaryContentMapper.insert(diaryContent);
+
+        return true;
     }
 }
