@@ -72,13 +72,38 @@
     </li>
 
     <li>写日记
-        <p> 接口地址：http://23.244.68.15:8081/diary/addDiary?diaryId=1</p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/addDiary</p>
+        <p style="color: red">该接口的请求方式必须是post</p>
+        <p style="color: blue">参数说明  </p>
+        <p style="color: blue">publishTime 发布时间</p>
+        <p style="color: blue">tag 标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】</p>
+        <p style="color: blue">brief 日记摘要（选填）</p>
+        <p style="color: blue">firstImage 日记首图（选填）</p>
+        <p style="color: blue">anonymous 是否匿名【0：不匿名，1：匿名】</p>
+        <p style="color: blue">accessRight 访问权限【all：所有人可见，excludeFriend：朋友不可见，friend：朋友可见，oneself：仅自己可见】</p>
+        <p style="color: blue">lbsX 经度</p>
+        <p style="color: blue">lbsY 纬度</p>
+        <p style="color: blue">content 内容</p>
     </li>
 
     <li>评论
-        <p> 接口地址：http://23.244.68.15:8081/diary/addComment?diaryId=1</p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/addComment</p>
+        <p style="color: red">该接口的请求方式必须是post</p>
+        <p style="color: blue">参数说明  </p>
+        <p style="color: blue">diaryId 日记id</p>
+        <p style="color: blue">parentId 如果是评论了其他人的评论 评论的id</p>
+        <p style="color: blue">isWhisper 是否是悄悄话</p>
+        <p style="color: blue">commentText 评论内容</p>
     </li>
 
+    <li>日记操作记录（日记的赞/踩/浏览）
+        <p> 接口地址：http://23.244.68.15:8081/diary/addDiaryRecord</p>
+        <p style="color: blue">参数说明  </p>
+        <p style="color: blue">diaryId 日记id</p>
+        <p style="color: blue">type 类型【diary：日记， comment：评论】</p>
+        <p style="color: blue">commentId 评论id 当type=comment时有效</p>
+        <p style="color: blue">category 分类【up：赞，down：踩，browse：浏览】</p>
+    </li>
 </ol>
 
 

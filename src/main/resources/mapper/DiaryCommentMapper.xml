@@ -8,7 +8,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="diaryId" jdbcType="BIGINT" property="diaryId" />
     <result column="parentId" jdbcType="BIGINT" property="parentId" />
-    <result column="isWhisper" jdbcType="TINYINT" property="isWhisper" />
+    <result column="isWhisper" jdbcType="INTEGER" property="isWhisper" />
     <result column="commentUserId" jdbcType="BIGINT" property="commentUserId" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="upCount" jdbcType="INTEGER" property="upCount" />

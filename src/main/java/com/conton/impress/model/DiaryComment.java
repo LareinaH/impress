@@ -23,7 +23,7 @@ public class DiaryComment extends BaseModel {
     /**
      * 是否是悄悄话【0：不是，1：是】
      */
-    private Byte isWhisper;
+    private Integer isWhisper;
 
     /**
      * 评论用户
@@ -120,7 +120,7 @@ public class DiaryComment extends BaseModel {
      *
      * @return isWhisper - 是否是悄悄话【0：不是，1：是】
      */
-    public Byte getIsWhisper() {
+    public Integer getIsWhisper() {
         return isWhisper;
     }
 
@@ -129,7 +129,7 @@ public class DiaryComment extends BaseModel {
      *
      * @param isWhisper 是否是悄悄话【0：不是，1：是】
      */
-    public void setIsWhisper(Byte isWhisper) {
+    public void setIsWhisper(Integer isWhisper) {
         this.isWhisper = isWhisper;
     }
 
