@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -82,12 +83,17 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         diary.setLbsX(lbsX);
         diary.setLbsY(lbsY);
         diary.setStatus("normal");
+        diary.setUpCount(0);
+        diary.setDownCount(0);
+        diary.setCommentCount(0);
+        diary.setCreatedAt(new Date());
         mapper.insert(diary);
 
         DiaryContent diaryContent = new DiaryContent();
         diaryContent.setDiaryId(diary.getId());
         diaryContent.setContent(content);
         diaryContent.setStatus("normal");
+        diaryContent.setCreatedAt(diary.getCreatedAt());
         diaryContentMapper.insert(diaryContent);
 
         return true;

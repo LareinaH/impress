@@ -26,7 +26,7 @@ public class MessageController {
 
 
     /**
-     * 获取当前用户未读系统消息总个数
+     * 获取当前用户未读系统消息总个数(我的消息页面，系统消息的个数)
      * @return
      */
     @RequestMapping(value = "/messageCount")
@@ -55,7 +55,10 @@ public class MessageController {
     }
 
 
-    //消息列表
+    /**
+     * 获取当前用户未读系统消息(系统消息页面)
+     * @return
+     */
     @RequestMapping(value = "/messageList")
     @ResponseBody
     public RestResponse<Map<String,Object>> messageList() {
@@ -65,7 +68,6 @@ public class MessageController {
         if(member!=null){
             //获取好友消息列表
             Map<String,Object> map = new HashMap<String, Object>();
-
 
 
             //获取被赞消息个数

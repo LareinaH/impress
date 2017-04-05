@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 @Transactional
 public class DiaryCommentServiceImpl extends BaseServiceImpl<DiaryComment> implements DiaryCommentService {
@@ -21,7 +23,7 @@ public class DiaryCommentServiceImpl extends BaseServiceImpl<DiaryComment> imple
     private DiaryMapper diaryMapper;
 
     @Override
-    public boolean addCommentService(DiaryComment diaryComment) {
+    public boolean addComment(DiaryComment diaryComment) {
 
         Diary diary = diaryMapper.selectByPrimaryKey(diaryComment.getDiaryId());
 
@@ -39,9 +41,12 @@ public class DiaryCommentServiceImpl extends BaseServiceImpl<DiaryComment> imple
         if(diaryComment.getParentId() != null){
             diaryRecord.setSelector("comment");
             diaryRecord.setCommentId(diaryComment.getParentId());
+        }else {
+            diaryRecord.setSelector("diary");
         }
         diaryRecord.setCategory("comment");
         diaryRecord.setStatus("normal");
+        diaryRecord.setCreatedAt(new Date());
 
         diaryRecordMapper.insert(diaryRecord);
 
@@ -53,7 +58,8 @@ public class DiaryCommentServiceImpl extends BaseServiceImpl<DiaryComment> imple
         if(diaryComment.getParentId() != null){
             DiaryComment parentComment = getById(diaryComment.getParentId());
             if(parentComment!=null){
-                diaryComment.setCommentCount(diaryComment.getCommentCount()+1);
+                parentComment.setCommentCount(parentComment.getCommentCount()+1);
+                update(parentComment);
             }
         }
         return true;

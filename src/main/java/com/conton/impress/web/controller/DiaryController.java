@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -142,7 +143,9 @@ public class DiaryController {
      */
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
     @ResponseBody
-    public RestResponse<Void> addComment(Long diaryId,Long parentId, int isWhisper,String commentText) {
+    public RestResponse<Void> addComment(@RequestParam(required = true) Long diaryId, Long parentId,
+                                         @RequestParam(required = true) int isWhisper,
+                                         @RequestParam(required = true) String commentText) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
         Member member = PermissionContext.getMember();
@@ -154,7 +157,8 @@ public class DiaryController {
         diaryComment.setIsWhisper(isWhisper);
         diaryComment.setCommentText(commentText);
         diaryComment.setStatus("normal");
-        if (diaryCommentService.addCommentService(diaryComment)) {
+        diaryComment.setCreatedAt(new Date());
+        if (diaryCommentService.addComment(diaryComment)) {
             restResponse.setCode(RestResponse.OK);
         } else {
             restResponse.setCode("error");
@@ -173,7 +177,9 @@ public class DiaryController {
      */
     @RequestMapping(value = "/addDiaryRecord")
     @ResponseBody
-    public RestResponse<Void> addDiaryRecord(Long diaryId,String type, Long commentId,String category) {
+    public RestResponse<Void> addDiaryRecord(@RequestParam(required = true)Long diaryId,
+                                             @RequestParam(required = true)String type, Long commentId,
+                                             @RequestParam(required = true)String category) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
         Member member = PermissionContext.getMember();
