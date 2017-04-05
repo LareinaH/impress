@@ -10,6 +10,7 @@ import com.conton.impress.model.VO.DiaryVO;
 import com.conton.impress.service.DiaryCommentService;
 import com.conton.impress.service.DiaryRecordService;
 import com.conton.impress.service.DiaryService;
+import com.conton.impress.service.MemberService;
 import com.conton.impress.web.PermissionContext;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 日记相关
@@ -31,6 +30,8 @@ import java.util.List;
 @RequestMapping("/diary")
 public class DiaryController {
 
+    @Autowired
+    private MemberService memberService;
     @Autowired
     private DiaryService diaryService;
     @Autowired
@@ -72,6 +73,79 @@ public class DiaryController {
         } else {
             restResponse.setCode("error");
             restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 我的印象
+     * @return
+     */
+    @RequestMapping(value = "/myDiarys")
+    @ResponseBody
+    public RestResponse<List<DiaryVO>> myDiarys() {
+        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+
+        Member member = PermissionContext.getMember();
+
+        Diary model = new Diary();
+        model.setMemberId(member.getId());
+
+        List<Diary> diaryList = diaryService.queryList(model);
+
+        if (diaryList != null) {
+            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+
+            for (Diary diary : diaryList) {
+                DiaryVO diaryVO = new DiaryVO();
+                BeanUtils.copyProperties(diary, diaryVO);
+                diaryVOList.add(diaryVO);
+            }
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(diaryVOList);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 我的好友详情
+     * @return
+     */
+    @RequestMapping(value = "/myFriendDetail")
+    @ResponseBody
+    public RestResponse<Map<String,Object>> myFriendDetail(@RequestParam(required = true) long friendId) {
+        RestResponse<Map<String,Object>> restResponse = new RestResponse<Map<String,Object>>();
+
+        Map<String,Object> map = new HashMap<String, Object>();
+
+        Diary model = new Diary();
+        model.setMemberId(friendId);
+        //获取好友个人信息
+        Member member = memberService.getById(friendId);
+        if(member != null) {
+            map.put("memberInfo", member);
+
+            //获取好友日志
+            List<Diary> diaryList = diaryService.queryList(model);
+
+            if (diaryList != null) {
+                List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+
+                for (Diary diary : diaryList) {
+                    DiaryVO diaryVO = new DiaryVO();
+                    BeanUtils.copyProperties(diary, diaryVO);
+                    diaryVOList.add(diaryVO);
+                }
+                map.put("diaryList", diaryVOList);
+            }
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(map);
+        }else {
+            restResponse.setCode("error");
+            restResponse.setMessage("获取好友信息失败！");
         }
         return restResponse;
     }

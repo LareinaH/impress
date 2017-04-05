@@ -67,6 +67,14 @@
         <p style="color: red"> 接口说明：pageNum pageSize 两个入参如果不填写 被默认设置成 1 | 20 </p>
     </li>
 
+    <li>我的日志列表（我的印象）
+        <p> 接口地址：http://23.244.68.15:8081/diary/myDiarys</p>
+    </li>
+    
+    <li>我的好友详情
+        <p> 接口地址：http://23.244.68.15:8081/diary/myFriendDetail?friendId=1</p>
+    </li>
+
     <li>获取日记详情
         <p> 接口地址：http://23.244.68.15:8081/diary/getDiaryDetail?diaryId=1</p>
     </li>
@@ -110,11 +118,12 @@
 <ol>
     <li>获取当前用户未读系统消息总个数(我的消息页面，系统消息的个数)
         <p> 接口地址：http://23.244.68.15:8081/message/messageCount</p>
-
+    </li>
+    <li>获取当前用户未读系统消息(系统消息页面)
+        <p> 接口地址：http://23.244.68.15:8081/message/messageList</p>
+        <p style="color: red">返回值中如果不带friends表示没有添加好友请求</p>
     </li>
 </ol>
-
-
 
 </body>
 </html>

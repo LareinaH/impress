@@ -66,8 +66,8 @@ public class MessageController {
         Member member = PermissionContext.getMember();
 
         if(member!=null){
-            //获取好友消息列表
             Map<String,Object> map = new HashMap<String, Object>();
+            //TODO:获取好友消息列表
 
 
             //获取被赞消息个数
