@@ -1,10 +1,16 @@
 package com.conton.impress.web.controller;
 
 import com.conton.base.common.RestResponse;
+import com.conton.impress.model.Diary;
 import com.conton.impress.model.Member;
 import com.conton.impress.model.Message;
+import com.conton.impress.model.VO.DiaryVO;
+import com.conton.impress.model.VO.MessageVO;
+import com.conton.impress.service.DiaryService;
 import com.conton.impress.service.MessageService;
 import com.conton.impress.web.PermissionContext;
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +31,9 @@ public class MessageController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private DiaryService diaryService;
 
 
     /**
@@ -93,6 +104,43 @@ public class MessageController {
             restResponse.setMessage("未找到当前用户！");
         }
 
+        return restResponse;
+    }
+
+    /**
+     * 获取消息列表（被赞/被评论）
+     * @param type up-被赞 comment-被评论
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/friendUpDiarys")
+    @ResponseBody
+    public RestResponse<PageInfo<MessageVO>> friendUpDiarys(@RequestParam(required = true) String type,
+                                                            @RequestParam(defaultValue = "1") int pageNum,
+                                                        @RequestParam(defaultValue = "20") int pageSize) {
+        RestResponse<PageInfo<MessageVO>> restResponse = new RestResponse<PageInfo<MessageVO>>();
+
+        Map<String,Object> map = new HashMap<String, Object>();
+        PageInfo<MessageVO> messagePageInfo = messageService.query(pageNum, pageSize,map);
+
+        //TODO:实现
+        if (messagePageInfo != null) {
+
+            if(messagePageInfo.getList()!= null && !messagePageInfo.getList().isEmpty()){
+
+                for(MessageVO messageVO : messagePageInfo.getList()){
+                    Long diaryId = 7L;
+                    Diary diary = diaryService.getById(diaryId);
+                    messageVO.setDiary(diary);
+                }
+            }
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(messagePageInfo);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("消息列表失败！");
+        }
         return restResponse;
     }
 

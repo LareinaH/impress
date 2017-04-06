@@ -18,7 +18,7 @@ public class FlmWebAppConfigurer extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(checkLoginInterceptor()).addPathPatterns("/").
+        registry.addInterceptor(checkLoginInterceptor()).addPathPatterns("/**").
                 excludePathPatterns("/member/un/*");
         super.addInterceptors(registry);
     }
