@@ -77,6 +77,41 @@ public class DiaryController {
         return restResponse;
     }
 
+
+    /**
+     * 日出印象
+     * @param type all-全部  friend-好友
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/sunDiarys")
+    @ResponseBody
+    public RestResponse<List<DiaryVO>> aboutDiarys(@RequestParam(required = true) String type,
+                                                   @RequestParam(defaultValue = "1") int pageNum,
+                                                   @RequestParam(defaultValue = "20") int pageSize) {
+        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+
+        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+
+        if (diaryPageInfo != null) {
+            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+
+            for (Diary diary : diaryPageInfo.getList()) {
+                DiaryVO diaryVO = new DiaryVO();
+                BeanUtils.copyProperties(diary, diaryVO);
+                diaryVOList.add(diaryVO);
+            }
+
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(diaryVOList);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
     /**
      * 我的印象
      * @return
@@ -149,6 +184,76 @@ public class DiaryController {
         }
         return restResponse;
     }
+
+
+
+    /**
+     * 他赞过的日记
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/friendUpDiarys")
+    @ResponseBody
+    public RestResponse<List<DiaryVO>> friendUpDiarys(@RequestParam(defaultValue = "1") int pageNum,
+                                                   @RequestParam(defaultValue = "20") int pageSize) {
+        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+
+        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+
+        //TODO:实现
+        if (diaryPageInfo != null) {
+            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+
+            for (Diary diary : diaryPageInfo.getList()) {
+                DiaryVO diaryVO = new DiaryVO();
+                BeanUtils.copyProperties(diary, diaryVO);
+                diaryVOList.add(diaryVO);
+            }
+
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(diaryVOList);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 他赞过的日记
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/friendBrowseDiarys")
+    @ResponseBody
+    public RestResponse<List<DiaryVO>> friendBrowseDiarys(@RequestParam(defaultValue = "1") int pageNum,
+                                                      @RequestParam(defaultValue = "20") int pageSize) {
+        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+
+        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+
+        //TODO:实现
+        if (diaryPageInfo != null) {
+            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+
+            for (Diary diary : diaryPageInfo.getList()) {
+                DiaryVO diaryVO = new DiaryVO();
+                BeanUtils.copyProperties(diary, diaryVO);
+                diaryVOList.add(diaryVO);
+            }
+
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(diaryVOList);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("读取日记失败！");
+        }
+        return restResponse;
+    }
+
+
 
     /**
      * 日记详情
