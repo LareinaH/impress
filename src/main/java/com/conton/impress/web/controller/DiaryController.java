@@ -294,7 +294,7 @@ public class DiaryController {
     @RequestMapping(value = "/addDiary", method = RequestMethod.POST)
     @ResponseBody
     public RestResponse<Void> addDiary(@RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
-                                       String brief,String firstImage,
+                                       String brief,String firstImage,String contentHeight,
                                        @RequestParam(required = true) Integer anonymous, @RequestParam(required = true) String accessRight,
                                        @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
                                        @RequestParam(required = true) String content) {
@@ -302,7 +302,7 @@ public class DiaryController {
 
 
         Member member = PermissionContext.getMember();
-        if (diaryService.addDiary(member.getId(), publishTime, tag, brief, firstImage, anonymous,
+        if (diaryService.addDiary(member.getId(), publishTime, tag, brief, firstImage, contentHeight, anonymous,
                 accessRight, lbsX, lbsY, content)) {
             restResponse.setCode(RestResponse.OK);
         } else {
