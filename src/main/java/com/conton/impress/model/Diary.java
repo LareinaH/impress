@@ -36,6 +36,11 @@ public class Diary extends BaseModel {
     private String firstImage;
 
     /**
+     * 日记高度（冗余字段，用于前端显示）
+     */
+    private String contentHeight;
+
+    /**
      * 是否匿名【0：不匿名，1：匿名】
      */
     private Integer anonymous;
@@ -187,6 +192,24 @@ public class Diary extends BaseModel {
      */
     public void setFirstImage(String firstImage) {
         this.firstImage = firstImage == null ? null : firstImage.trim();
+    }
+
+    /**
+     * 获取日记高度（冗余字段，用于前端显示）
+     *
+     * @return contentHeight - 日记高度（冗余字段，用于前端显示）
+     */
+    public String getContentHeight() {
+        return contentHeight;
+    }
+
+    /**
+     * 设置日记高度（冗余字段，用于前端显示）
+     *
+     * @param contentHeight 日记高度（冗余字段，用于前端显示）
+     */
+    public void setContentHeight(String contentHeight) {
+        this.contentHeight = contentHeight == null ? null : contentHeight.trim();
     }
 
     /**

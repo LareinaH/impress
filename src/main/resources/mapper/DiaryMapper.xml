@@ -11,6 +11,7 @@
     <result column="tag" jdbcType="VARCHAR" property="tag" />
     <result column="brief" jdbcType="VARCHAR" property="brief" />
     <result column="firstImage" jdbcType="VARCHAR" property="firstImage" />
+    <result column="contentHeight" jdbcType="VARCHAR" property="contentHeight" />
     <result column="anonymous" jdbcType="INTEGER" property="anonymous" />
     <result column="accessRight" jdbcType="VARCHAR" property="accessRight" />
     <result column="upCount" jdbcType="INTEGER" property="upCount" />

@@ -28,6 +28,11 @@ public class DiaryVO {
     private String firstImage;
 
     /**
+     * 日记高度（冗余字段，用于前端显示）
+     */
+    private String contentHeight;
+
+    /**
      * 赞的统计数量
      */
     private Integer upCount;
@@ -77,6 +82,13 @@ public class DiaryVO {
      */
     String influence;
 
+    public String getContentHeight() {
+        return contentHeight;
+    }
+
+    public void setContentHeight(String contentHeight) {
+        this.contentHeight = contentHeight;
+    }
 
     public boolean isbFriendDiary() {
         return bFriendDiary;
