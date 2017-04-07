@@ -42,28 +42,28 @@ public class MemberController {
     /**
      * 手机登录
      *
-     * @param ellphone 手机号
+     * @param cellphone 手机号
      * @param passWord  密码
      * @param code      验证码
      * @return
      */
     @RequestMapping(value = "/un/login")
     @ResponseBody
-    public RestResponse<MemberVO> login(@RequestBody LoginParam lp) {
+    public RestResponse<MemberVO> login( String cellphone,String passWord,String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         //TODO: 验证验证码
 
         Member model = new Member();
-        model.setCellphone(lp.getCellphone());
+        model.setCellphone(cellphone);
         List<Member> memberList = memberService.queryList(model);
 
         if (memberList.isEmpty()) {
 
             //该用户不存在 注册新用户
             Member member = new Member();
-            member.setCellphone(lp.getCellphone());
-            member.setPassword(lp.getPassWord());
+            member.setCellphone(cellphone);
+            member.setPassword(passWord);
             member.setStatus("normal");
             member.setSex("unknow");
             member.setTicket(RandomStringUtils.randomAlphanumeric(15));
@@ -79,7 +79,7 @@ public class MemberController {
             }
 
         } else {
-            if (memberList.get(0).getPassword().equals(lp.getPassWord()) && memberList.get(0).getStatus().equals("normal")) {
+            if (memberList.get(0).getPassword().equals(passWord) && memberList.get(0).getStatus().equals("normal")) {
                 MemberVO memberVO = new MemberVO();
                 BeanUtils.copyProperties(memberList.get(0), memberVO);
                 restResponse.setCode(RestResponse.OK);
