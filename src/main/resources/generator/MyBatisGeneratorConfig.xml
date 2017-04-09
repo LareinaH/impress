@@ -49,8 +49,12 @@
 		<table tableName="member_friend">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="message">
+			<property name="useActualColumnNames" value="true" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>-->
-		<table tableName="diary_comment">
+		<table tableName="message">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>
