@@ -7,6 +7,8 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="diaryId" jdbcType="BIGINT" property="diaryId" />
+    <result column="commentId" jdbcType="BIGINT" property="commentId" />
     <result column="fromMemberId" jdbcType="BIGINT" property="fromMemberId" />
     <result column="toMemberId" jdbcType="BIGINT" property="toMemberId" />
     <result column="processStatus" jdbcType="VARCHAR" property="processStatus" />
@@ -14,4 +16,39 @@
     <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
   </resultMap>
+
+  <resultMap id="MessageVOMap" type="com.conton.impress.model.VO.MessageVO">
+  </resultMap>
+
+
+  <sql id="where1">
+    <where>
+      1=1
+      <if test="map.toMemberId != null">and toMemberId = #{map.toMemberId}</if>
+      <if test="map.category != null">and category = #{map.category}</if>
+      <if test="map.status != null">and status = #{map.status}</if>
+      <if test="map.processStatus != null">and processStatus = #{map.processStatus}</if>
+    </where>
+  </sql>
+
+  <select id="query" resultMap="MessageVOMap">
+    SELECT
+      a.category,
+      a.fromMemberId,
+      a.toMemberId,
+      a.processStatus,
+      a.createdAt,
+      b.`name` as fromMemberName,
+      b.headPortrait as fromMemberHeadPortrait,
+      c.commentText
+    FROM
+    (SELECT * from message
+
+    <include refid="where1" />
+    )
+    AS a
+    LEFT JOIN member AS b ON a.toMemberId = b.id
+    LEFT JOIN diary_comment AS c ON a.commentId = c.id
+  </select>
+
 </mapper>

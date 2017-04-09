@@ -28,7 +28,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/diary")
-public class DiaryController {
+public class DiaryController extends ImpressBaseComtroller{
 
     @Autowired
     private MemberService memberService;

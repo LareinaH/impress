@@ -4,7 +4,6 @@ import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "message")
 public class Message extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +13,13 @@ public class Message extends BaseModel {
      * 类别【friend：好友申请，up：点赞，comment：评论】
      */
     private String category;
+
+    /**
+     * 关联的日记的id
+     */
+    private Long diaryId;
+
+    private Long commentId;
 
     /**
      * 消息发送者
@@ -75,6 +81,38 @@ public class Message extends BaseModel {
      */
     public void setCategory(String category) {
         this.category = category == null ? null : category.trim();
+    }
+
+    /**
+     * 获取关联的日记的id
+     *
+     * @return diaryId - 关联的日记的id
+     */
+    public Long getDiaryId() {
+        return diaryId;
+    }
+
+    /**
+     * 设置关联的日记的id
+     *
+     * @param diaryId 关联的日记的id
+     */
+    public void setDiaryId(Long diaryId) {
+        this.diaryId = diaryId;
+    }
+
+    /**
+     * @return commentId
+     */
+    public Long getCommentId() {
+        return commentId;
+    }
+
+    /**
+     * @param commentId
+     */
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
     }
 
     /**

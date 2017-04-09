@@ -34,6 +34,11 @@ public class MessageVO {
     private String fromMemberHeadPortrait;
 
     /**
+     * 评论内容
+     */
+    private String commentText;
+
+    /**
      * 创建时间
      */
     private Date createdAt;
@@ -44,6 +49,13 @@ public class MessageVO {
      */
     private Diary diary;
 
+    public String getCommentText() {
+        return commentText;
+    }
+
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
 
     public Long getId() {
         return id;

@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/member")
-public class MemberController {
+public class MemberController extends ImpressBaseComtroller{
 
     @Autowired
     private MemberService memberService;

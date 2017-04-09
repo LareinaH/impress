@@ -27,13 +27,4 @@ public class BaseController {
 			return new RestResponse<Void>("exception", "服务器出小差了");
 		}
 	}
-
-/*	protected Map<String, Object> parseJson(String jsonString) {
-		GsonBuilder gb = new GsonBuilder();
-		Gson g = gb.create();
-		Map<String, Object> map = g.fromJson(jsonString,
-				new TypeToken<Map<String, String>>() {
-				}.getType());
-		return map;
-	}*/
 }

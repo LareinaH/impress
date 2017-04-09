@@ -8,6 +8,11 @@ public class DiaryVO {
     private Long id;
 
     /**
+     * 发布人
+     */
+    private Long memberId;
+
+    /**
      * 发布时间
      */
     private String publishTime;
@@ -81,6 +86,15 @@ public class DiaryVO {
      * 影响力
      */
     String influence;
+
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
 
     public String getContentHeight() {
         return contentHeight;
