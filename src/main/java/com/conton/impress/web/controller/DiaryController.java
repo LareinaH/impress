@@ -333,14 +333,14 @@ public class DiaryController extends ImpressBaseComtroller {
      *
      * @param diaryId     日记id
      * @param parentId    如果是评论了其他人的评论 评论的id
-     * @param isWhisper   是否是悄悄话
+     * @param isWhisper   是否是悄悄话 【0：不是，1：是】
      * @param commentText 评论内容
      * @return
      */
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
     @ResponseBody
     public RestResponse<Void> addComment(@RequestParam(required = true) Long diaryId, Long parentId,
-                                         @RequestParam(required = true) int isWhisper,
+                                         @RequestParam(defaultValue = "1") int isWhisper,
                                          @RequestParam(required = true) String commentText) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
