@@ -16,7 +16,7 @@ public class DiaryRecord extends BaseModel {
     private Long memberId;
 
     /**
-     * 选择器【diary：日记， comment：评论】
+     * 选择器【diary：日记， comment：评论， browse：浏览】
      */
     private String selector;
 
@@ -26,14 +26,28 @@ public class DiaryRecord extends BaseModel {
     private Long diaryId;
 
     /**
+     * 冗余数据 日记关联的用户id
+     */
+    private Long diaryMemberId;
+
+    /**
      * 评论id 当selector=comment是有效
      */
     private Long commentId;
 
     /**
-     * 分类【up：赞，down：踩，browse：浏览】
+     * 冗余数据 评论关联的用户id
+     */
+    private Long commentMemberId;
+
+    /**
+     * 分类【up：赞，down：踩，browse：浏览，comment：评论】
      */
     private String category;
+
+    private Double lbsX;
+
+    private Double lbsY;
 
     /**
      * 状态【normal：正常 delete：删除】
@@ -83,18 +97,18 @@ public class DiaryRecord extends BaseModel {
     }
 
     /**
-     * 获取选择器【diary：日记， comment：评论】
+     * 获取选择器【diary：日记， comment：评论， browse：浏览】
      *
-     * @return selector - 选择器【diary：日记， comment：评论】
+     * @return selector - 选择器【diary：日记， comment：评论， browse：浏览】
      */
     public String getSelector() {
         return selector;
     }
 
     /**
-     * 设置选择器【diary：日记， comment：评论】
+     * 设置选择器【diary：日记， comment：评论， browse：浏览】
      *
-     * @param selector 选择器【diary：日记， comment：评论】
+     * @param selector 选择器【diary：日记， comment：评论， browse：浏览】
      */
     public void setSelector(String selector) {
         this.selector = selector == null ? null : selector.trim();
@@ -119,6 +133,24 @@ public class DiaryRecord extends BaseModel {
     }
 
     /**
+     * 获取冗余数据 日记关联的用户id
+     *
+     * @return diaryMemberId - 冗余数据 日记关联的用户id
+     */
+    public Long getDiaryMemberId() {
+        return diaryMemberId;
+    }
+
+    /**
+     * 设置冗余数据 日记关联的用户id
+     *
+     * @param diaryMemberId 冗余数据 日记关联的用户id
+     */
+    public void setDiaryMemberId(Long diaryMemberId) {
+        this.diaryMemberId = diaryMemberId;
+    }
+
+    /**
      * 获取评论id 当selector=comment是有效
      *
      * @return commentId - 评论id 当selector=comment是有效
@@ -137,21 +169,67 @@ public class DiaryRecord extends BaseModel {
     }
 
     /**
-     * 获取分类【up：赞，down：踩，browse：浏览】
+     * 获取冗余数据 评论关联的用户id
      *
-     * @return category - 分类【up：赞，down：踩，browse：浏览】
+     * @return commentMemberId - 冗余数据 评论关联的用户id
+     */
+    public Long getCommentMemberId() {
+        return commentMemberId;
+    }
+
+    /**
+     * 设置冗余数据 评论关联的用户id
+     *
+     * @param commentMemberId 冗余数据 评论关联的用户id
+     */
+    public void setCommentMemberId(Long commentMemberId) {
+        this.commentMemberId = commentMemberId;
+    }
+
+    /**
+     * 获取分类【up：赞，down：踩，browse：浏览，comment：评论】
+     *
+     * @return category - 分类【up：赞，down：踩，browse：浏览，comment：评论】
      */
     public String getCategory() {
         return category;
     }
 
     /**
-     * 设置分类【up：赞，down：踩，browse：浏览】
+     * 设置分类【up：赞，down：踩，browse：浏览，comment：评论】
      *
-     * @param category 分类【up：赞，down：踩，browse：浏览】
+     * @param category 分类【up：赞，down：踩，browse：浏览，comment：评论】
      */
     public void setCategory(String category) {
         this.category = category == null ? null : category.trim();
+    }
+
+    /**
+     * @return lbsX
+     */
+    public Double getLbsX() {
+        return lbsX;
+    }
+
+    /**
+     * @param lbsX
+     */
+    public void setLbsX(Double lbsX) {
+        this.lbsX = lbsX;
+    }
+
+    /**
+     * @return lbsY
+     */
+    public Double getLbsY() {
+        return lbsY;
+    }
+
+    /**
+     * @param lbsY
+     */
+    public void setLbsY(Double lbsY) {
+        this.lbsY = lbsY;
     }
 
     /**

@@ -17,6 +17,7 @@
     <result column="upCount" jdbcType="INTEGER" property="upCount" />
     <result column="downCount" jdbcType="INTEGER" property="downCount" />
     <result column="commentCount" jdbcType="INTEGER" property="commentCount" />
+    <result column="browseCount" jdbcType="INTEGER" property="browseCount" />
     <result column="lbsX" jdbcType="DOUBLE" property="lbsX" />
     <result column="lbsY" jdbcType="DOUBLE" property="lbsY" />
     <result column="status" jdbcType="VARCHAR" property="status" />

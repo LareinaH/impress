@@ -43,6 +43,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                         diary.setDownCount(diary.getDownCount()+1);
 
                     }else if(diaryRecord.getCategory().equals("browse")){
+                        diary.setBrowseCount(diary.getBrowseCount()+1);
 
                     }
                 }
@@ -59,7 +60,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
 
                     }else if(diaryRecord.getCategory().equals("browse")){
 
-
+                        //评论不处理浏览
                     }
                 }
             }

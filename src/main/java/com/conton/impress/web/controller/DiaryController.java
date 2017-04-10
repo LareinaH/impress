@@ -28,7 +28,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/diary")
-public class DiaryController extends ImpressBaseComtroller{
+public class DiaryController extends ImpressBaseComtroller {
 
     @Autowired
     private MemberService memberService;
@@ -41,6 +41,7 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 左右印象
+     *
      * @param lbsX
      * @param lbsY
      * @param radius
@@ -80,16 +81,21 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 日出印象
-     * @param type all-全部  friend-好友
+     *
+     * @param type     all-全部  friend-好友
+     * @param lbsX
+     * @param lbsY
      * @param pageNum
      * @param pageSize
      * @return
      */
     @RequestMapping(value = "/sunDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> aboutDiarys(@RequestParam(required = true) String type,
-                                                   @RequestParam(defaultValue = "1") int pageNum,
-                                                   @RequestParam(defaultValue = "20") int pageSize) {
+    public RestResponse<List<DiaryVO>> sunDiarys(@RequestParam(required = true) String type,
+                                                 @RequestParam(required = true) String lbsX,
+                                                 @RequestParam(required = true) String lbsY,
+                                                 @RequestParam(defaultValue = "1") int pageNum,
+                                                 @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
         PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
@@ -114,6 +120,7 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 我的印象
+     *
      * @return
      */
     @RequestMapping(value = "/myDiarys")
@@ -147,20 +154,21 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 我的好友详情
+     *
      * @return
      */
     @RequestMapping(value = "/myFriendDetail")
     @ResponseBody
-    public RestResponse<Map<String,Object>> myFriendDetail(@RequestParam(required = true) long friendId) {
-        RestResponse<Map<String,Object>> restResponse = new RestResponse<Map<String,Object>>();
+    public RestResponse<Map<String, Object>> myFriendDetail(@RequestParam(required = true) long friendId) {
+        RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
-        Map<String,Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
 
         Diary model = new Diary();
         model.setMemberId(friendId);
         //获取好友个人信息
         Member member = memberService.getById(friendId);
-        if(member != null) {
+        if (member != null) {
             map.put("memberInfo", member);
 
             //获取好友日志
@@ -178,7 +186,7 @@ public class DiaryController extends ImpressBaseComtroller{
             }
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(map);
-        }else {
+        } else {
             restResponse.setCode("error");
             restResponse.setMessage("获取好友信息失败！");
         }
@@ -186,9 +194,9 @@ public class DiaryController extends ImpressBaseComtroller{
     }
 
 
-
     /**
      * 他赞过的日记
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -196,8 +204,14 @@ public class DiaryController extends ImpressBaseComtroller{
     @RequestMapping(value = "/friendUpDiarys")
     @ResponseBody
     public RestResponse<List<DiaryVO>> friendUpDiarys(@RequestParam(defaultValue = "1") int pageNum,
-                                                   @RequestParam(defaultValue = "20") int pageSize) {
+                                                      @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+
+        //获取我赞过的日志列表
+
+        Member member = PermissionContext.getMember();
+
+        diaryRecordService.queryList();
 
         PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
 
@@ -221,7 +235,8 @@ public class DiaryController extends ImpressBaseComtroller{
     }
 
     /**
-     * 他赞过的日记
+     * 他浏览过的日记
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -229,7 +244,7 @@ public class DiaryController extends ImpressBaseComtroller{
     @RequestMapping(value = "/friendBrowseDiarys")
     @ResponseBody
     public RestResponse<List<DiaryVO>> friendBrowseDiarys(@RequestParam(defaultValue = "1") int pageNum,
-                                                      @RequestParam(defaultValue = "20") int pageSize) {
+                                                          @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
         PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
@@ -254,9 +269,9 @@ public class DiaryController extends ImpressBaseComtroller{
     }
 
 
-
     /**
      * 日记详情
+     *
      * @param diaryId
      * @return
      */
@@ -280,21 +295,22 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 添加日记
+     *
      * @param publishTime 发布时间
-     * @param tag 标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】
-     * @param brief 日记摘要（选填）
-     * @param firstImage 日记首图（选填）
-     * @param anonymous 是否匿名【0：不匿名，1：匿名】
+     * @param tag         标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】
+     * @param brief       日记摘要（选填）
+     * @param firstImage  日记首图（选填）
+     * @param anonymous   是否匿名【0：不匿名，1：匿名】
      * @param accessRight 访问权限【all：所有人可见，excludeFriend：朋友不可见，friend：朋友可见，oneself：仅自己可见】
-     * @param lbsX 经度
-     * @param lbsY 纬度
-     * @param content 内容
+     * @param lbsX        经度
+     * @param lbsY        纬度
+     * @param content     内容
      * @return
      */
     @RequestMapping(value = "/addDiary", method = RequestMethod.POST)
     @ResponseBody
     public RestResponse<Void> addDiary(@RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
-                                       String brief,String firstImage,String contentHeight,
+                                       String brief, String firstImage, String contentHeight,
                                        @RequestParam(required = true) Integer anonymous, @RequestParam(required = true) String accessRight,
                                        @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
                                        @RequestParam(required = true) String content) {
@@ -314,9 +330,10 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 添加评论
-     * @param diaryId 日记id
-     * @param parentId 如果是评论了其他人的评论 评论的id
-     * @param isWhisper 是否是悄悄话
+     *
+     * @param diaryId     日记id
+     * @param parentId    如果是评论了其他人的评论 评论的id
+     * @param isWhisper   是否是悄悄话
      * @param commentText 评论内容
      * @return
      */
@@ -348,17 +365,21 @@ public class DiaryController extends ImpressBaseComtroller{
 
     /**
      * 日记操作记录（日记的赞/踩/浏览）
+     *
      * @param diaryId
-     * @param type 类型【diary：日记， comment：评论】
+     * @param type      类型【diary：日记， comment：评论】
      * @param commentId 评论id 当type=comment时有效
-     * @param category 分类【up：赞，down：踩，browse：浏览】
+     * @param category  分类【up：赞，down：踩，browse：浏览】
+     * @param lbsX      经度
+     * @param lbsY      纬度
      * @return
      */
     @RequestMapping(value = "/addDiaryRecord")
     @ResponseBody
-    public RestResponse<Void> addDiaryRecord(@RequestParam(required = true)Long diaryId,
-                                             @RequestParam(required = true)String type, Long commentId,
-                                             @RequestParam(required = true)String category) {
+    public RestResponse<Void> addDiaryRecord(@RequestParam(required = true) Long diaryId,
+                                             @RequestParam(required = true) String type, Long commentId,
+                                             @RequestParam(required = true) String category,
+                                             @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
         Member member = PermissionContext.getMember();
@@ -369,6 +390,8 @@ public class DiaryController extends ImpressBaseComtroller{
         diaryRecord.setCommentId(commentId);
         diaryRecord.setSelector(type);
         diaryRecord.setCategory(category);
+        diaryRecord.setLbsX(lbsX);
+        diaryRecord.setLbsY(lbsY);
         diaryRecord.setStatus("normal");
 
         if (diaryRecordService.addDiaryRecord(diaryRecord)) {

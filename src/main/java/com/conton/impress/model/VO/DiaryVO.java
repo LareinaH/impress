@@ -53,6 +53,11 @@ public class DiaryVO {
     private Integer commentCount;
 
     /**
+     * 浏览的统计数量
+     */
+    private Integer browseCount;
+
+    /**
      * 经度
      */
     private Double lbsX;
@@ -61,6 +66,12 @@ public class DiaryVO {
      * 纬度
      */
     private Double lbsY;
+
+
+    /**
+     * 距离
+     */
+    private String distance;
 
     /**
      * 是否阅读状态
@@ -87,6 +98,22 @@ public class DiaryVO {
      */
     String influence;
 
+
+    public Integer getBrowseCount() {
+        return browseCount;
+    }
+
+    public void setBrowseCount(Integer browseCount) {
+        this.browseCount = browseCount;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public Long getMemberId() {
         return memberId;

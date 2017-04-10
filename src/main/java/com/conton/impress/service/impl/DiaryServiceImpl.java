@@ -87,6 +87,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         diary.setUpCount(0);
         diary.setDownCount(0);
         diary.setCommentCount(0);
+        diary.setBrowseCount(0);
         diary.setCreatedAt(new Date());
         mapper.insert(diary);
 

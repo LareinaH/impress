@@ -4,7 +4,6 @@ import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "diary")
 public class Diary extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +63,11 @@ public class Diary extends BaseModel {
      * 评论的统计数量
      */
     private Integer commentCount;
+
+    /**
+     * 浏览数量统计
+     */
+    private Integer browseCount;
 
     /**
      * 经度
@@ -300,6 +304,24 @@ public class Diary extends BaseModel {
      */
     public void setCommentCount(Integer commentCount) {
         this.commentCount = commentCount;
+    }
+
+    /**
+     * 获取浏览数量统计
+     *
+     * @return browseCount - 浏览数量统计
+     */
+    public Integer getBrowseCount() {
+        return browseCount;
+    }
+
+    /**
+     * 设置浏览数量统计
+     *
+     * @param browseCount 浏览数量统计
+     */
+    public void setBrowseCount(Integer browseCount) {
+        this.browseCount = browseCount;
     }
 
     /**

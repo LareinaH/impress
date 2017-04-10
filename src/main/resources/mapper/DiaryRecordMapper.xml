@@ -9,8 +9,12 @@
     <result column="memberId" jdbcType="BIGINT" property="memberId" />
     <result column="selector" jdbcType="VARCHAR" property="selector" />
     <result column="diaryId" jdbcType="BIGINT" property="diaryId" />
+    <result column="diaryMemberId" jdbcType="BIGINT" property="diaryMemberId" />
     <result column="commentId" jdbcType="BIGINT" property="commentId" />
+    <result column="commentMemberId" jdbcType="BIGINT" property="commentMemberId" />
     <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="lbsX" jdbcType="DOUBLE" property="lbsX" />
+    <result column="lbsY" jdbcType="DOUBLE" property="lbsY" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />

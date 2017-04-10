@@ -191,7 +191,6 @@ public class MessageController extends ImpressBaseComtroller {
             }
             restResponse.setCode(RestResponse.OK);
 
-
         } else {
             restResponse.setCode("error");
             restResponse.setMessage("该消息已读！");
