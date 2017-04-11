@@ -3,7 +3,7 @@ package com.conton.impress.model;
 import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
-
+@Table(name = "message")
 public class Message extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
