@@ -1,6 +1,7 @@
 package com.conton.impress.model.VO;
 
 import java.util.Date;
+import java.util.List;
 
 public class DiaryCommentVO {
 
@@ -17,12 +18,6 @@ public class DiaryCommentVO {
     private Long parentId;
 
     /**
-     * 引用的父评论
-     */
-    DiaryCommentVO parentDiaryComment;
-
-
-    /**
      * 评论用户
      */
     private Long commentUserId;
@@ -37,6 +32,8 @@ public class DiaryCommentVO {
      */
     private String commentUserHeadPortrait;
 
+
+    List<DiaryCommentVO> replayList;
 
     /**
      * 赞数量统计
@@ -58,6 +55,14 @@ public class DiaryCommentVO {
      */
     private Date createdAt;
 
+
+    public List<DiaryCommentVO> getReplayList() {
+        return replayList;
+    }
+
+    public void setReplayList(List<DiaryCommentVO> replayList) {
+        this.replayList = replayList;
+    }
 
     public Long getId() {
         return id;
@@ -81,14 +86,6 @@ public class DiaryCommentVO {
 
     public void setParentId(Long parentId) {
         this.parentId = parentId;
-    }
-
-    public DiaryCommentVO getParentDiaryComment() {
-        return parentDiaryComment;
-    }
-
-    public void setParentDiaryComment(DiaryCommentVO parentDiaryComment) {
-        this.parentDiaryComment = parentDiaryComment;
     }
 
     public Long getCommentUserId() {

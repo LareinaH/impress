@@ -260,6 +260,7 @@ public class MemberController extends ImpressBaseComtroller{
             PageInfo<MemberVO> result = new PageInfo<MemberVO>();
             result.setPageSize(pageSize);
             result.setPageNum(pageNum);
+            result.setTotal(memberFriendInfo.getTotal());
 
             if(!memberFriendInfo.getList().isEmpty()) {
                 List<Long> friendMemberIdList = new LinkedList<Long>();

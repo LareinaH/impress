@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -208,12 +209,26 @@ public class DiaryController extends ImpressBaseComtroller {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
         //获取我赞过的日志列表
-
         Member member = PermissionContext.getMember();
 
-        diaryRecordService.queryList();
+        DiaryRecord diaryRecord = new DiaryRecord();
+        diaryRecord.setMemberId(member.getId());
+        diaryRecord.setSelector("diary");
+        diaryRecord.setStatus("normal");
+        diaryRecord.setCategory("up");
+        List<DiaryRecord> diaryRecordList = diaryRecordService.queryList(diaryRecord);
 
-        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+
+        Example example = new Example(Diary.class);
+
+        if(diaryRecordList != null && !diaryRecordList.isEmpty()){
+            List<Long> diaryIdList = new LinkedList<Long>();
+            for(DiaryRecord record : diaryRecordList){
+                diaryIdList.add(record.getDiaryId());
+            }
+        }
+
+        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize,example);
 
         //TODO:实现
         if (diaryPageInfo != null) {
@@ -335,13 +350,15 @@ public class DiaryController extends ImpressBaseComtroller {
      * @param parentId    如果是评论了其他人的评论 评论的id
      * @param isWhisper   是否是悄悄话 【0：不是，1：是】
      * @param commentText 评论内容
+     * @param image 评论图片
      * @return
      */
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
     @ResponseBody
     public RestResponse<Void> addComment(@RequestParam(required = true) Long diaryId, Long parentId,
                                          @RequestParam(defaultValue = "1") int isWhisper,
-                                         @RequestParam(required = true) String commentText) {
+                                         @RequestParam(required = true) String commentText,
+                                         String image) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
         Member member = PermissionContext.getMember();
@@ -352,6 +369,7 @@ public class DiaryController extends ImpressBaseComtroller {
         diaryComment.setCommentUserId(member.getId());
         diaryComment.setIsWhisper(isWhisper);
         diaryComment.setCommentText(commentText);
+        diaryComment.setImage(image);
         diaryComment.setStatus("normal");
         diaryComment.setCreatedAt(new Date());
         if (diaryCommentService.addComment(diaryComment)) {

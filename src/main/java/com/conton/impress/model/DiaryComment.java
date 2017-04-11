@@ -31,6 +31,11 @@ public class DiaryComment extends BaseModel {
     private Long commentUserId;
 
     /**
+     * 评论图片地址
+     */
+    private String image;
+
+    /**
      * 状态【normal:正常 delete 删除】
      */
     private String status;
@@ -149,6 +154,24 @@ public class DiaryComment extends BaseModel {
      */
     public void setCommentUserId(Long commentUserId) {
         this.commentUserId = commentUserId;
+    }
+
+    /**
+     * 获取评论图片地址
+     *
+     * @return image - 评论图片地址
+     */
+    public String getImage() {
+        return image;
+    }
+
+    /**
+     * 设置评论图片地址
+     *
+     * @param image 评论图片地址
+     */
+    public void setImage(String image) {
+        this.image = image == null ? null : image.trim();
     }
 
     /**

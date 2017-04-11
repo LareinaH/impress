@@ -48,21 +48,31 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         DiaryComment model2 = new DiaryComment();
         model2.setDiaryId(id);
         List<DiaryComment> diaryCommentList = diaryCommentMapper.select(model2);
+
+        //查找评论
         if (diaryContentList != null && diaryCommentList.size() > 0) {
             List<DiaryCommentVO> diaryCommentVOList = new LinkedList<DiaryCommentVO>();
             for (DiaryComment diaryComment : diaryCommentList) {
                 DiaryCommentVO diaryCommentVO = new DiaryCommentVO();
                 BeanUtils.copyProperties(diaryComment, diaryCommentVO);
-                if (diaryComment.getParentId() != null) {
-                    DiaryComment parentComment = diaryCommentMapper.selectByPrimaryKey(diaryComment.getParentId());
-                    if (parentComment != null) {
-                        DiaryCommentVO parentVO = new DiaryCommentVO();
-                        BeanUtils.copyProperties(parentComment, parentVO);
-                        diaryCommentVO.setParentDiaryComment(parentVO);
-                    }
-                }
-                diaryCommentVOList.add(diaryCommentVO);
 
+                //查找子评论
+                if (diaryComment.getParentId() == null) {
+                    DiaryComment model3 = new DiaryComment();
+                    model3.setParentId(diaryComment.getId());
+                    List<DiaryComment> childCommentList = diaryCommentMapper.select(model3);
+                    if (childCommentList != null) {
+                        List<DiaryCommentVO> childCommentVOList = new LinkedList<DiaryCommentVO>();
+                        for(DiaryComment diaryComment1 :childCommentList){
+                            DiaryCommentVO childVO = new DiaryCommentVO();
+                            BeanUtils.copyProperties(diaryComment1, childVO);
+                            childCommentVOList.add(childVO);
+                        }
+
+                        diaryCommentVO.setReplayList(childCommentVOList);
+                    }
+                    diaryCommentVOList.add(diaryCommentVO);
+                }
             }
             diaryDetailVO.setDiaryCommentVOList(diaryCommentVOList);
         }
