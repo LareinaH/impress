@@ -22,6 +22,7 @@
     <result column="influence" jdbcType="INTEGER" property="influence" />
     <result column="lbsX" jdbcType="DOUBLE" property="lbsX" />
     <result column="lbsY" jdbcType="DOUBLE" property="lbsY" />
+    <result column="accuse" jdbcType="VARCHAR" property="accuse" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />

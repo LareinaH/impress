@@ -74,6 +74,10 @@
 
     </li>
 
+    <li>世界印象
+        <p> 接口地址：http://23.244.68.15:8081/diary/wordImpress</p>
+    </li>
+
     <li>我的日志列表（我的印象）
         <p> 接口地址：http://23.244.68.15:8081/diary/myDiarys</p>
     </li>
@@ -83,20 +87,22 @@
     </li>
 
     <li>好友赞过的
-        <p> 接口地址：http://23.244.68.15:8081/diary/friendUpDiarys?pageNum=1&pageSize=20</p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/friendUpDiarys?pageNum=1&pageSize=20&friendId=2</p>
         <p style="color: red"> 接口说明：pageNum pageSize 两个入参如果不填写 被默认设置成 1 | 20 </p>
-        <p style="color: blue"> type 类型 all-全部  friend-好友 </p>
     </li>
 
     <li>好友浏览过的
-        <p> 接口地址：http://23.244.68.15:8081/diary/friendBrowseDiarys?pageNum=1&pageSize=20</p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/friendBrowseDiarys?pageNum=1&pageSize=20&friendId=2</p>
         <p style="color: red"> 接口说明：pageNum pageSize 两个入参如果不填写 被默认设置成 1 | 20 </p>
-        <p style="color: blue"> type 类型 all-全部  friend-好友 </p>
 
     </li>
 
     <li>获取日记详情
         <p> 接口地址：http://23.244.68.15:8081/diary/getDiaryDetail?diaryId=1</p>
+    </li>
+
+    <li>举报日记
+        <p> 接口地址：http://23.244.68.15:8081/diary/accuse?diaryId=1</p>
     </li>
 
     <li>写日记
@@ -107,6 +113,23 @@
         <p style="color: blue">tag 标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】</p>
         <p style="color: blue">brief 日记摘要（选填）</p>
         <p style="color: blue">firstImage 日记首图（选填）</p>
+        <p style="color: blue">anonymous 是否匿名【0：不匿名，1：匿名】</p>
+        <p style="color: blue">accessRight 访问权限【all：所有人可见，excludeFriend：朋友不可见，friend：朋友可见，oneself：仅自己可见】</p>
+        <p style="color: blue">lbsX 经度</p>
+        <p style="color: blue">lbsY 纬度</p>
+        <p style="color: blue">content 内容</p>
+    </li>
+
+
+    <li>修改日记
+        <p> 接口地址：http://23.244.68.15:8081/diary/editDiary</p>
+        <p style="color: red">该接口的请求方式必须是post</p>
+        <p style="color: blue">参数说明 除了diaryId 以外所有参数选填  </p>
+        <p style="color: blue">diaryId 日记id</p>
+        <p style="color: blue">publishTime 发布时间</p>
+        <p style="color: blue">tag 标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】</p>
+        <p style="color: blue">brief 日记摘要</p>
+        <p style="color: blue">firstImage 日记首图</p>
         <p style="color: blue">anonymous 是否匿名【0：不匿名，1：匿名】</p>
         <p style="color: blue">accessRight 访问权限【all：所有人可见，excludeFriend：朋友不可见，friend：朋友可见，oneself：仅自己可见】</p>
         <p style="color: blue">lbsX 经度</p>

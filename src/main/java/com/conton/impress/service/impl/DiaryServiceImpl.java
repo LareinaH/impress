@@ -80,7 +80,22 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
     }
 
     @Override
-    public boolean addDiary(long memberId, String publishTime, String tag, String brief, String firstImage, String contentHeight, Integer anonymous, String accessRight, double lbsX, double lbsY, String content) {
+    public boolean editDiary(Diary diary, String content) {
+
+        mapper.updateByPrimaryKeySelective(diary);
+        DiaryContent model = new DiaryContent();
+        model.setDiaryId(diary.getId());
+        model.setStatus("normal");
+        DiaryContent diaryContent = diaryContentMapper.selectOne(model);
+        diaryContent.setContent(content);
+
+        diaryContentMapper.updateByPrimaryKeySelective(diaryContent);
+
+        return true;
+    }
+
+    @Override
+    public boolean addDiary(long memberId, String sex, String publishTime, String tag, String brief, String firstImage, String contentHeight, Integer anonymous, String accessRight, double lbsX, double lbsY, String content) {
 
         Diary diary = new Diary();
         diary.setMemberId(memberId);

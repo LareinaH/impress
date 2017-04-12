@@ -43,8 +43,13 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                         diary.setDownCount(diary.getDownCount()+1);
 
                     }else if(diaryRecord.getCategory().equals("browse")){
+
                         diary.setBrowseCount(diary.getBrowseCount()+1);
 
+                        //如果是管理员日记
+                        if(diaryRecord.getDiaryMemberId() == 1){
+                            diary.setInfluence(diary.getInfluence()+1);
+                        }
                     }
                 }
 

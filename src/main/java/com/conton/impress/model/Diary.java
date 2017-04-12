@@ -3,6 +3,8 @@ package com.conton.impress.model;
 import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
+
+
 @Table(name = "diary")
 public class Diary extends BaseModel {
     @Id
@@ -88,6 +90,11 @@ public class Diary extends BaseModel {
      * 纬度
      */
     private Double lbsY;
+
+    /**
+     * 是否被举报 normal：正常 accuse：被举报
+     */
+    private String accuse;
 
     /**
      * 日记状态【normal 正常 delete 删除】
@@ -404,6 +411,24 @@ public class Diary extends BaseModel {
      */
     public void setLbsY(Double lbsY) {
         this.lbsY = lbsY;
+    }
+
+    /**
+     * 获取是否被举报 normal：正常 accuse：被举报
+     *
+     * @return accuse - 是否被举报 normal：正常 accuse：被举报
+     */
+    public String getAccuse() {
+        return accuse;
+    }
+
+    /**
+     * 设置是否被举报 normal：正常 accuse：被举报
+     *
+     * @param accuse 是否被举报 normal：正常 accuse：被举报
+     */
+    public void setAccuse(String accuse) {
+        this.accuse = accuse == null ? null : accuse.trim();
     }
 
     /**
