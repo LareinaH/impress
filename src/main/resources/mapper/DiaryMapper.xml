@@ -7,6 +7,7 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="memberId" jdbcType="BIGINT" property="memberId" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
     <result column="publishTime" jdbcType="VARCHAR" property="publishTime" />
     <result column="tag" jdbcType="VARCHAR" property="tag" />
     <result column="brief" jdbcType="VARCHAR" property="brief" />
@@ -18,6 +19,7 @@
     <result column="downCount" jdbcType="INTEGER" property="downCount" />
     <result column="commentCount" jdbcType="INTEGER" property="commentCount" />
     <result column="browseCount" jdbcType="INTEGER" property="browseCount" />
+    <result column="influence" jdbcType="INTEGER" property="influence" />
     <result column="lbsX" jdbcType="DOUBLE" property="lbsX" />
     <result column="lbsY" jdbcType="DOUBLE" property="lbsY" />
     <result column="status" jdbcType="VARCHAR" property="status" />

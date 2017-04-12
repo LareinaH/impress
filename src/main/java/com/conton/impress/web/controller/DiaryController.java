@@ -119,6 +119,31 @@ public class DiaryController extends ImpressBaseComtroller {
         return restResponse;
     }
 
+
+    /**
+     * 世界印象
+     *
+     * @return
+     */
+    @RequestMapping(value = "/wordImpress")
+    @ResponseBody
+    public RestResponse<Map<String,Object>> wordImpress() {
+        RestResponse<Map<String,Object>> restResponse = new RestResponse<Map<String,Object>>();
+
+
+        //获取看过我的位置
+
+
+        //统计看过我的人数
+
+        //计算影响力
+
+        //计算覆盖范围
+
+
+        return restResponse;
+    }
+
     /**
      * 我的印象
      *

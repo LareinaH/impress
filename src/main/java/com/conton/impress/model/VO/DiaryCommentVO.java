@@ -55,6 +55,12 @@ public class DiaryCommentVO {
      */
     private Date createdAt;
 
+    /**
+     * 评论图片地址
+     */
+    private String image;
+
+
 
     public List<DiaryCommentVO> getReplayList() {
         return replayList;
@@ -142,5 +148,13 @@ public class DiaryCommentVO {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

@@ -15,6 +15,11 @@ public class Diary extends BaseModel {
     private Long memberId;
 
     /**
+     * 写日记的用户性别（用于管理员用户数据显示）
+     */
+    private String sex;
+
+    /**
      * 发布时间
      */
     private String publishTime;
@@ -68,6 +73,11 @@ public class Diary extends BaseModel {
      * 浏览数量统计
      */
     private Integer browseCount;
+
+    /**
+     * 影响力
+     */
+    private Integer influence;
 
     /**
      * 经度
@@ -124,6 +134,24 @@ public class Diary extends BaseModel {
      */
     public void setMemberId(Long memberId) {
         this.memberId = memberId;
+    }
+
+    /**
+     * 获取写日记的用户性别（用于管理员用户数据显示）
+     *
+     * @return sex - 写日记的用户性别（用于管理员用户数据显示）
+     */
+    public String getSex() {
+        return sex;
+    }
+
+    /**
+     * 设置写日记的用户性别（用于管理员用户数据显示）
+     *
+     * @param sex 写日记的用户性别（用于管理员用户数据显示）
+     */
+    public void setSex(String sex) {
+        this.sex = sex == null ? null : sex.trim();
     }
 
     /**
@@ -322,6 +350,24 @@ public class Diary extends BaseModel {
      */
     public void setBrowseCount(Integer browseCount) {
         this.browseCount = browseCount;
+    }
+
+    /**
+     * 获取影响力
+     *
+     * @return influence - 影响力
+     */
+    public Integer getInfluence() {
+        return influence;
+    }
+
+    /**
+     * 设置影响力
+     *
+     * @param influence 影响力
+     */
+    public void setInfluence(Integer influence) {
+        this.influence = influence;
     }
 
     /**

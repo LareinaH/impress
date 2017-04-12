@@ -13,6 +13,11 @@ public class DiaryVO {
     private Long memberId;
 
     /**
+     * 性别
+     */
+    private String sex;
+
+    /**
      * 发布时间
      */
     private String publishTime;
@@ -98,6 +103,14 @@ public class DiaryVO {
      */
     String influence;
 
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
     public Integer getBrowseCount() {
         return browseCount;
