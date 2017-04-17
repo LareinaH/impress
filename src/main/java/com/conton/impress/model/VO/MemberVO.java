@@ -13,6 +13,11 @@ public class MemberVO {
     private Long id;
 
     /**
+     * 用户注册极光推送的用户名（唯一值）
+     */
+    private String uuid;
+
+    /**
      * 凭证
      */
     private String ticket;
@@ -142,4 +147,11 @@ public class MemberVO {
         this.cellphone = cellphone == null ? null : cellphone.trim();
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 }

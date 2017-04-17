@@ -1,5 +1,7 @@
 package com.conton.impress.model.VO;
 
+import java.util.Date;
+
 /**
  * Created by Administrator on 2017-03-18.
  */
@@ -103,6 +105,18 @@ public class DiaryVO {
      */
     String influence;
 
+    /**
+     * 创建时间
+     */
+    private Date createdAt;
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public String getSex() {
         return sex;

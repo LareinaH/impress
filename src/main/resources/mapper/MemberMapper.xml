@@ -6,6 +6,7 @@
       WARNING - @mbggenerated
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
     <result column="ticket" jdbcType="VARCHAR" property="ticket" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="sex" jdbcType="VARCHAR" property="sex" />

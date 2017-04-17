@@ -5,6 +5,7 @@ import com.conton.impress.model.Member;
 import com.conton.impress.model.MemberFriend;
 import com.conton.impress.model.Message;
 import com.conton.impress.model.VO.MemberVO;
+import com.conton.impress.service.JPushService;
 import com.conton.impress.service.MemberFriendService;
 import com.conton.impress.service.MemberService;
 import com.conton.impress.service.MessageService;
@@ -30,7 +31,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/member")
-public class MemberController extends ImpressBaseComtroller{
+public class MemberController extends ImpressBaseComtroller {
 
     @Autowired
     private MemberService memberService;
@@ -38,6 +39,23 @@ public class MemberController extends ImpressBaseComtroller{
     private MemberFriendService memberFriendService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    public JPushService jPushService;
+
+    /**
+     * 接口测试
+     *
+     * @return
+     */
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    public RestResponse<Void> test() {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        jPushService.createUser(java.util.UUID.randomUUID().toString(), java.util.UUID.randomUUID().toString());
+
+        return restResponse;
+    }
 
     /**
      * 手机登录
@@ -49,7 +67,7 @@ public class MemberController extends ImpressBaseComtroller{
      */
     @RequestMapping(value = "/un/login")
     @ResponseBody
-    public RestResponse<MemberVO> login( String cellphone,String passWord,String code) {
+    public RestResponse<MemberVO> login(String cellphone, String passWord, String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         //TODO: 验证验证码
@@ -62,17 +80,24 @@ public class MemberController extends ImpressBaseComtroller{
 
             //该用户不存在 注册新用户
             Member member = new Member();
+            member.setUuid(java.util.UUID.randomUUID().toString());
             member.setCellphone(cellphone);
             member.setPassword(passWord);
             member.setStatus("normal");
             member.setSex("unknow");
             member.setTicket(RandomStringUtils.randomAlphanumeric(15));
 
-            if (memberService.insert(member)) {
-                MemberVO memberVO = new MemberVO();
-                BeanUtils.copyProperties(member, memberVO);
-                restResponse.setCode(RestResponse.OK);
-                restResponse.setData(memberVO);
+            if (jPushService.createUser(member.getUuid(), member.getPassword())) {
+
+                if (memberService.insert(member)) {
+                    MemberVO memberVO = new MemberVO();
+                    BeanUtils.copyProperties(member, memberVO);
+                    restResponse.setCode(RestResponse.OK);
+                    restResponse.setData(memberVO);
+                } else {
+                    restResponse.setCode("error");
+                    restResponse.setMessage("注册用户失败!");
+                }
             } else {
                 restResponse.setCode("error");
                 restResponse.setMessage("注册用户失败!");
@@ -157,6 +182,7 @@ public class MemberController extends ImpressBaseComtroller{
 
         Member member = PermissionContext.getMember();
 
+
         if (!member.getPassword().equals(oldPassword)) {
             restResponse.setCode("error");
             restResponse.setMessage("原密码错误!");
@@ -164,10 +190,16 @@ public class MemberController extends ImpressBaseComtroller{
         }
         member.setPassword(newPassword);
 
-        if (memberService.update(member)) {
+        if (jPushService.updatePassword(member.getUuid(), newPassword)) {
 
-            restResponse.setCode(RestResponse.OK);
+            if (memberService.update(member)) {
 
+                restResponse.setCode(RestResponse.OK);
+
+            } else {
+                restResponse.setCode("error");
+                restResponse.setMessage("修改密码失败!");
+            }
         } else {
             restResponse.setCode("error");
             restResponse.setMessage("修改密码失败!");
@@ -255,14 +287,14 @@ public class MemberController extends ImpressBaseComtroller{
         model.setStatus("normal");
         PageInfo<MemberFriend> memberFriendInfo = memberFriendService.query(pageNum, pageSize, model);
 
-        if (memberFriendInfo != null ) {
+        if (memberFriendInfo != null) {
 
             PageInfo<MemberVO> result = new PageInfo<MemberVO>();
             result.setPageSize(pageSize);
             result.setPageNum(pageNum);
             result.setTotal(memberFriendInfo.getTotal());
 
-            if(!memberFriendInfo.getList().isEmpty()) {
+            if (!memberFriendInfo.getList().isEmpty()) {
                 List<Long> friendMemberIdList = new LinkedList<Long>();
 
                 for (MemberFriend memberFriend : memberFriendInfo.getList()) {

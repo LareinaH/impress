@@ -3,12 +3,16 @@ package com.conton.impress.model;
 import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
-
 @Table(name = "member")
 public class Member extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * 用户注册极光推送的用户名（唯一值）
+     */
+    private String uuid;
 
     /**
      * 凭证
@@ -67,6 +71,24 @@ public class Member extends BaseModel {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * 获取用户注册极光推送的用户名（唯一值）
+     *
+     * @return uuid - 用户注册极光推送的用户名（唯一值）
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * 设置用户注册极光推送的用户名（唯一值）
+     *
+     * @param uuid 用户注册极光推送的用户名（唯一值）
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid == null ? null : uuid.trim();
     }
 
     /**
