@@ -67,7 +67,9 @@ public class MemberController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/un/login")
     @ResponseBody
-    public RestResponse<MemberVO> login(String cellphone, String passWord, String code) {
+    public RestResponse<MemberVO> login(@RequestParam(required = true) String cellphone,
+                                        @RequestParam(required = true) String passWord,
+                                        @RequestParam(required = true) String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
 
         //TODO: 验证验证码
@@ -80,6 +82,7 @@ public class MemberController extends ImpressBaseComtroller {
 
             //该用户不存在 注册新用户
             Member member = new Member();
+            member.setName("匿名");
             member.setUuid(java.util.UUID.randomUUID().toString());
             member.setCellphone(cellphone);
             member.setPassword(passWord);
@@ -113,6 +116,71 @@ public class MemberController extends ImpressBaseComtroller {
                 restResponse.setCode("error");
                 restResponse.setMessage("用户名或者密码错误!");
             }
+        }
+
+        return restResponse;
+    }
+
+
+    /**
+     * 微信/QQ授权登录
+     *
+     * @return
+     */
+    @RequestMapping(value = "/un/oauthLogin")
+    @ResponseBody
+    public RestResponse<MemberVO> oauthLogin(@RequestParam(required = true) String uid,
+                                             @RequestParam(required = true) String name,
+                                             @RequestParam(required = true) String sex,
+                                             @RequestParam(required = true) String headPortrait) {
+        RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
+
+        Member model = new Member();
+        model.setUid(uid);
+        List<Member> memberList = memberService.queryList(model);
+
+        if (memberList.isEmpty()) {
+
+            //该用户不存在 注册新用户
+            Member member = new Member();
+            member.setUid(uid);
+            member.setName(name);
+            member.setSex(sex);
+            member.setHeadPortrait(headPortrait);
+            member.setUuid(java.util.UUID.randomUUID().toString());
+            member.setPassword("123456");
+            member.setStatus("normal");
+            member.setTicket(RandomStringUtils.randomAlphanumeric(15));
+
+            if (jPushService.createUser(member.getUuid(), member.getPassword())) {
+
+                if (memberService.insert(member)) {
+                    MemberVO memberVO = new MemberVO();
+                    BeanUtils.copyProperties(member, memberVO);
+                    restResponse.setCode(RestResponse.OK);
+                    restResponse.setData(memberVO);
+                } else {
+                    restResponse.setCode("error");
+                    restResponse.setMessage("注册用户失败!");
+                }
+            } else {
+                restResponse.setCode("error");
+                restResponse.setMessage("注册用户失败!");
+            }
+
+        } else {
+            Member member = memberList.get(0);
+
+            //更新一下用户信息
+            memberService.update(member);
+            member.setUid(uid);
+            member.setName(name);
+           // member.setSex(sex); 性别不可以改
+            member.setHeadPortrait(headPortrait);
+            MemberVO memberVO = new MemberVO();
+            BeanUtils.copyProperties(member, memberVO);
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(memberVO);
         }
 
         return restResponse;

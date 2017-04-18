@@ -3,6 +3,7 @@ package com.conton.impress.model;
 import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
+
 @Table(name = "member")
 public class Member extends BaseModel {
     @Id
@@ -13,6 +14,11 @@ public class Member extends BaseModel {
      * 用户注册极光推送的用户名（唯一值）
      */
     private String uuid;
+
+    /**
+     * 微信/QQ授权的标识
+     */
+    private String uid;
 
     /**
      * 凭证
@@ -89,6 +95,24 @@ public class Member extends BaseModel {
      */
     public void setUuid(String uuid) {
         this.uuid = uuid == null ? null : uuid.trim();
+    }
+
+    /**
+     * 获取微信/QQ授权的标识
+     *
+     * @return uid - 微信/QQ授权的标识
+     */
+    public String getUid() {
+        return uid;
+    }
+
+    /**
+     * 设置微信/QQ授权的标识
+     *
+     * @param uid 微信/QQ授权的标识
+     */
+    public void setUid(String uid) {
+        this.uid = uid == null ? null : uid.trim();
     }
 
     /**
