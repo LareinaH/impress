@@ -52,8 +52,10 @@ public class MemberController extends ImpressBaseComtroller {
     public RestResponse<Void> test() {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
-        jPushService.createUser(java.util.UUID.randomUUID().toString(), java.util.UUID.randomUUID().toString());
+        //jPushService.createUser(java.util.UUID.randomUUID().toString(), java.util.UUID.randomUUID().toString());
 
+        String name = jPushService.getUserInfo("f5f3a0ad-b4c5-4101-8196-3e1702fa0ad1");
+        restResponse.setMessage(name);
         return restResponse;
     }
 
@@ -71,8 +73,6 @@ public class MemberController extends ImpressBaseComtroller {
                                         @RequestParam(required = true) String passWord,
                                         @RequestParam(required = true) String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
-
-        //TODO: 验证验证码
 
         Member model = new Member();
         model.setCellphone(cellphone);
@@ -187,9 +187,6 @@ public class MemberController extends ImpressBaseComtroller {
     }
 
 
-    //发送验证码
-
-
     /**
      * 绑定手机号
      *
@@ -202,8 +199,6 @@ public class MemberController extends ImpressBaseComtroller {
     public RestResponse<MemberVO> bindCellphone(@RequestParam(required = true) String cellphone,
                                                 @RequestParam(required = true) String code) {
         RestResponse<MemberVO> restResponse = new RestResponse<MemberVO>();
-
-        //TODO: 验证验证码
 
         Member model = new Member();
         model.setCellphone(cellphone);

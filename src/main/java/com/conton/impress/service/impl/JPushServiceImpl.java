@@ -4,6 +4,7 @@ import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
 import cn.jmessage.api.JMessageClient;
 import cn.jmessage.api.common.model.RegisterInfo;
+import cn.jmessage.api.user.UserInfoResult;
 import com.conton.impress.service.JPushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,5 +72,23 @@ public class JPushServiceImpl implements JPushService{
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String getUserInfo(String username) {
+        JMessageClient client = new JMessageClient(appkey, masterSecret);
+
+        try {
+            UserInfoResult result = client.getUserInfo(username);
+            return result.getUsername();
+        } catch (APIConnectionException e) {
+            LOG.error("Connection error. Should retry later. ", e);
+        } catch (APIRequestException e) {
+            LOG.error("Error response from JPush server. Should review and fix it. ", e);
+            LOG.info("HTTP Status: " + e.getStatus());
+            LOG.info("Error Message: " + e.getMessage());
+
+        }
+        return null;
     }
 }

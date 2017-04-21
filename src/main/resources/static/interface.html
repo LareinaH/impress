@@ -17,8 +17,7 @@
     </li>
 
     <li>微信/QQ授权登录
-        <p> 接口地址：http://23.244.68.15:8081/member/un/oauthLogin?cellphone=18551178309&passWord=123456&code=3214</p>
-        <p> 接口说明：如果手机未注册过，直接使用该手机号、密码注册</p>
+        <p> 接口地址：http://23.244.68.15:8081/member/un/oauthLogin?uid=11111&name=张三&sex=male&headPortrait=http://xxxx</p>
     </li>
 
 </ol>
@@ -107,13 +106,15 @@
     </li>
 
     <li>举报日记
-        <p> 接口地址：http://23.244.68.15:8081/diary/accuse?diaryId=1</p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/accuse?diaryId=1&format=android</p>
+        <p style="color: red">format 日记格式 ios|android  默认是不填是ios </p>
     </li>
 
     <li>写日记
         <p> 接口地址：http://23.244.68.15:8081/diary/addDiary</p>
         <p style="color: red">该接口的请求方式必须是post</p>
         <p style="color: blue">参数说明  </p>
+        <p style="color: red">format 日记格式 ios|android  默认是不填是ios </p>
         <p style="color: blue">publishTime 发布时间</p>
         <p style="color: blue">tag 标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】</p>
         <p style="color: blue">brief 日记摘要（选填）</p>
@@ -131,6 +132,7 @@
         <p style="color: red">该接口的请求方式必须是post</p>
         <p style="color: blue">参数说明 除了diaryId 以外所有参数选填  </p>
         <p style="color: blue">diaryId 日记id</p>
+        <p style="color: red">format 日记格式 ios|android  默认是不填是ios </p>
         <p style="color: blue">publishTime 发布时间</p>
         <p style="color: blue">tag 标签【default：默认， event：事件， mood：心情 ，thing：物件，view： 景色】</p>
         <p style="color: blue">brief 日记摘要</p>

@@ -3,12 +3,16 @@ package com.conton.impress.service.impl;
 import com.conton.base.service.impl.BaseServiceImpl;
 import com.conton.impress.mapper.DiaryCommentMapper;
 import com.conton.impress.mapper.DiaryContentMapper;
+import com.conton.impress.mapper.DiaryMapper;
 import com.conton.impress.model.Diary;
 import com.conton.impress.model.DiaryComment;
 import com.conton.impress.model.DiaryContent;
 import com.conton.impress.model.VO.DiaryCommentVO;
 import com.conton.impress.model.VO.DiaryDetailVO;
+import com.conton.impress.model.VO.DiaryVO;
 import com.conton.impress.service.DiaryService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -26,6 +31,8 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
     private DiaryContentMapper diaryContentMapper;
     @Autowired
     private DiaryCommentMapper diaryCommentMapper;
+    @Autowired
+    private DiaryMapper diaryMapper;
 
     @Override
     public DiaryDetailVO getDiaryDetailVObyId(long id) {
@@ -124,5 +131,21 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         diaryContentMapper.insert(diaryContent);
 
         return true;
+    }
+
+    @Override
+    public PageInfo<DiaryVO> queryAboutDiaryList(int pageNum, int pageSize, Map<String, Object> map) {
+        if (pageSize > 0) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+        return new PageInfo<DiaryVO>(diaryMapper.selectAboutDiaryList(map));
+    }
+
+    @Override
+    public PageInfo<DiaryVO> querySunDiaryList(int pageNum, int pageSize, Map<String, Object> map) {
+        if (pageSize > 0) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+        return new PageInfo<DiaryVO>(diaryMapper.selectSunDiaryList(map));
     }
 }

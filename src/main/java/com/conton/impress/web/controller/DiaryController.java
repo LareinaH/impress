@@ -1,10 +1,8 @@
 package com.conton.impress.web.controller;
 
 import com.conton.base.common.RestResponse;
-import com.conton.impress.model.Diary;
-import com.conton.impress.model.DiaryComment;
-import com.conton.impress.model.DiaryRecord;
-import com.conton.impress.model.Member;
+import com.conton.base.model.BaseModel;
+import com.conton.impress.model.*;
 import com.conton.impress.model.VO.DiaryDetailVO;
 import com.conton.impress.model.VO.DiaryVO;
 import com.conton.impress.service.DiaryCommentService;
@@ -16,6 +14,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,9 +22,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 日记相关
@@ -42,6 +44,13 @@ public class DiaryController extends ImpressBaseComtroller {
     private DiaryCommentService diaryCommentService;
     @Autowired
     private DiaryRecordService diaryRecordService;
+
+    @Value("${dtX}")
+    private int dtX;
+    @Value("${dtY}")
+    private int dtY;
+    @Value("${adminId}")
+    private long adminId;
 
     /**
      * 左右印象
@@ -156,7 +165,35 @@ public class DiaryController extends ImpressBaseComtroller {
             memberIdSet.add(diaryRecord.getMemberId());
         }
 
-        map.put("pointList", pointList);
+        Map<String, Integer> pointMap = new HashMap<String, Integer>();
+
+        for (Point point : pointList) {
+
+            //转换坐标
+            if (point.getLbsX() != null && point.getLbsY() != null) {
+                String x = String.valueOf(Math.floor(point.getLbsX() / dtX) * dtX);
+                String y = String.valueOf(Math.floor(point.getLbsY() / dtY) * dtY);
+                String key = x + "-" + y;
+                if (pointMap.containsKey(key)) {
+
+                    pointMap.put(key, pointMap.get(key) + 1);
+                } else {
+                    pointMap.put(key, 1);
+                }
+            }
+        }
+
+        List<Point> pointResult = new LinkedList<Point>();
+
+        for (Map.Entry<String, Integer> entry : pointMap.entrySet()) {
+
+            String[] xy = entry.getKey().split("-");
+            Point point = new Point(Double.valueOf(xy[0]), Double.valueOf(xy[1]),entry.getValue());
+            pointResult.add(point);
+
+        }
+
+        map.put("pointList", pointResult);
 
         //2 计算影响人数
         map.put("influencePerson", memberIdSet.size());
@@ -401,12 +438,18 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/getDiaryDetail")
     @ResponseBody
-    public RestResponse<DiaryDetailVO> getDiaryDetail(@RequestParam(required = true) long diaryId) {
+    public RestResponse<DiaryDetailVO> getDiaryDetail(@RequestParam(defaultValue = "ios") String format,
+                                                      @RequestParam(required = true) long diaryId) {
         RestResponse<DiaryDetailVO> restResponse = new RestResponse<DiaryDetailVO>();
 
         DiaryDetailVO diaryDetailVO = diaryService.getDiaryDetailVObyId(diaryId);
 
         if (diaryDetailVO != null) {
+
+            if (format.equals("android")) {
+
+                diaryDetailVO.setContent(iosToAndroid(diaryDetailVO.getContent()));
+            }
 
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryDetailVO);
@@ -416,7 +459,6 @@ public class DiaryController extends ImpressBaseComtroller {
         }
         return restResponse;
     }
-
 
     /**
      * 举报日记
@@ -458,7 +500,8 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/addDiary", method = RequestMethod.POST)
     @ResponseBody
-    public RestResponse<Void> addDiary(@RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
+    public RestResponse<Void> addDiary(@RequestParam(defaultValue = "ios") String format,
+                                       @RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
                                        String brief, String firstImage, String contentHeight,
                                        @RequestParam(required = true) Integer anonymous, @RequestParam(required = true) String accessRight,
                                        @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
@@ -467,6 +510,11 @@ public class DiaryController extends ImpressBaseComtroller {
 
 
         Member member = PermissionContext.getMember();
+
+        if (format.equals("android")) {
+
+            content = androidToIos(content);
+        }
         if (diaryService.addDiary(member.getId(), member.getSex(), publishTime, tag, brief, firstImage, contentHeight, anonymous,
                 accessRight, lbsX, lbsY, content)) {
             restResponse.setCode(RestResponse.OK);
@@ -494,7 +542,8 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/editDiary", method = RequestMethod.POST)
     @ResponseBody
-    public RestResponse<Void> editDiary(@RequestParam(required = true) long diaryId, String publishTime, String tag, String brief, String firstImage,
+    public RestResponse<Void> editDiary(@RequestParam(defaultValue = "ios") String format,
+                                        @RequestParam(required = true) long diaryId, String publishTime, String tag, String brief, String firstImage,
                                         String contentHeight, Integer anonymous, String accessRight,
                                         double lbsX, double lbsY, String content) {
 
@@ -508,6 +557,10 @@ public class DiaryController extends ImpressBaseComtroller {
             return restResponse;
         }
 
+        if (format.equals("android") && content != null) {
+
+            content = androidToIos(content);
+        }
         diary.setPublishTime(publishTime);
         diary.setTag(tag);
         diary.setBrief(brief);
@@ -549,6 +602,25 @@ public class DiaryController extends ImpressBaseComtroller {
 
         Member member = PermissionContext.getMember();
 
+        Diary diary = diaryService.getById(diaryId);
+
+        if (diary == null) {
+            restResponse.setCode("error");
+            restResponse.setMessage("diaryId 不存在！");
+            return restResponse;
+        }
+
+        DiaryComment parentComment = null;
+        if (parentId != null) {
+            parentComment = diaryCommentService.getById(parentId);
+
+            if (parentComment == null) {
+                restResponse.setCode("error");
+                restResponse.setMessage("parentId 不存在！");
+                return restResponse;
+            }
+        }
+
         DiaryComment diaryComment = new DiaryComment();
         diaryComment.setDiaryId(diaryId);
         diaryComment.setParentId(parentId);
@@ -559,6 +631,30 @@ public class DiaryController extends ImpressBaseComtroller {
         diaryComment.setStatus("normal");
         diaryComment.setCreatedAt(new Date());
         if (diaryCommentService.addComment(diaryComment)) {
+
+            //发消息
+            Message message = new Message();
+            message.setDiaryId(diaryId);
+            message.setStatus("normal");
+            message.setCategory("comment");
+            message.setFromMemberId(member.getId());
+            message.setToMemberId(diary.getMemberId());
+            message.setProcessStatus("unprocessed");
+            message.setUpdateAt(new Date());
+            messageService.insert(message);
+
+            if (parentComment != null) {
+                Message message2 = new Message();
+                message.setDiaryId(diaryId);
+                message2.setStatus("normal");
+                message2.setCategory("comment");
+                message2.setFromMemberId(member.getId());
+                message2.setToMemberId(parentComment.getCommentUserId());
+                message2.setProcessStatus("unprocessed");
+                message2.setUpdateAt(new Date());
+                messageService.insert(message2);
+            }
+
             restResponse.setCode(RestResponse.OK);
         } else {
             restResponse.setCode("error");
@@ -588,17 +684,55 @@ public class DiaryController extends ImpressBaseComtroller {
 
         Member member = PermissionContext.getMember();
 
+        Diary diary = diaryService.getById(diaryId);
+
+        if (diary == null) {
+            restResponse.setCode("error");
+            restResponse.setMessage("diaryId错误！");
+            return restResponse;
+        }
         DiaryRecord diaryRecord = new DiaryRecord();
         diaryRecord.setMemberId(member.getId());
         diaryRecord.setDiaryId(diaryId);
-        diaryRecord.setCommentId(commentId);
+        diaryRecord.setDiaryMemberId(diary.getMemberId());
         diaryRecord.setSelector(type);
         diaryRecord.setCategory(category);
         diaryRecord.setLbsX(lbsX);
         diaryRecord.setLbsY(lbsY);
         diaryRecord.setStatus("normal");
 
+        DiaryComment diaryComment = null;
+        if (type.equals("comment")) {
+            diaryComment = diaryCommentService.getById(commentId);
+            if (diaryComment == null) {
+                restResponse.setCode("error");
+                restResponse.setMessage("commentId错误！");
+                return restResponse;
+            }
+            diaryRecord.setCommentId(commentId);
+            diaryRecord.setCommentMemberId(diaryComment.getCommentUserId());
+        }
+
         if (diaryRecordService.addDiaryRecord(diaryRecord)) {
+
+            //如果是点赞的 发送消息
+            if (category.equals("up")) {
+                Message message = new Message();
+                message.setDiaryId(diaryId);
+                message.setStatus("normal");
+                message.setCategory("up");
+                message.setFromMemberId(member.getId());
+                message.setProcessStatus("unprocessed");
+                message.setUpdateAt(new Date());
+
+                if (type.equals("diary")) {
+                    message.setToMemberId(diary.getMemberId());
+
+                } else {
+                    message.setToMemberId(diaryComment.getCommentUserId());
+                }
+                messageService.insert(message);
+            }
             restResponse.setCode(RestResponse.OK);
         } else {
             restResponse.setCode("error");
@@ -607,7 +741,7 @@ public class DiaryController extends ImpressBaseComtroller {
         return restResponse;
     }
 
-    class Point {
+    class Point{
         /**
          * 经度
          */
@@ -618,9 +752,27 @@ public class DiaryController extends ImpressBaseComtroller {
          */
         private Double lbsY;
 
+        private Integer num;
+
+
         public Point(Double lbsY, Double lbsX) {
             this.lbsY = lbsY;
             this.lbsX = lbsX;
+            this.num = 1;
+        }
+
+        public Point(Double lbsX, Double lbsY, Integer num) {
+            this.lbsX = lbsX;
+            this.lbsY = lbsY;
+            this.num = num;
+        }
+
+        public Integer getNum() {
+            return num;
+        }
+
+        public void setNum(Integer num) {
+            this.num = num;
         }
 
         public Double getLbsX() {
@@ -638,6 +790,37 @@ public class DiaryController extends ImpressBaseComtroller {
         public void setLbsY(Double lbsY) {
             this.lbsY = lbsY;
         }
+
     }
+
+    private String androidToIos(String context) {
+
+        String result = context.replaceAll("<br>", "\n");
+        result = result.replaceAll("<img src=\"", "|");
+        result = result.replaceAll("\" alt=\"image\">", "|");
+        return result;
+    }
+
+    private String iosToAndroid(String context) {
+
+        String result = context.replaceAll("\\n", "<br>");
+
+        Pattern p = Pattern.compile("\\|", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(result);
+        StringBuffer buf = new StringBuffer();
+        int i = 0;
+        while (m.find()) {
+            i++;
+            if (i % 2 == 0) {
+                m.appendReplacement(buf, "\" alt=\"image\">");
+            } else {
+                m.appendReplacement(buf, "<img src=\"");
+            }
+        }
+        m.appendTail(buf);
+
+        return buf.toString();
+    }
+
 
 }

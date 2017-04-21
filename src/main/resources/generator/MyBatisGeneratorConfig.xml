@@ -14,8 +14,8 @@
 			<property name="mappers" value="com.conton.base.mapper.BaseMapper" />
 		</plugin>
 
-		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://23.244.68.15:3306/impress"
-			userId="lareina" password="123456" />
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://47.92.29.192:3306/impress"
+			userId="root" password="root" />
 
 		<javaModelGenerator targetPackage="com.conton.impress.model" targetProject="${basedir.src.main.java}" >
 		    <property name="rootClass" value="com.conton.base.model.BaseModel"/>
@@ -54,7 +54,7 @@
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>-->
-		<table tableName="diary_comment">
+		<table tableName="member">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>
