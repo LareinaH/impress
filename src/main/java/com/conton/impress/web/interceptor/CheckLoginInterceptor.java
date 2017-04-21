@@ -71,7 +71,7 @@ public class CheckLoginInterceptor implements HandlerInterceptor {
     private void setReLogin(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
         restResponse.setCode(RestResponse.LoginTimeout);
-        restResponse.setMessage("登录超时");
+        restResponse.setMessage("用户未登录");
 
         //转换成json
         GsonBuilder gb = new GsonBuilder();
