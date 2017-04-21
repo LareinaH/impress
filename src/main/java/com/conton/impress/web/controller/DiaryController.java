@@ -335,7 +335,6 @@ public class DiaryController extends ImpressBaseComtroller {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
         //获取用户赞过的日志列表
-
         DiaryRecord diaryRecord = new DiaryRecord();
         diaryRecord.setMemberId(friendId);
         diaryRecord.setSelector("diary");
@@ -353,26 +352,31 @@ public class DiaryController extends ImpressBaseComtroller {
                 diaryIdList.add(record.getDiaryId());
             }
             criteria.andIn("id", diaryIdList);
-        }
 
-        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
+            PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
 
 
-        if (diaryPageInfo != null) {
-            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+            if (diaryPageInfo != null) {
+                List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
 
-            for (Diary diary : diaryPageInfo.getList()) {
-                DiaryVO diaryVO = new DiaryVO();
-                BeanUtils.copyProperties(diary, diaryVO);
-                diaryVOList.add(diaryVO);
+                for (Diary diary : diaryPageInfo.getList()) {
+                    DiaryVO diaryVO = new DiaryVO();
+                    BeanUtils.copyProperties(diary, diaryVO);
+                    diaryVOList.add(diaryVO);
+                }
+
+                restResponse.setCode(RestResponse.OK);
+                restResponse.setData(diaryVOList);
+            } else {
+                restResponse.setCode("error");
+                restResponse.setMessage("读取日记失败！");
             }
-
+        }else{
             restResponse.setCode(RestResponse.OK);
-            restResponse.setData(diaryVOList);
-        } else {
-            restResponse.setCode("error");
-            restResponse.setMessage("读取日记失败！");
+            restResponse.setData(null);
         }
+
+
         return restResponse;
     }
 
@@ -407,25 +411,29 @@ public class DiaryController extends ImpressBaseComtroller {
                 diaryIdList.add(record.getDiaryId());
             }
             criteria.andIn("id", diaryIdList);
-        }
 
-        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+            PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize,example);
 
-        if (diaryPageInfo != null) {
-            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+            if (diaryPageInfo != null) {
+                List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
 
-            for (Diary diary : diaryPageInfo.getList()) {
-                DiaryVO diaryVO = new DiaryVO();
-                BeanUtils.copyProperties(diary, diaryVO);
-                diaryVOList.add(diaryVO);
+                for (Diary diary : diaryPageInfo.getList()) {
+                    DiaryVO diaryVO = new DiaryVO();
+                    BeanUtils.copyProperties(diary, diaryVO);
+                    diaryVOList.add(diaryVO);
+                }
+
+                restResponse.setCode(RestResponse.OK);
+                restResponse.setData(diaryVOList);
+            } else {
+                restResponse.setCode("error");
+                restResponse.setMessage("读取日记失败！");
             }
-
+        }else {
             restResponse.setCode(RestResponse.OK);
-            restResponse.setData(diaryVOList);
-        } else {
-            restResponse.setCode("error");
-            restResponse.setMessage("读取日记失败！");
+            restResponse.setData(null);
         }
+
         return restResponse;
     }
 
