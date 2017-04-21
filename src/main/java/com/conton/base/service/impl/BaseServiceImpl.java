@@ -55,6 +55,7 @@ public class BaseServiceImpl<ModelType extends BaseModel> implements BaseService
 	public PageInfo<ModelType> query(int pageNum, int pageSize) {
 		if (pageSize > 0) {
 			PageHelper.startPage(pageNum, pageSize);
+			PageHelper.orderBy("createdAt DESC");
 		}
 		return new PageInfo<ModelType>(mapper.selectAll());
 	}
@@ -63,6 +64,7 @@ public class BaseServiceImpl<ModelType extends BaseModel> implements BaseService
 	public PageInfo<ModelType> query(int pageNum, int pageSize, Object condition) {
 		if (pageSize > 0) {
 			PageHelper.startPage(pageNum, pageSize);
+			PageHelper.orderBy("createdAt DESC");
 		}
 		return new PageInfo<ModelType>(mapper.selectByExample(condition));
 	}
@@ -71,6 +73,7 @@ public class BaseServiceImpl<ModelType extends BaseModel> implements BaseService
 	public PageInfo<ModelType> query(int pageNum, int pageSize, ModelType model) {
 		if (pageSize > 0) {
 			PageHelper.startPage(pageNum, pageSize);
+			PageHelper.orderBy("createdAt DESC");
 		}
 		return new PageInfo<ModelType>(mapper.select(model));
 	}
