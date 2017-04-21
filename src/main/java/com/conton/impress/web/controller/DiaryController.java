@@ -188,7 +188,7 @@ public class DiaryController extends ImpressBaseComtroller {
         for (Map.Entry<String, Integer> entry : pointMap.entrySet()) {
 
             String[] xy = entry.getKey().split("-");
-            Point point = new Point(Double.valueOf(xy[0]), Double.valueOf(xy[1]),entry.getValue());
+            Point point = new Point(Double.valueOf(xy[0]), Double.valueOf(xy[1]), entry.getValue());
             pointResult.add(point);
 
         }
@@ -352,7 +352,7 @@ public class DiaryController extends ImpressBaseComtroller {
             for (DiaryRecord record : diaryRecordList) {
                 diaryIdList.add(record.getDiaryId());
             }
-            criteria.andIn("Id", diaryIdList);
+            criteria.andIn("id", diaryIdList);
         }
 
         PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
@@ -406,7 +406,7 @@ public class DiaryController extends ImpressBaseComtroller {
             for (DiaryRecord record : diaryRecordList) {
                 diaryIdList.add(record.getDiaryId());
             }
-            criteria.andIn("Id", diaryIdList);
+            criteria.andIn("id", diaryIdList);
         }
 
         PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
@@ -741,7 +741,7 @@ public class DiaryController extends ImpressBaseComtroller {
         return restResponse;
     }
 
-    class Point{
+    class Point {
         /**
          * 经度
          */
