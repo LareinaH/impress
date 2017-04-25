@@ -3,6 +3,7 @@ package com.conton.impress.service;
 import com.conton.base.service.BaseService;
 import com.conton.impress.model.Diary;
 import com.conton.impress.model.VO.DiaryDetailVO;
+import com.conton.impress.model.VO.DiaryExVO;
 import com.conton.impress.model.VO.DiaryVO;
 import com.github.pagehelper.PageInfo;
 
@@ -25,4 +26,7 @@ public interface DiaryService extends BaseService<Diary> {
     PageInfo<DiaryVO> queryAboutDiaryList(int pageNum, int pageSize,Map<String,Object> map);
 
     PageInfo<DiaryVO> querySunDiaryList(int pageNum, int pageSize,Map<String,Object> map);
+
+    DiaryExVO convertDiaryVO2DiaryExVO(Long currentMemberId, DiaryVO diaryVO);
+
 }

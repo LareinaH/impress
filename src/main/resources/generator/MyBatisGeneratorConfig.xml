@@ -54,9 +54,11 @@
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>-->
-		<table tableName="member">
+		<table tableName="diary">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>
+
+
 	</context>
 </generatorConfiguration>

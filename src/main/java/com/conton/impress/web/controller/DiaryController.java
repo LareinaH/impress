@@ -1,17 +1,14 @@
 package com.conton.impress.web.controller;
 
 import com.conton.base.common.RestResponse;
-import com.conton.base.model.BaseModel;
+import com.conton.base.util.DistanceUtil;
 import com.conton.impress.model.*;
 import com.conton.impress.model.VO.DiaryDetailVO;
+import com.conton.impress.model.VO.DiaryExVO;
 import com.conton.impress.model.VO.DiaryVO;
-import com.conton.impress.service.DiaryCommentService;
-import com.conton.impress.service.DiaryRecordService;
-import com.conton.impress.service.DiaryService;
-import com.conton.impress.service.MemberService;
+import com.conton.impress.service.*;
 import com.conton.impress.web.PermissionContext;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,10 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +33,8 @@ public class DiaryController extends ImpressBaseComtroller {
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private MemberFriendService memberFriendService;
     @Autowired
     private DiaryService diaryService;
     @Autowired
@@ -64,21 +61,57 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/aboutDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> aboutDiarys(@RequestParam(required = true) String lbsX,
-                                                   @RequestParam(required = true) String lbsY,
-                                                   @RequestParam(required = true) String radius,
-                                                   @RequestParam(defaultValue = "1") int pageNum,
-                                                   @RequestParam(defaultValue = "20") int pageSize) {
-        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+    public RestResponse<List<DiaryExVO>> aboutDiaries(@RequestParam(required = true) String lbsX,
+                                                      @RequestParam(required = true) String lbsY,
+                                                      @RequestParam(required = true) String radius,
+                                                      @RequestParam(defaultValue = "1") int pageNum,
+                                                      @RequestParam(defaultValue = "20") int pageSize) {
+        RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
 
-        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+        Member member = PermissionContext.getMember();
+
+        Map<String, Object> condition = new HashMap<String, Object>();
+        condition.put("lbX", Double.valueOf(lbsX));
+        condition.put("lbY", Double.valueOf(lbsY));
+        condition.put("radius", radius);
+
+        //TODO: 条件查询
+        //获取我的好友列表
+
+        //能够浏览到的日记的权限条件： 1  所有人可以看 2 我自己的日记 3 朋友不可见 不是好友 4 朋友可见 是好友
+
+        PageInfo<DiaryVO> diaryPageInfo = diaryService.queryAboutDiaryList(pageNum, pageSize, condition);
 
         if (diaryPageInfo != null) {
-            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
 
-            for (Diary diary : diaryPageInfo.getList()) {
-                DiaryVO diaryVO = new DiaryVO();
-                BeanUtils.copyProperties(diary, diaryVO);
+            //TODO: 伪造管理员数据
+            if (diaryPageInfo.getList() != null && diaryPageInfo.getList().size() < pageSize) {
+
+            }
+
+            Map<Long, String> tempInfluence = new HashMap<Long, String>();
+
+            for (DiaryVO diaryVO : diaryPageInfo.getList()) {
+
+                //如果数据库中影响力字段没有值，去获取作者的影响力
+                if (diaryVO.getInfluence() == null || diaryVO.getInfluence().equals("0")) {
+
+                    //查看是否获取过作者的影响力
+                    if (tempInfluence.get(diaryVO.getMemberId()) != null) {
+                        diaryVO.setInfluence(tempInfluence.get(diaryVO.getMemberId()));
+                    } else {
+                        String influence = memberService.getInfluence(diaryVO.getMemberId());
+                        diaryVO.setInfluence(influence);
+                        tempInfluence.put(diaryVO.getMemberId(), influence);
+                    }
+                }
+            }
+
+            //转换ExVO数据
+            List<DiaryExVO> diaryVOList = new LinkedList<DiaryExVO>();
+
+            for (DiaryVO diary : diaryPageInfo.getList()) {
+                DiaryExVO diaryVO = diaryService.convertDiaryVO2DiaryExVO(member.getId(), diary);
                 diaryVOList.add(diaryVO);
             }
 
@@ -104,30 +137,70 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/sunDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> sunDiarys(@RequestParam(required = true) String type,
-                                                 @RequestParam(required = true) String lbsX,
-                                                 @RequestParam(required = true) String lbsY,
-                                                 @RequestParam(defaultValue = "1") int pageNum,
-                                                 @RequestParam(defaultValue = "20") int pageSize) {
+    public RestResponse<List<DiaryVO>> sunDiaries(@RequestParam(required = true) String lbsX,
+                                                  @RequestParam(required = true) String lbsY,
+                                                  @RequestParam(defaultValue = "all") String type,
+                                                  @RequestParam(defaultValue = "1") int pageNum,
+                                                  @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
-        PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize);
+        Member member = PermissionContext.getMember();
 
-        if (diaryPageInfo != null) {
-            List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
 
-            for (Diary diary : diaryPageInfo.getList()) {
-                DiaryVO diaryVO = new DiaryVO();
-                BeanUtils.copyProperties(diary, diaryVO);
-                diaryVOList.add(diaryVO);
+        Map<String, Object> condition = new HashMap<String, Object>();
+        condition.put("lbX", Double.valueOf(lbsX));
+        condition.put("lbY", Double.valueOf(lbsY));
+
+
+        if (type.equals("friend")) {
+
+            //获取好友列表
+            MemberFriend memberFriendModel = new MemberFriend();
+            memberFriendModel.setMemberId(member.getId());
+            memberFriendModel.setStatus("normal");
+
+            List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
+
+            if(memberFriendList != null && !memberFriendList.isEmpty()){
+
+                List<Long> friendIdList = new LinkedList<Long>();
+                for(MemberFriend f : memberFriendList){
+                    friendIdList.add(f.getFriendMemberId());
+                }
+                condition.put("friendIdList",friendIdList);
+
+            }else {
+                restResponse.setCode(RestResponse.OK);
+                return restResponse;
             }
 
-            restResponse.setCode(RestResponse.OK);
-            restResponse.setData(diaryVOList);
         } else {
-            restResponse.setCode("error");
-            restResponse.setMessage("读取日记失败！");
+            condition.put("weight", "true");
         }
+
+        PageInfo<DiaryVO> diaryPageInfo = diaryService.querySunDiaryList(pageNum, pageSize, condition);
+
+        if(diaryPageInfo != null && diaryPageInfo.getList() != null && !diaryPageInfo.getList().isEmpty()){
+
+
+            Map<Long,String> influenceMap = new HashMap<Long, String>();
+            for(DiaryVO d : diaryPageInfo.getList()){
+                if(d.getInfluence() == null || d.getInfluence().equals("0")){
+                    if(influenceMap.get(d.getMemberId()) != null){
+                        d.setInfluence(influenceMap.get(d.getMemberId()));
+                    }else {
+                        String influence = memberService.getInfluence(d.getMemberId());
+                        d.setInfluence(influence);
+                        influenceMap.put(d.getMemberId(),influence);
+                    }
+                }
+            }
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(diaryPageInfo.getList());
+        }else {
+            restResponse.setCode(RestResponse.OK);
+        }
+
         return restResponse;
     }
 
@@ -149,7 +222,7 @@ public class DiaryController extends ImpressBaseComtroller {
         restResponse.setData(map);
 
         //0 查找所有看过我的人 包括二级浏览者
-        List<DiaryRecord> diaryRecordList = getAllBrowseMe(member.getId());
+        List<DiaryRecord> diaryRecordList = memberService.getAllBrowseMe(member.getId());
 
         if (diaryRecordList == null || diaryRecordList.isEmpty()) {
             map.put("pointList", null);
@@ -212,37 +285,6 @@ public class DiaryController extends ImpressBaseComtroller {
         return restResponse;
     }
 
-    private List<DiaryRecord> getAllBrowseMe(Long memberId) {
-
-        DiaryRecord model = new DiaryRecord();
-        model.setDiaryMemberId(memberId);
-        model.setSelector("diary");
-        model.setCategory("browse");
-        model.setStatus("normal");
-
-        List<DiaryRecord> diaryRecordList = diaryRecordService.queryList(model);
-
-        if (diaryRecordList != null && !diaryRecordList.isEmpty()) {
-
-            Set<Long> memberIdSet = new HashSet<Long>();
-            for (DiaryRecord diaryRecord : diaryRecordList) {
-                memberIdSet.add(diaryRecord.getMemberId());
-            }
-
-            Example example = new Example(DiaryRecord.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andIn("diaryMemberId", new ArrayList<Long>(memberIdSet));
-            criteria.andEqualTo("selector", "diary");
-            criteria.andEqualTo("category", "browse");
-            criteria.andEqualTo("status", "normal");
-
-            List<DiaryRecord> subDiaryRecordList = diaryRecordService.queryList(example);
-
-            diaryRecordList.addAll(subDiaryRecordList);
-        }
-
-        return diaryRecordList;
-    }
 
     /**
      * 我的印象
@@ -251,7 +293,7 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/myDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> myDiarys() {
+    public RestResponse<List<DiaryVO>> myDiaries() {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
         Member member = PermissionContext.getMember();
@@ -285,7 +327,9 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/myFriendDetail")
     @ResponseBody
-    public RestResponse<Map<String, Object>> myFriendDetail(@RequestParam(required = true) long friendId) {
+    public RestResponse<Map<String, Object>> myFriendDetail(@RequestParam(defaultValue = "30.278992") String lbsX,
+                                                            @RequestParam(defaultValue = "120.167536") String lbsY,
+                                                            @RequestParam(required = true) long friendId) {
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -297,6 +341,9 @@ public class DiaryController extends ImpressBaseComtroller {
         if (member != null) {
             map.put("memberInfo", member);
 
+            //获取该好友的影响力
+            String influence = memberService.getInfluence(friendId);
+
             //获取好友日志
             List<Diary> diaryList = diaryService.queryList(model);
 
@@ -306,6 +353,15 @@ public class DiaryController extends ImpressBaseComtroller {
                 for (Diary diary : diaryList) {
                     DiaryVO diaryVO = new DiaryVO();
                     BeanUtils.copyProperties(diary, diaryVO);
+
+                    if (diaryVO.getInfluence() == null) {
+                        diaryVO.setInfluence(influence);
+                    }
+
+                    //计算当前坐标位置
+                    double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
+                    diaryVO.setDistance((int) distance);
+
                     diaryVOList.add(diaryVO);
                 }
                 map.put("diaryList", diaryVOList);
@@ -329,9 +385,11 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/friendUpDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> friendUpDiarys(@RequestParam(defaultValue = "1") int pageNum,
-                                                      @RequestParam(defaultValue = "20") int pageSize,
-                                                      @RequestParam(required = true) long friendId) {
+    public RestResponse<List<DiaryVO>> friendUpDiaries(@RequestParam(defaultValue = "1") int pageNum,
+                                                       @RequestParam(defaultValue = "20") int pageSize,
+                                                       @RequestParam(defaultValue = "30.278992") String lbsX,
+                                                       @RequestParam(defaultValue = "120.167536") String lbsY,
+                                                       @RequestParam(required = true) long friendId) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
         //获取用户赞过的日志列表
@@ -362,6 +420,11 @@ public class DiaryController extends ImpressBaseComtroller {
                 for (Diary diary : diaryPageInfo.getList()) {
                     DiaryVO diaryVO = new DiaryVO();
                     BeanUtils.copyProperties(diary, diaryVO);
+
+                    //计算当前坐标位置
+                    double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
+                    diaryVO.setDistance((int) distance);
+
                     diaryVOList.add(diaryVO);
                 }
 
@@ -371,7 +434,7 @@ public class DiaryController extends ImpressBaseComtroller {
                 restResponse.setCode("error");
                 restResponse.setMessage("读取日记失败！");
             }
-        }else{
+        } else {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(null);
         }
@@ -389,9 +452,11 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/friendBrowseDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> friendBrowseDiarys(@RequestParam(defaultValue = "1") int pageNum,
-                                                          @RequestParam(defaultValue = "20") int pageSize,
-                                                          @RequestParam(required = true) long friendId) {
+    public RestResponse<List<DiaryVO>> friendBrowseDiaries(@RequestParam(defaultValue = "1") int pageNum,
+                                                           @RequestParam(defaultValue = "20") int pageSize,
+                                                           @RequestParam(defaultValue = "30.278992") String lbsX,
+                                                           @RequestParam(defaultValue = "120.167536") String lbsY,
+                                                           @RequestParam(required = true) long friendId) {
         RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
 
 
@@ -412,7 +477,7 @@ public class DiaryController extends ImpressBaseComtroller {
             }
             criteria.andIn("id", diaryIdList);
 
-            PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize,example);
+            PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
 
             if (diaryPageInfo != null) {
                 List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
@@ -420,6 +485,11 @@ public class DiaryController extends ImpressBaseComtroller {
                 for (Diary diary : diaryPageInfo.getList()) {
                     DiaryVO diaryVO = new DiaryVO();
                     BeanUtils.copyProperties(diary, diaryVO);
+
+                    //计算当前坐标位置
+                    double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
+                    diaryVO.setDistance((int) distance);
+
                     diaryVOList.add(diaryVO);
                 }
 
@@ -429,7 +499,7 @@ public class DiaryController extends ImpressBaseComtroller {
                 restResponse.setCode("error");
                 restResponse.setMessage("读取日记失败！");
             }
-        }else {
+        } else {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(null);
         }
@@ -809,7 +879,12 @@ public class DiaryController extends ImpressBaseComtroller {
         return result;
     }
 
+
     private String iosToAndroid(String context) {
+
+        if (context == null || context.isEmpty()) {
+            return null;
+        }
 
         String result = context.replaceAll("\\n", "<br>");
 

@@ -1,30 +1,171 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.conton.impress.mapper.DiaryMapper">
-  <resultMap id="BaseResultMap" type="com.conton.impress.model.Diary">
-    <!--
-      WARNING - @mbggenerated
-    -->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="memberId" jdbcType="BIGINT" property="memberId" />
-    <result column="sex" jdbcType="VARCHAR" property="sex" />
-    <result column="publishTime" jdbcType="VARCHAR" property="publishTime" />
-    <result column="tag" jdbcType="VARCHAR" property="tag" />
-    <result column="brief" jdbcType="VARCHAR" property="brief" />
-    <result column="firstImage" jdbcType="VARCHAR" property="firstImage" />
-    <result column="contentHeight" jdbcType="VARCHAR" property="contentHeight" />
-    <result column="anonymous" jdbcType="INTEGER" property="anonymous" />
-    <result column="accessRight" jdbcType="VARCHAR" property="accessRight" />
-    <result column="upCount" jdbcType="INTEGER" property="upCount" />
-    <result column="downCount" jdbcType="INTEGER" property="downCount" />
-    <result column="commentCount" jdbcType="INTEGER" property="commentCount" />
-    <result column="browseCount" jdbcType="INTEGER" property="browseCount" />
-    <result column="influence" jdbcType="INTEGER" property="influence" />
-    <result column="lbsX" jdbcType="DOUBLE" property="lbsX" />
-    <result column="lbsY" jdbcType="DOUBLE" property="lbsY" />
-    <result column="accuse" jdbcType="VARCHAR" property="accuse" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
-    <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.conton.impress.model.Diary">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="memberId" jdbcType="BIGINT" property="memberId"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="publishTime" jdbcType="VARCHAR" property="publishTime"/>
+        <result column="tag" jdbcType="VARCHAR" property="tag"/>
+        <result column="brief" jdbcType="VARCHAR" property="brief"/>
+        <result column="firstImage" jdbcType="VARCHAR" property="firstImage"/>
+        <result column="contentHeight" jdbcType="VARCHAR" property="contentHeight"/>
+        <result column="anonymous" jdbcType="INTEGER" property="anonymous"/>
+        <result column="accessRight" jdbcType="VARCHAR" property="accessRight"/>
+        <result column="upCount" jdbcType="INTEGER" property="upCount"/>
+        <result column="downCount" jdbcType="INTEGER" property="downCount"/>
+        <result column="commentCount" jdbcType="INTEGER" property="commentCount"/>
+        <result column="browseCount" jdbcType="INTEGER" property="browseCount"/>
+        <result column="weight" jdbcType="INTEGER" property="weight"/>
+        <result column="influence" jdbcType="INTEGER" property="influence"/>
+        <result column="lbsX" jdbcType="DOUBLE" property="lbsX"/>
+        <result column="lbsY" jdbcType="DOUBLE" property="lbsY"/>
+        <result column="accuse" jdbcType="VARCHAR" property="accuse"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt"/>
+    </resultMap>
+
+    <resultMap id="DiaryVOResultMap" type="com.conton.impress.model.VO.DiaryVO">
+    </resultMap>
+
+    <sql id="where1">
+        <where>
+            1=1
+            <if test="map.radius != null">and distance &lt; #{map.radius}</if>
+        </where>
+    </sql>
+
+
+    <sql id="where2">
+        <where>
+            1=1
+            <!--          <if test="map.shopId != null">and shopId = #{map.shopId}</if>
+                      <if test="map.wechatNo != null">and shopId like "%${map.wechatNo}%"</if>
+                      <if test="map.name != null">and shopId like "%${map.name}%"</if>-->
+        </where>
+    </sql>
+
+    <sql id="whereMemberIdList">
+        <where>
+            1=1
+            <if test="map.friendIdList != null">and memberId in
+
+                <foreach collection="map.friendIdList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <sql id="distance">
+        ROUND(
+        6378.138 * 2 * ASIN(
+        SQRT(
+        POW(
+        SIN(
+        (
+        #{map.lbX} * PI() / 180 - lbsX * PI() / 180
+        ) / 2
+        ),
+        2
+        ) + COS(#{map.lbX} * PI() / 180) * COS(lbsX * PI() / 180) * POW(
+        SIN(
+        (
+        #{map.lbY} * PI() / 180 - lbsY * PI() / 180
+        ) / 2
+        ),
+        2
+        )
+        )
+        ) * 1000
+        )
+    </sql>
+
+
+    <select id="selectAboutDiaryList" resultMap="DiaryVOResultMap">
+        SELECT
+        a.id,
+        a.memberId,
+        a.sex,
+        a.publishTime,
+        a.tag,
+        a.brief,
+        a.firstImage,
+        a.contentHeight,
+        a.anonymous,
+        a.accessRight,
+        a.upCount,
+        a.downCount,
+        a.commentCount,
+        a.browseCount,
+        a.influence,
+        a.lbsX,
+        a.lbsY,
+        a.accuse,
+        a.`status`,
+        a.createdAt,
+        a.updateAt,
+        a.distance,
+        b.`name` AS friendName,
+        b.headPortrait
+
+        FROM
+        (SELECT * ,   <include refid="distance"></include> AS distance
+        from diary
+
+        <include refid="where2"></include>
+        )
+        AS a
+        LEFT JOIN member AS b ON a.memberId = b.id
+        <include refid="where1"></include>
+        ORDER BY
+        a.distance ASC
+
+    </select>
+
+
+    <select id="selectSunDiaryList" resultMap="DiaryVOResultMap">
+        SELECT
+        a.id,
+        a.memberId,
+        a.sex,
+        a.publishTime,
+        a.tag,
+        a.brief,
+        a.firstImage,
+        a.contentHeight,
+        a.anonymous,
+        a.accessRight,
+        a.upCount,
+        a.downCount,
+        a.commentCount,
+        a.browseCount,
+        a.influence,
+        a.lbsX,
+        a.lbsY,
+        a.accuse,
+        a.`status`,
+        a.createdAt,
+        a.updateAt,
+        a.distance,
+        b.`name` AS friendName,
+        b.headPortrait
+
+        FROM
+        (SELECT * ,<include refid="distance"></include> AS distance
+        from diary
+
+        <include refid="whereMemberIdList"></include>
+        )
+        AS a
+        LEFT JOIN member AS b ON a.memberId = b.id
+        ORDER BY
+        a.createdAt DESC
+
+    </select>
+
 </mapper>

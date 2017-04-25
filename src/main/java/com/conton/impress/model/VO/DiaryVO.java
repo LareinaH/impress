@@ -74,41 +74,35 @@ public class DiaryVO {
      */
     private Double lbsY;
 
-
-    /**
-     * 距离
-     */
-    private String distance;
-
-    /**
-     * 是否阅读状态
-     */
-    String readStatus;
-
-    /**
-     * 是否是好友日记
-     */
-    boolean bFriendDiary;
-
-    /**
-     * 好友姓名
-     */
-    String friendName;
-
-    /**
-     * 头像
-     */
-    String headPortrait;
-
-    /**
-     * 影响力
-     */
-    String influence;
-
     /**
      * 创建时间
      */
     private Date createdAt;
+
+
+    /**
+     * 影响力
+     */
+    private String influence;
+
+    /**
+     * 距离
+     */
+    private Integer distance;
+
+
+    //连表查询得出的数据
+
+    /**
+     * 好友姓名
+     */
+    private String friendName;
+
+    /**
+     * 头像
+     */
+    private String headPortrait;
+
 
     public Date getCreatedAt() {
         return createdAt;
@@ -134,11 +128,11 @@ public class DiaryVO {
         this.browseCount = browseCount;
     }
 
-    public String getDistance() {
+    public Integer getDistance() {
         return distance;
     }
 
-    public void setDistance(String distance) {
+    public void setDistance(Integer distance) {
         this.distance = distance;
     }
 
@@ -158,13 +152,6 @@ public class DiaryVO {
         this.contentHeight = contentHeight;
     }
 
-    public boolean isbFriendDiary() {
-        return bFriendDiary;
-    }
-
-    public void setbFriendDiary(boolean bFriendDiary) {
-        this.bFriendDiary = bFriendDiary;
-    }
 
     public String getFriendName() {
         return friendName;
@@ -190,13 +177,6 @@ public class DiaryVO {
         this.influence = influence;
     }
 
-    public String getReadStatus() {
-        return "unRead";
-    }
-
-    public void setReadStatus(String readStatus) {
-        this.readStatus = readStatus;
-    }
 
     public Long getId() {
         return id;

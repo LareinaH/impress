@@ -33,6 +33,9 @@ public class DiaryCommentVO {
     private String commentUserHeadPortrait;
 
 
+    /**
+     * 回复列表
+     */
     List<DiaryCommentVO> replayList;
 
     /**

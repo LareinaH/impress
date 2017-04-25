@@ -2,7 +2,7 @@ package com.conton.impress.model.VO;
 
 import java.util.List;
 
-public class DiaryDetailVO extends DiaryVO{
+public class DiaryDetailVO extends DiaryExVO{
 
     /**
      * 日记正文

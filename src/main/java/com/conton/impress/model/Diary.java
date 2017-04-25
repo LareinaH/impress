@@ -3,8 +3,6 @@ package com.conton.impress.model;
 import com.conton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
-
-
 @Table(name = "diary")
 public class Diary extends BaseModel {
     @Id
@@ -77,17 +75,22 @@ public class Diary extends BaseModel {
     private Integer browseCount;
 
     /**
+     * 权重（用户日出印象，每天零点清空）
+     */
+    private Integer weight;
+
+    /**
      * 影响力
      */
     private Integer influence;
 
     /**
-     * 经度
+     * 纬度
      */
     private Double lbsX;
 
     /**
-     * 纬度
+     * 经度
      */
     private Double lbsY;
 
@@ -360,6 +363,24 @@ public class Diary extends BaseModel {
     }
 
     /**
+     * 获取权重（用户日出印象，每天零点清空）
+     *
+     * @return weight - 权重（用户日出印象，每天零点清空）
+     */
+    public Integer getWeight() {
+        return weight;
+    }
+
+    /**
+     * 设置权重（用户日出印象，每天零点清空）
+     *
+     * @param weight 权重（用户日出印象，每天零点清空）
+     */
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    /**
      * 获取影响力
      *
      * @return influence - 影响力
@@ -378,36 +399,36 @@ public class Diary extends BaseModel {
     }
 
     /**
-     * 获取经度
+     * 获取纬度
      *
-     * @return lbsX - 经度
+     * @return lbsX - 纬度
      */
     public Double getLbsX() {
         return lbsX;
     }
 
     /**
-     * 设置经度
+     * 设置纬度
      *
-     * @param lbsX 经度
+     * @param lbsX 纬度
      */
     public void setLbsX(Double lbsX) {
         this.lbsX = lbsX;
     }
 
     /**
-     * 获取纬度
+     * 获取经度
      *
-     * @return lbsY - 纬度
+     * @return lbsY - 经度
      */
     public Double getLbsY() {
         return lbsY;
     }
 
     /**
-     * 设置纬度
+     * 设置经度
      *
-     * @param lbsY 纬度
+     * @param lbsY 经度
      */
     public void setLbsY(Double lbsY) {
         this.lbsY = lbsY;
