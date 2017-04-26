@@ -11,6 +11,7 @@
     <result column="isWhisper" jdbcType="INTEGER" property="isWhisper" />
     <result column="commentUserId" jdbcType="BIGINT" property="commentUserId" />
     <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="accuse" jdbcType="VARCHAR" property="accuse" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="upCount" jdbcType="INTEGER" property="upCount" />
     <result column="downCount" jdbcType="INTEGER" property="downCount" />

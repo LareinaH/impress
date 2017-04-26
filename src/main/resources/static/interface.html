@@ -102,12 +102,12 @@
     </li>
 
     <li>获取日记详情
-        <p> 接口地址：http://23.244.68.15:8081/diary/getDiaryDetail?diaryId=1</p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/getDiaryDetail?diaryId=1&format=android</p>
+        <p style="color: red">format 日记格式 ios|android  默认是不填是ios </p>
     </li>
 
     <li>举报日记
-        <p> 接口地址：http://23.244.68.15:8081/diary/accuse?diaryId=1&format=android</p>
-        <p style="color: red">format 日记格式 ios|android  默认是不填是ios </p>
+        <p> 接口地址：http://23.244.68.15:8081/diary/accuse?diaryId=1</p>
     </li>
 
     <li>写日记
@@ -144,7 +144,7 @@
         <p style="color: blue">content 内容</p>
     </li>
 
-    <li>评论
+    <li>添加评论
         <p> 接口地址：http://23.244.68.15:8081/diary/addComment</p>
         <p style="color: red">该接口的请求方式必须是post</p>
         <p style="color: blue">参数说明  </p>
@@ -153,6 +153,16 @@
         <p style="color: blue">isWhisper 是否是悄悄话 【0：不是，1：是】 （选填 默认是1）</p>
         <p style="color: blue">commentText 评论内容</p>
         <p style="color: blue">image 图片（选填）</p>
+    </li>
+
+
+    <li>举报评论
+        <p> 接口地址：http://23.244.68.15:8081/diary/accuseComment?commentId=1</p>
+    </li>
+
+    <li>删除评论
+        <p> 接口地址：http://23.244.68.15:8081/diary/deleteComment?commemtId=1</p>
+
     </li>
 
     <li>日记操作记录（日记的赞/踩/浏览）

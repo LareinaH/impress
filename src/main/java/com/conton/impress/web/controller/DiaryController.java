@@ -565,7 +565,7 @@ public class DiaryController extends ImpressBaseComtroller {
             restResponse.setCode(RestResponse.OK);
         } else {
             restResponse.setCode("error");
-            restResponse.setMessage("举报日记是吧！");
+            restResponse.setMessage("举报日记失败！");
         }
         return restResponse;
     }
@@ -745,6 +745,66 @@ public class DiaryController extends ImpressBaseComtroller {
         } else {
             restResponse.setCode("error");
             restResponse.setMessage("评论失败！");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 举报日记
+     *
+     * @param diaryId
+     * @return
+     */
+    @RequestMapping(value = "/accuseComment")
+    @ResponseBody
+    public RestResponse<Void> accuseComment(@RequestParam(required = true) long commentId) {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        DiaryComment diaryComment = diaryCommentService.getById(commentId);
+
+        if (diaryComment != null) {
+            diaryComment.setAccuse("accuse");
+            diaryCommentService.update(diaryComment);
+            restResponse.setCode(RestResponse.OK);
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("举报评论失败！");
+        }
+        return restResponse;
+    }
+
+    /**
+     * 举报日记
+     *
+     * @param diaryId
+     * @return
+     */
+    @RequestMapping(value = "/deleteComment")
+    @ResponseBody
+    public RestResponse<Void> deleteComment(@RequestParam(required = true) long commentId) {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        Member member = PermissionContext.getMember();
+
+        DiaryComment diaryComment = diaryCommentService.getById(commentId);
+
+        if (diaryComment != null) {
+
+            //条件判断，只能删除我的评论和我日记里的评论
+            Diary diary = diaryService.getById(diaryComment.getDiaryId());
+            if(member.getId() == diaryComment.getCommentUserId() ||
+                    member.getId() == diary.getMemberId()) {
+
+                diaryComment.setStatus("delete");
+                diaryCommentService.update(diaryComment);
+                restResponse.setCode(RestResponse.OK);
+            }else {
+                restResponse.setCode("error");
+                restResponse.setMessage("没有删除权限！");
+            }
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("该评论不存在！");
         }
         return restResponse;
     }

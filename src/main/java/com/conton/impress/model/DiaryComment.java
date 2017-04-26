@@ -36,6 +36,11 @@ public class DiaryComment extends BaseModel {
     private String image;
 
     /**
+     * 是否被举报
+     */
+    private String accuse;
+
+    /**
      * 状态【normal:正常 delete 删除】
      */
     private String status;
@@ -172,6 +177,24 @@ public class DiaryComment extends BaseModel {
      */
     public void setImage(String image) {
         this.image = image == null ? null : image.trim();
+    }
+
+    /**
+     * 获取是否被举报
+     *
+     * @return accuse - 是否被举报
+     */
+    public String getAccuse() {
+        return accuse;
+    }
+
+    /**
+     * 设置是否被举报
+     *
+     * @param accuse 是否被举报
+     */
+    public void setAccuse(String accuse) {
+        this.accuse = accuse == null ? null : accuse.trim();
     }
 
     /**
