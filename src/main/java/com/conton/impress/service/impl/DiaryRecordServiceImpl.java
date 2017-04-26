@@ -37,6 +37,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                 if(diary != null){
                     if(diaryRecord.getCategory().equals("up")){
                         diary.setUpCount(diary.getUpCount()+1);
+                        diary.setWeight(diary.getWeight()+3);
 
                     }else if(diaryRecord.getCategory().equals("down")){
 
@@ -45,6 +46,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                     }else if(diaryRecord.getCategory().equals("browse")){
 
                         diary.setBrowseCount(diary.getBrowseCount()+1);
+                        diary.setWeight(diary.getWeight()+1);
 
                         //如果是管理员日记
                         if(diaryRecord.getDiaryMemberId() == 1){

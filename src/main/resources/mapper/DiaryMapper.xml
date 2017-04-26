@@ -85,6 +85,10 @@
         )
     </sql>
 
+    <update id="resetWeight">
+        update diary set weight = 0
+    </update>
+
 
     <select id="selectAboutDiaryList" resultMap="DiaryVOResultMap">
         SELECT
@@ -147,6 +151,7 @@
         a.influence,
         a.lbsX,
         a.lbsY,
+        a.weight,
         a.accuse,
         a.`status`,
         a.createdAt,
@@ -164,6 +169,7 @@
         AS a
         LEFT JOIN member AS b ON a.memberId = b.id
         ORDER BY
+        <if test="map.weight != null">a.weight Desc,</if>
         a.createdAt DESC
 
     </select>

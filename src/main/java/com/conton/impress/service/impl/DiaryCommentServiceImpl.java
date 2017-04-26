@@ -50,8 +50,10 @@ public class DiaryCommentServiceImpl extends BaseServiceImpl<DiaryComment> imple
 
         diaryRecordMapper.insert(diaryRecord);
 
-        //3 日记评论数+1
+        //3.1 日记评论数+1
         diary.setCommentCount(diary.getCommentCount()+1);
+        //3.2 日记每增加一条评论，权重+5
+        diary.setWeight(diary.getWeight()+5);
         diaryMapper.updateByPrimaryKeySelective(diary);
 
         //4 如果是引用父评论 该父评论被评论数+1

@@ -231,7 +231,12 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         return diaryExVO;
     }
 
-    private void convertDiaryVo2DiaryExtVO(DiaryVO diaryVO,DiaryExVO diaryExVO){
+    @Override
+    public void resetWeight() {
+        diaryMapper.resetWeight();
+    }
+
+    private void convertDiaryVo2DiaryExtVO(DiaryVO diaryVO, DiaryExVO diaryExVO){
 
         diaryExVO.setId(diaryVO.getId());
         diaryExVO.setMemberId(diaryVO.getMemberId());

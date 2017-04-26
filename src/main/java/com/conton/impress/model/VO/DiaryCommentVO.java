@@ -63,7 +63,45 @@ public class DiaryCommentVO {
      */
     private String image;
 
+    /**
+     * 是否阅读状态
+     */
+    boolean readStatus;
 
+    /**
+     * 是否赞过
+     */
+    boolean upStatus;
+
+    /**
+     * 是否踩
+     */
+    boolean downStatus;
+    
+
+    public boolean isReadStatus() {
+        return readStatus;
+    }
+
+    public void setReadStatus(boolean readStatus) {
+        this.readStatus = readStatus;
+    }
+
+    public boolean isUpStatus() {
+        return upStatus;
+    }
+
+    public void setUpStatus(boolean upStatus) {
+        this.upStatus = upStatus;
+    }
+
+    public boolean isDownStatus() {
+        return downStatus;
+    }
+
+    public void setDownStatus(boolean downStatus) {
+        this.downStatus = downStatus;
+    }
 
     public List<DiaryCommentVO> getReplayList() {
         return replayList;

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,9 +80,6 @@ public class DiaryController extends ImpressBaseComtroller {
 
         //能够浏览到的日记的权限条件： 1  所有人可以看 2 我自己的日记 3 朋友不可见 不是好友 4 朋友可见 是好友
 
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS");
-
-        System.out.print("查询数据"+sdf.format(new Date()) +"\n");
         PageInfo<DiaryVO> diaryPageInfo = diaryService.queryAboutDiaryList(pageNum, pageSize, condition);
 
         if (diaryPageInfo != null) {
@@ -93,7 +89,6 @@ public class DiaryController extends ImpressBaseComtroller {
 
             }
 
-            System.out.print("计算影响力"+sdf.format(new Date()));
             Map<Long, String> tempInfluence = new HashMap<Long, String>();
 
             for (DiaryVO diaryVO : diaryPageInfo.getList()) {
@@ -112,7 +107,6 @@ public class DiaryController extends ImpressBaseComtroller {
                 }
             }
 
-            System.out.print("转换vo"+sdf.format(new Date()) +"\n");
 
             //转换ExVO数据
             List<DiaryExVO> diaryVOList = new LinkedList<DiaryExVO>();
@@ -122,7 +116,6 @@ public class DiaryController extends ImpressBaseComtroller {
                 diaryVOList.add(diaryVO);
             }
 
-            System.out.print("转换完成"+sdf.format(new Date()) +"\n");
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryVOList);
         } else {
@@ -750,9 +743,9 @@ public class DiaryController extends ImpressBaseComtroller {
     }
 
     /**
-     * 举报日记
+     * 举报评论
      *
-     * @param diaryId
+     * @param commentId
      * @return
      */
     @RequestMapping(value = "/accuseComment")
@@ -774,9 +767,9 @@ public class DiaryController extends ImpressBaseComtroller {
     }
 
     /**
-     * 举报日记
+     * 删除评论
      *
-     * @param diaryId
+     * @param commentId
      * @return
      */
     @RequestMapping(value = "/deleteComment")

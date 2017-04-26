@@ -14,4 +14,6 @@ public interface DiaryMapper extends BaseMapper<Diary> {
 
     List<DiaryVO> selectSunDiaryList(@Param("map")Map<String, Object> map);
 
+    void resetWeight();
+
 }

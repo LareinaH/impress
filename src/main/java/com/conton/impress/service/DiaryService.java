@@ -29,4 +29,7 @@ public interface DiaryService extends BaseService<Diary> {
 
     DiaryExVO convertDiaryVO2DiaryExVO(Long currentMemberId, DiaryVO diaryVO);
 
+
+    void resetWeight();
+
 }
