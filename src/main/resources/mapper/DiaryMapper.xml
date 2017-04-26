@@ -123,7 +123,7 @@
         LEFT JOIN member AS b ON a.memberId = b.id
         <include refid="where1"></include>
         ORDER BY
-        a.distance ASC
+        a.createdAt DESC,a.distance ASC
 
     </select>
 
