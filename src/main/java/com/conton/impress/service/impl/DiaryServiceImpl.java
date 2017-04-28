@@ -188,10 +188,10 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         DiaryExVO diaryExVO = new DiaryExVO();
 
         //转换普通数据
-        //BeanUtils.copyProperties(diaryVO, diaryExVO);
-        convertDiaryVo2DiaryExtVO(diaryVO,diaryExVO);
+        BeanUtils.copyProperties(diaryVO, diaryExVO);
 
-        /*
+
+
         //查看是否是好友日记
         MemberFriend memberFriendModel = new MemberFriend();
         memberFriendModel.setMemberId(currentMemberId);
@@ -226,7 +226,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
                 }
             }
         }
-        */
+
 
         return diaryExVO;
     }
@@ -236,26 +236,5 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         diaryMapper.resetWeight();
     }
 
-    private void convertDiaryVo2DiaryExtVO(DiaryVO diaryVO, DiaryExVO diaryExVO){
 
-        diaryExVO.setId(diaryVO.getId());
-        diaryExVO.setMemberId(diaryVO.getMemberId());
-        diaryExVO.setPublishTime(diaryVO.getPublishTime());
-        diaryExVO.setSex(diaryVO.getSex());
-        diaryExVO.setTag(diaryVO.getTag());
-        diaryExVO.setBrief(diaryVO.getBrief());
-        diaryExVO.setFirstImage(diaryVO.getFirstImage());
-        diaryExVO.setContentHeight(diaryVO.getContentHeight());
-        diaryExVO.setCommentCount(diaryVO.getCommentCount());
-        diaryExVO.setUpCount(diaryVO.getUpCount());
-        diaryExVO.setDownCount(diaryVO.getDownCount());
-        diaryExVO.setBrowseCount(diaryVO.getBrowseCount());
-        diaryExVO.setLbsX(diaryVO.getLbsX());
-        diaryExVO.setLbsY(diaryVO.getLbsY());
-        diaryExVO.setInfluence(diaryVO.getInfluence());
-        diaryExVO.setDistance(diaryVO.getDistance());
-        diaryExVO.setFriendName(diaryVO.getFriendName());
-        diaryExVO.setHeadPortrait(diaryVO.getHeadPortrait());
-
-    }
 }

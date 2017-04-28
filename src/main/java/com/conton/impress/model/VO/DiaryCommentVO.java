@@ -77,7 +77,7 @@ public class DiaryCommentVO {
      * 是否踩
      */
     boolean downStatus;
-    
+
 
     public boolean isReadStatus() {
         return readStatus;

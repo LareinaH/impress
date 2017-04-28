@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 @Controller
 @RequestMapping("/diary")
-public class DiaryController extends ImpressBaseComtroller {
+public class DiaryController extends ImpressBaseController {
 
     @Autowired
     private MemberService memberService;
@@ -41,6 +41,9 @@ public class DiaryController extends ImpressBaseComtroller {
     private DiaryCommentService diaryCommentService;
     @Autowired
     private DiaryRecordService diaryRecordService;
+
+    @Autowired
+    private CacheService cacheService;
 
     @Value("${dtX}")
     private int dtX;
@@ -96,14 +99,16 @@ public class DiaryController extends ImpressBaseComtroller {
                 //如果数据库中影响力字段没有值，去获取作者的影响力
                 if (diaryVO.getInfluence() == null || diaryVO.getInfluence().equals("0")) {
 
-                    //查看是否获取过作者的影响力
+     /*               //查看是否获取过作者的影响力
                     if (tempInfluence.get(diaryVO.getMemberId()) != null) {
                         diaryVO.setInfluence(tempInfluence.get(diaryVO.getMemberId()));
                     } else {
                         String influence = memberService.getInfluence(diaryVO.getMemberId());
                         diaryVO.setInfluence(influence);
                         tempInfluence.put(diaryVO.getMemberId(), influence);
-                    }
+                    }*/
+
+                    diaryVO.setInfluence(cacheService.getInfluence(diaryVO.getMemberId()));
                 }
             }
 
@@ -138,12 +143,12 @@ public class DiaryController extends ImpressBaseComtroller {
      */
     @RequestMapping(value = "/sunDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> sunDiaries(@RequestParam(required = true) String lbsX,
+    public RestResponse<List<DiaryExVO>> sunDiaries(@RequestParam(required = true) String lbsX,
                                                   @RequestParam(required = true) String lbsY,
                                                   @RequestParam(defaultValue = "all") String type,
                                                   @RequestParam(defaultValue = "1") int pageNum,
                                                   @RequestParam(defaultValue = "20") int pageSize) {
-        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+        RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
 
         Member member = PermissionContext.getMember();
 
@@ -162,15 +167,15 @@ public class DiaryController extends ImpressBaseComtroller {
 
             List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
 
-            if(memberFriendList != null && !memberFriendList.isEmpty()){
+            if (memberFriendList != null && !memberFriendList.isEmpty()) {
 
                 List<Long> friendIdList = new LinkedList<Long>();
-                for(MemberFriend f : memberFriendList){
+                for (MemberFriend f : memberFriendList) {
                     friendIdList.add(f.getFriendMemberId());
                 }
-                condition.put("friendIdList",friendIdList);
+                condition.put("friendIdList", friendIdList);
 
-            }else {
+            } else {
                 restResponse.setCode(RestResponse.OK);
                 return restResponse;
             }
@@ -181,24 +186,27 @@ public class DiaryController extends ImpressBaseComtroller {
 
         PageInfo<DiaryVO> diaryPageInfo = diaryService.querySunDiaryList(pageNum, pageSize, condition);
 
-        if(diaryPageInfo != null && diaryPageInfo.getList() != null && !diaryPageInfo.getList().isEmpty()){
+        if (diaryPageInfo != null && diaryPageInfo.getList() != null && !diaryPageInfo.getList().isEmpty()) {
 
 
-            Map<Long,String> influenceMap = new HashMap<Long, String>();
-            for(DiaryVO d : diaryPageInfo.getList()){
-                if(d.getInfluence() == null || d.getInfluence().equals("0")){
-                    if(influenceMap.get(d.getMemberId()) != null){
-                        d.setInfluence(influenceMap.get(d.getMemberId()));
-                    }else {
-                        String influence = memberService.getInfluence(d.getMemberId());
-                        d.setInfluence(influence);
-                        influenceMap.put(d.getMemberId(),influence);
-                    }
+            for (DiaryVO d : diaryPageInfo.getList()) {
+                if (d.getInfluence() == null || d.getInfluence().equals("0")) {
+
+                    d.setInfluence(cacheService.getInfluence(d.getMemberId()));
                 }
             }
+
+            //转换ExVO数据
+            List<DiaryExVO> diaryVOList = new LinkedList<DiaryExVO>();
+
+            for (DiaryVO diary : diaryPageInfo.getList()) {
+                DiaryExVO diaryVO = diaryService.convertDiaryVO2DiaryExVO(member.getId(), diary);
+                diaryVOList.add(diaryVO);
+            }
+
             restResponse.setCode(RestResponse.OK);
-            restResponse.setData(diaryPageInfo.getList());
-        }else {
+            restResponse.setData(diaryVOList);
+        } else {
             restResponse.setCode(RestResponse.OK);
         }
 
@@ -343,7 +351,7 @@ public class DiaryController extends ImpressBaseComtroller {
             map.put("memberInfo", member);
 
             //获取该好友的影响力
-            String influence = memberService.getInfluence(friendId);
+            String influence = cacheService.getInfluence(friendId);
 
             //获取好友日志
             List<Diary> diaryList = diaryService.queryList(model);
@@ -785,13 +793,13 @@ public class DiaryController extends ImpressBaseComtroller {
 
             //条件判断，只能删除我的评论和我日记里的评论
             Diary diary = diaryService.getById(diaryComment.getDiaryId());
-            if(member.getId() == diaryComment.getCommentUserId() ||
+            if (member.getId() == diaryComment.getCommentUserId() ||
                     member.getId() == diary.getMemberId()) {
 
                 diaryComment.setStatus("delete");
                 diaryCommentService.update(diaryComment);
                 restResponse.setCode(RestResponse.OK);
-            }else {
+            } else {
                 restResponse.setCode("error");
                 restResponse.setMessage("没有删除权限！");
             }

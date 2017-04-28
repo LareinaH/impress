@@ -4,14 +4,10 @@ import com.conton.base.common.RestResponse;
 import com.conton.impress.model.Diary;
 import com.conton.impress.model.Member;
 import com.conton.impress.model.Message;
-import com.conton.impress.model.VO.DiaryVO;
-import com.conton.impress.model.VO.MemberVO;
 import com.conton.impress.model.VO.MessageVO;
 import com.conton.impress.service.DiaryService;
-import com.conton.impress.service.MessageService;
 import com.conton.impress.web.PermissionContext;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +23,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/message")
-public class MessageController extends ImpressBaseComtroller {
+public class MessageController extends ImpressBaseController {
 
 
     @Autowired
