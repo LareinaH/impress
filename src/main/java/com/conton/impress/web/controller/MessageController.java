@@ -192,4 +192,34 @@ public class MessageController extends ImpressBaseController {
         }
         return restResponse;
     }
+
+    /**
+     * 读取消息
+     *
+     * @param messageIds
+     * @return
+     */
+    @RequestMapping(value = "/readMessages")
+    @ResponseBody
+    public RestResponse<Void> readMessages(@RequestParam(required = true) String messageIds) {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        String[] messageIdArray = messageIds.split(",");
+        if(messageIdArray.length > 0) {
+
+            for(int i = 0;i < messageIdArray.length; i++) {
+                Message message = messageService.getById(Long.valueOf(messageIdArray[i]));
+
+                if (message != null) {
+                    if (message.getProcessStatus().equals("unprocessed")) {
+
+                        message.setProcessStatus("processed");
+                        messageService.update(message);
+                    }
+                }
+            }
+        }
+            restResponse.setCode(RestResponse.OK);
+        return restResponse;
+    }
 }
