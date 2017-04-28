@@ -33,7 +33,9 @@
 
   <select id="query" resultMap="MessageVOMap">
     SELECT
+      a.id,
       a.category,
+      a.diaryId,
       a.fromMemberId,
       a.toMemberId,
       a.processStatus,

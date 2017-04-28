@@ -148,8 +148,7 @@ public class MessageController extends ImpressBaseController {
                 if (messagePageInfo.getList() != null && !messagePageInfo.getList().isEmpty()) {
 
                     for (MessageVO messageVO : messagePageInfo.getList()) {
-                        Long diaryId = 7L;
-                        Diary diary = diaryService.getById(diaryId);
+                        Diary diary = diaryService.getById(messageVO.getDiaryId());
                         messageVO.setDiary(diary);
                     }
                 }

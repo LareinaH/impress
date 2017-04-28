@@ -43,11 +43,25 @@ public class MessageVO {
      */
     private Date createdAt;
 
+    /**
+     * 关联的日记的id
+     */
+    private Long diaryId;
+
 
     /**
      * 关联的日记 当ctaegory 等于up/comment时候有效
      */
     private Diary diary;
+
+
+    public Long getDiaryId() {
+        return diaryId;
+    }
+
+    public void setDiaryId(Long diaryId) {
+        this.diaryId = diaryId;
+    }
 
     public String getCommentText() {
         return commentText;
