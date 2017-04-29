@@ -394,12 +394,12 @@ public class DiaryController extends ImpressBaseController {
      */
     @RequestMapping(value = "/friendUpDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> friendUpDiaries(@RequestParam(defaultValue = "1") int pageNum,
+    public RestResponse<List<DiaryExVO>> friendUpDiaries(@RequestParam(defaultValue = "1") int pageNum,
                                                        @RequestParam(defaultValue = "20") int pageSize,
                                                        @RequestParam(defaultValue = "30.278992") String lbsX,
                                                        @RequestParam(defaultValue = "120.167536") String lbsY,
                                                        @RequestParam(required = true) long friendId) {
-        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+        RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
 
         //获取用户赞过的日志列表
         DiaryRecord diaryRecord = new DiaryRecord();
@@ -424,17 +424,17 @@ public class DiaryController extends ImpressBaseController {
 
 
             if (diaryPageInfo != null) {
-                List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+                List<DiaryExVO> diaryVOList = new LinkedList<DiaryExVO>();
 
                 for (Diary diary : diaryPageInfo.getList()) {
-                    DiaryVO diaryVO = new DiaryVO();
-                    BeanUtils.copyProperties(diary, diaryVO);
+                    DiaryExVO diaryExVO = new DiaryExVO();
+                    BeanUtils.copyProperties(diary, diaryExVO);
 
                     //计算当前坐标位置
-                    double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
-                    diaryVO.setDistance((int) distance);
+                    double distance = DistanceUtil.getTwopointsDistance(diaryExVO.getLbsX().toString(), diaryExVO.getLbsY().toString(), lbsX, lbsY);
+                    diaryExVO.setDistance((int) distance);
 
-                    diaryVOList.add(diaryVO);
+                    diaryVOList.add(diaryExVO);
                 }
 
                 restResponse.setCode(RestResponse.OK);
@@ -461,12 +461,12 @@ public class DiaryController extends ImpressBaseController {
      */
     @RequestMapping(value = "/friendBrowseDiarys")
     @ResponseBody
-    public RestResponse<List<DiaryVO>> friendBrowseDiaries(@RequestParam(defaultValue = "1") int pageNum,
+    public RestResponse<List<DiaryExVO>> friendBrowseDiaries(@RequestParam(defaultValue = "1") int pageNum,
                                                            @RequestParam(defaultValue = "20") int pageSize,
                                                            @RequestParam(defaultValue = "30.278992") String lbsX,
                                                            @RequestParam(defaultValue = "120.167536") String lbsY,
                                                            @RequestParam(required = true) long friendId) {
-        RestResponse<List<DiaryVO>> restResponse = new RestResponse<List<DiaryVO>>();
+        RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
 
 
         DiaryRecord diaryRecord = new DiaryRecord();
@@ -489,17 +489,17 @@ public class DiaryController extends ImpressBaseController {
             PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
 
             if (diaryPageInfo != null) {
-                List<DiaryVO> diaryVOList = new LinkedList<DiaryVO>();
+                List<DiaryExVO> diaryVOList = new LinkedList<DiaryExVO>();
 
                 for (Diary diary : diaryPageInfo.getList()) {
-                    DiaryVO diaryVO = new DiaryVO();
-                    BeanUtils.copyProperties(diary, diaryVO);
+                    DiaryExVO diaryExVO = new DiaryExVO();
+                    BeanUtils.copyProperties(diary, diaryExVO);
 
                     //计算当前坐标位置
-                    double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
-                    diaryVO.setDistance((int) distance);
+                    double distance = DistanceUtil.getTwopointsDistance(diaryExVO.getLbsX().toString(), diaryExVO.getLbsY().toString(), lbsX, lbsY);
+                    diaryExVO.setDistance((int) distance);
 
-                    diaryVOList.add(diaryVO);
+                    diaryVOList.add(diaryExVO);
                 }
 
                 restResponse.setCode(RestResponse.OK);
