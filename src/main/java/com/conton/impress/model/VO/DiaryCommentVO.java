@@ -7,6 +7,8 @@ public class DiaryCommentVO {
 
     private Long id;
 
+    private Long diaryId;
+
     /**
      * 评论内容
      */
@@ -78,6 +80,14 @@ public class DiaryCommentVO {
      */
     boolean downStatus;
 
+
+    public Long getDiaryId() {
+        return diaryId;
+    }
+
+    public void setDiaryId(Long diaryId) {
+        this.diaryId = diaryId;
+    }
 
     public boolean isReadStatus() {
         return readStatus;

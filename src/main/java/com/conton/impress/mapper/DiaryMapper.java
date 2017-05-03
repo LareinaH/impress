@@ -16,4 +16,6 @@ public interface DiaryMapper extends BaseMapper<Diary> {
 
     void resetWeight();
 
+    List<DiaryVO> getAdminByRand(@Param("pageSize")int pageSize);
+
 }

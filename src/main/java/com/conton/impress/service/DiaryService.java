@@ -7,6 +7,7 @@ import com.conton.impress.model.VO.DiaryExVO;
 import com.conton.impress.model.VO.DiaryVO;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +28,14 @@ public interface DiaryService extends BaseService<Diary> {
 
     PageInfo<DiaryVO> querySunDiaryList(int pageNum, int pageSize,Map<String,Object> map);
 
-    DiaryExVO convertDiaryVO2DiaryExVO(Long currentMemberId, DiaryVO diaryVO);
+    //DiaryExVO convertDiaryVO2DiaryExVO(Long currentMemberId, DiaryVO diaryVO);
+
+    /**
+     * 随机获取几条管理员日记
+     * @param pageSize
+     * @return
+     */
+    List<DiaryVO> getAdminByRand(int pageSize);
 
 
     void resetWeight();

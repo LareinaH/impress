@@ -51,10 +51,10 @@ public class MemberController extends ImpressBaseController {
     public RestResponse<Void> test() {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
-        //jPushService.createUser(java.util.UUID.randomUUID().toString(), java.util.UUID.randomUUID().toString());
+        jPushService.createUser("f479b3e1-1a66-48d2-9c5f-d5b7c2f89df6", "123456");
 
-        String name = jPushService.getUserInfo("f5f3a0ad-b4c5-4101-8196-3e1702fa0ad1");
-        restResponse.setMessage(name);
+        //String name = jPushService.getUserInfo("f5f3a0ad-b4c5-4101-8196-3e1702fa0ad1");
+        //restResponse.setMessage(name);
         return restResponse;
     }
 
@@ -81,7 +81,7 @@ public class MemberController extends ImpressBaseController {
 
             //该用户不存在 注册新用户
             Member member = new Member();
-            member.setName("匿名");
+            member.setName("小明");
             member.setUuid(java.util.UUID.randomUUID().toString());
             member.setCellphone(cellphone);
             member.setPassword(passWord);

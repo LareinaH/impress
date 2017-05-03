@@ -64,10 +64,8 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
             diaryVO.setInfluence(memberService.getInfluence(diaryVO.getMemberId()));
         }
 
-        DiaryExVO diaryExVO = convertDiaryVO2DiaryExVO(diaryVO.getMemberId(),diaryVO);
-
         DiaryDetailVO diaryDetailVO = new DiaryDetailVO();
-        BeanUtils.copyProperties(diaryExVO, diaryDetailVO);
+        BeanUtils.copyProperties(diaryVO, diaryDetailVO);
 
 
         //日记正文
@@ -180,6 +178,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         return new PageInfo<DiaryVO>(diaryMapper.selectSunDiaryList(map));
     }
 
+    /*
 
     @NotNull
     @Override
@@ -229,6 +228,13 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
 
 
         return diaryExVO;
+    }
+
+    */
+
+    @Override
+    public List<DiaryVO> getAdminByRand(int pageSize) {
+        return diaryMapper.getAdminByRand(pageSize);
     }
 
     @Override

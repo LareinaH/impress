@@ -174,4 +174,12 @@
 
     </select>
 
+    <select id="getAdminByRand" resultMap="DiaryVOResultMap">
+
+
+        select * FROM diary where memberId = 17 ORDER BY rand() LIMIT #{pageSize}
+
+    </select>
+
+
 </mapper>

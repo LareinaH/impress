@@ -24,11 +24,20 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
     public boolean addDiaryRecord(DiaryRecord diaryRecord) {
 
         //1 查找是否已经存在
+        //坐标缓存
+        Double lbsX = diaryRecord.getLbsX();
+        Double lbsY = diaryRecord.getLbsY();
+        diaryRecord.setLbsX(null);
+        diaryRecord.setLbsX(null);
+
         DiaryRecord diaryRecord1 = selectOne(diaryRecord);
 
         if (diaryRecord1 == null) {
 
             //2 插入日记记录
+            diaryRecord.setLbsX(lbsX);
+            diaryRecord.setLbsY(lbsY);
+
             insert(diaryRecord);
 
             //3 更新统计值
