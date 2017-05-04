@@ -1,13 +1,17 @@
 package com.conton.impress.web.controller;
 
 import com.conton.base.common.RestResponse;
+import com.conton.base.util.DistanceUtil;
 import com.conton.impress.model.Diary;
 import com.conton.impress.model.Member;
 import com.conton.impress.model.Message;
+import com.conton.impress.model.VO.DiaryVO;
 import com.conton.impress.model.VO.MessageVO;
+import com.conton.impress.service.CacheService;
 import com.conton.impress.service.DiaryService;
 import com.conton.impress.web.PermissionContext;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +33,8 @@ public class MessageController extends ImpressBaseController {
     @Autowired
     private DiaryService diaryService;
 
+    @Autowired
+    private CacheService cacheService;
 
     /**
      * 获取当前用户未读系统消息总个数(我的消息页面，系统消息的个数)
@@ -125,7 +131,10 @@ public class MessageController extends ImpressBaseController {
     @ResponseBody
     public RestResponse<PageInfo<MessageVO>> friendUpDiarys(@RequestParam(required = true) String type,
                                                             @RequestParam(defaultValue = "1") int pageNum,
-                                                            @RequestParam(defaultValue = "20") int pageSize) {
+                                                            @RequestParam(defaultValue = "20") int pageSize,
+                                                            @RequestParam(defaultValue = "30.278992") String lbsX,
+                                                            @RequestParam(defaultValue = "120.167536") String lbsY
+    ) {
         RestResponse<PageInfo<MessageVO>> restResponse = new RestResponse<PageInfo<MessageVO>>();
 
         Member member = PermissionContext.getMember();
@@ -149,7 +158,13 @@ public class MessageController extends ImpressBaseController {
 
                     for (MessageVO messageVO : messagePageInfo.getList()) {
                         Diary diary = diaryService.getById(messageVO.getDiaryId());
-                        messageVO.setDiary(diary);
+                        DiaryVO diaryVO = new DiaryVO();
+                        BeanUtils.copyProperties(diary,diaryVO);
+
+                        diaryVO.setInfluence(cacheService.getInfluence(diaryVO.getMemberId()));
+                        double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
+                        diaryVO.setDistance((int) distance);
+                        messageVO.setDiary(diaryVO);
                     }
                 }
                 restResponse.setCode(RestResponse.OK);

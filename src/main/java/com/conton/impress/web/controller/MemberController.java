@@ -51,9 +51,9 @@ public class MemberController extends ImpressBaseController {
     public RestResponse<Void> test() {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
-        jPushService.createUser("f479b3e1-1a66-48d2-9c5f-d5b7c2f89df6", "123456");
+        jPushService.createUser("13325910685", "123456");
 
-        //String name = jPushService.getUserInfo("f5f3a0ad-b4c5-4101-8196-3e1702fa0ad1");
+        //String name = jPushService.getUserInfo("f479b3e1-1a66-48d2-9c5f-d5b7c2f89df6");
         //restResponse.setMessage(name);
         return restResponse;
     }
@@ -356,6 +356,10 @@ public class MemberController extends ImpressBaseController {
             result.setPageNum(pageNum);
             result.setTotal(memberFriendInfo.getTotal());
 
+            List<MemberVO> memberVOList = new LinkedList<MemberVO>();
+
+            result.setList(memberVOList);
+
             if (!memberFriendInfo.getList().isEmpty()) {
                 List<Long> friendMemberIdList = new LinkedList<Long>();
 
@@ -367,8 +371,6 @@ public class MemberController extends ImpressBaseController {
                 example.or().andIn(Member.ID, friendMemberIdList);
 
                 List<Member> memberList = memberService.queryList(example);
-
-                List<MemberVO> memberVOList = new LinkedList<MemberVO>();
 
                 for (Member member1 : memberList) {
                     MemberVO memberVO = new MemberVO();

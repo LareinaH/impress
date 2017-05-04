@@ -52,7 +52,7 @@ public class MessageVO {
     /**
      * 关联的日记 当ctaegory 等于up/comment时候有效
      */
-    private Diary diary;
+    private DiaryVO diary;
 
 
     public Long getDiaryId() {
@@ -119,11 +119,12 @@ public class MessageVO {
         this.createdAt = createdAt;
     }
 
-    public Diary getDiary() {
+
+    public DiaryVO getDiary() {
         return diary;
     }
 
-    public void setDiary(Diary diary) {
+    public void setDiary(DiaryVO diary) {
         this.diary = diary;
     }
 }
