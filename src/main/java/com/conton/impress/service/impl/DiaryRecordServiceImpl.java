@@ -62,6 +62,8 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                             diary.setInfluence(diary.getInfluence()+1);
                         }
                     }
+
+                    diaryMapper.updateByPrimaryKeySelective(diary);
                 }
 
             } else {
@@ -79,6 +81,8 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                         //评论不处理浏览
                     }
                 }
+
+                diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
             }
         }
         return true;
