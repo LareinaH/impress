@@ -20,4 +20,40 @@
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
     <result column="commentText" jdbcType="LONGVARCHAR" property="commentText" />
   </resultMap>
+
+  <resultMap id="DiaryCommentVOResultMap" type="com.cotton.impress.model.VO.DiaryCommentVO">
+  </resultMap>
+
+  <sql id="where1">
+    <where>
+      1=1
+      <if test="map.diaryId != null">and diaryId = #{map.diaryId}</if>
+      <if test="map.status != null">and status = #{map.status}</if>
+    </where>
+  </sql>
+
+
+  <select id="selectDiaryCommentVOList" resultMap="DiaryCommentVOResultMap">
+    SELECT
+    a.id,
+    a.diaryId,
+    a.parentId,
+    a.isWhisper,
+    a.commentText,
+    a.commentUserId,
+    a.image,
+    a.accuse,
+    a.`status`,
+    a.upCount,
+    a.downCount,
+    a.commentCount,
+    a.createdAt,
+    a.updateAt,
+    b.`name` AS commentUserName,
+    b.headPortrait AS commentUserHeadPortrait
+    FROM (SELECT * FROM  diary_comment
+    <include refid="where1"></include>
+    ) AS a
+    LEFT JOIN member AS b ON a.commentUserId = b.id
+  </select>
 </mapper>

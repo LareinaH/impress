@@ -611,7 +611,7 @@ public class DiaryController extends ImpressBaseController {
     }
 
     /**
-     * 删除评论
+     * 删除日记
      *
      * @param diaryId
      * @return

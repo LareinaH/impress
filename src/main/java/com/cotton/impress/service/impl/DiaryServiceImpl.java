@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -76,37 +73,36 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
 
         //日记评论
 
-        DiaryComment model2 = new DiaryComment();
-        model2.setDiaryId(id);
-        List<DiaryComment> diaryCommentList = diaryCommentMapper.select(model2);
+        Map<String,Object> condition = new HashMap<String, Object>();
+        condition.put("diaryId",id);
+        condition.put("status","normal");
+
+        List<DiaryCommentVO> diaryCommentVOList = diaryCommentMapper.selectDiaryCommentVOList(condition);
+
+        List<DiaryCommentVO> newDiaryCommentVOList = new LinkedList<DiaryCommentVO>();
 
         //查找评论
-        if (diaryContentList != null && diaryCommentList.size() > 0) {
-            List<DiaryCommentVO> diaryCommentVOList = new LinkedList<DiaryCommentVO>();
-            for (DiaryComment diaryComment : diaryCommentList) {
-                DiaryCommentVO diaryCommentVO = new DiaryCommentVO();
-                BeanUtils.copyProperties(diaryComment, diaryCommentVO);
+        if (diaryCommentVOList != null && diaryCommentVOList.size() > 0) {
+
+
+
+            for (DiaryCommentVO diaryCommentVO : diaryCommentVOList) {
 
                 //查找子评论
-                if (diaryComment.getParentId() == null) {
-                    DiaryComment model3 = new DiaryComment();
-                    model3.setParentId(diaryComment.getId());
-                    List<DiaryComment> childCommentList = diaryCommentMapper.select(model3);
-                    if (childCommentList != null) {
-                        List<DiaryCommentVO> childCommentVOList = new LinkedList<DiaryCommentVO>();
-                        for(DiaryComment diaryComment1 :childCommentList){
-                            DiaryCommentVO childVO = new DiaryCommentVO();
-                            BeanUtils.copyProperties(diaryComment1, childVO);
-                            childCommentVOList.add(childVO);
-                        }
+                if (diaryCommentVO.getParentId() == null) {
+
+                    condition.put("diaryId",diaryCommentVO.getId());
+                    List<DiaryCommentVO> childCommentVOList = diaryCommentMapper.selectDiaryCommentVOList(condition);
+                    if (childCommentVOList != null) {
 
                         diaryCommentVO.setReplayList(childCommentVOList);
                     }
-                    diaryCommentVOList.add(diaryCommentVO);
+                    newDiaryCommentVOList.add(diaryCommentVO);
                 }
             }
-            diaryDetailVO.setDiaryCommentVOList(diaryCommentVOList);
         }
+
+        diaryDetailVO.setDiaryCommentVOList(newDiaryCommentVOList);
         return diaryDetailVO;
     }
 
