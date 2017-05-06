@@ -436,6 +436,8 @@ public class MemberController extends ImpressBaseController {
             restResponse.setCode(RestResponse.OK);
 
         } else {
+
+            //添加好友消息 变成 已处理
             restResponse.setCode("error");
             restResponse.setMessage("添加好友成功!");
         }

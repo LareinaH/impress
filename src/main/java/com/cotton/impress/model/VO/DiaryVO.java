@@ -114,9 +114,9 @@ public class DiaryVO {
             } else if (1000 <= distance && distance < 1000000) {
                 return String.format("%.2f",(double) distance / 1000) + "km";
             } else if (1000000 <= distance && distance < 1000000000) {
-                return String.valueOf((double) distance / 1000000) + "Mm";
+                return String.format("%.2f",(double) distance / 1000000) + "Mm";
             } else if (1000000000 <= distance) {
-                return String.valueOf((double) distance / 1000000000) + "Gm";
+                return String.format("%.2f",(double) distance / 1000000000) + "Gm";
             }
         }
 
