@@ -534,6 +534,8 @@ public class DiaryController extends ImpressBaseController {
             if (format.equals("android")) {
 
                 diaryDetailVO.setContent(iosToAndroid(diaryDetailVO.getContent()));
+            }else {
+                diaryDetailVO.setContent(androidToIos(diaryDetailVO.getContent()));
             }
 
             restResponse.setCode(RestResponse.OK);
