@@ -11,20 +11,20 @@
 		<property name="javaFileEncoding" value="UTF-8"/>
 		
 		<plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-			<property name="mappers" value="com.conton.base.mapper.BaseMapper" />
+			<property name="mappers" value="com.cotton.base.mapper.BaseMapper" />
 		</plugin>
 
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://47.92.29.192:3306/impress"
 			userId="root" password="root" />
 
-		<javaModelGenerator targetPackage="com.conton.impress.model" targetProject="${basedir.src.main.java}" >
-		    <property name="rootClass" value="com.conton.base.model.BaseModel"/>
+		<javaModelGenerator targetPackage="com.cotton.impress.model" targetProject="${basedir.src.main.java}" >
+		    <property name="rootClass" value="com.cotton.base.model.BaseModel"/>
 		    <property name="trimStrings" value="true"/>
 		</javaModelGenerator>
 
 		<sqlMapGenerator targetPackage="mapper" targetProject="${basedir.src.main.resources}" />
 
-		<javaClientGenerator targetPackage="com.conton.impress.mapper" targetProject="${basedir.src.main.java}" type="XMLMAPPER" />
+		<javaClientGenerator targetPackage="com.cotton.impress.mapper" targetProject="${basedir.src.main.java}" type="XMLMAPPER" />
 
 <!--		<table tableName="diary">
 			<property name="useActualColumnNames" value="true" />
@@ -54,7 +54,7 @@
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>-->
-		<table tableName="diary_comment">
+		<table tableName="member">
 			<property name="useActualColumnNames" value="true" />
 			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
 		</table>

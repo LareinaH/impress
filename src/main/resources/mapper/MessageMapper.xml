@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.conton.impress.mapper.MessageMapper">
-  <resultMap id="BaseResultMap" type="com.conton.impress.model.Message">
+<mapper namespace="com.cotton.impress.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.cotton.impress.model.Message">
     <!--
       WARNING - @mbggenerated
     -->
@@ -17,7 +17,7 @@
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
   </resultMap>
 
-  <resultMap id="MessageVOMap" type="com.conton.impress.model.VO.MessageVO">
+  <resultMap id="MessageVOMap" type="com.cotton.impress.model.VO.MessageVO">
   </resultMap>
 
 
