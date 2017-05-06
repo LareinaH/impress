@@ -10,6 +10,11 @@ import com.cotton.impress.service.DiaryRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -23,16 +28,29 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
     @Override
     public boolean addDiaryRecord(DiaryRecord diaryRecord) {
 
+        if (diaryRecord.getCategory().equals("browse")) {
+
+            addBrowseRecord(diaryRecord);
+
+        } else {
+            addUpOrDownRecord(diaryRecord, diaryRecord.getCategory());
+
+        }
+        return true;
+    }
+
+    private void addBrowseRecord(DiaryRecord diaryRecord) {
+
         //1 查找是否已经存在
         //坐标缓存
         Double lbsX = diaryRecord.getLbsX();
         Double lbsY = diaryRecord.getLbsY();
         diaryRecord.setLbsX(null);
-        diaryRecord.setLbsX(null);
+        diaryRecord.setLbsY(null);
 
-        DiaryRecord diaryRecord1 = selectOne(diaryRecord);
+        List<DiaryRecord> diaryRecordList = queryList(diaryRecord);
 
-        if (diaryRecord1 == null) {
+        if (diaryRecordList.isEmpty()) {
 
             //2 插入日记记录
             diaryRecord.setLbsX(lbsX);
@@ -43,49 +61,138 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
             //3 更新统计值
             if (diaryRecord.getSelector().equals("diary")) {
                 Diary diary = diaryMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
-                if(diary != null){
-                    if(diaryRecord.getCategory().equals("up")){
-                        diary.setUpCount(diary.getUpCount()+1);
-                        diary.setWeight(diary.getWeight()+3);
+                if (diary != null) {
 
-                    }else if(diaryRecord.getCategory().equals("down")){
+                    diary.setBrowseCount(diary.getBrowseCount() + 1);
+                    diary.setWeight(diary.getWeight() + 1);
 
-                        diary.setDownCount(diary.getDownCount()+1);
-
-                    }else if(diaryRecord.getCategory().equals("browse")){
-
-                        diary.setBrowseCount(diary.getBrowseCount()+1);
-                        diary.setWeight(diary.getWeight()+1);
-
-                        //如果是管理员日记
-                        if(diaryRecord.getDiaryMemberId() == 1){
-                            diary.setInfluence(diary.getInfluence()+1);
-                        }
+                    //如果是管理员日记
+                    if (diaryRecord.getDiaryMemberId() == 1) {
+                        diary.setInfluence(diary.getInfluence() + 1);
                     }
+                }
 
+                diaryMapper.updateByPrimaryKeySelective(diary);
+            }
+        }
+    }
+
+
+    private void addUpOrDownRecord(DiaryRecord diaryRecord, String type) {
+
+        //查询是否有赞过
+        diaryRecord.setCategory("up");
+        List<DiaryRecord> diaryRecordUpList = queryList(diaryRecord);
+
+        //查询是否有踩过
+        diaryRecord.setCategory("down");
+        List<DiaryRecord> diaryRecordDownList = queryList(diaryRecord);
+
+        //不踩不赞的状态
+        if (diaryRecordUpList.isEmpty() && diaryRecordDownList.isEmpty()) {
+
+            //2 插入日记记录
+            diaryRecord.setCategory(type);
+            insert(diaryRecord);
+
+            //3 更新统计值
+            if (diaryRecord.getSelector().equals("diary")) {
+                Diary diary = diaryMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+                if (diary != null) {
+
+                    if (type.equals("up")) {
+
+                        diary.setUpCount(diary.getUpCount() + 1);
+
+                        //如果有当天的点赞记录，就不增加权重
+                        Example example = new Example(DiaryRecord.class);
+                        Example.Criteria criteria = example.createCriteria();
+                        criteria.andEqualTo("memberId", diaryRecord.getMemberId());
+                        criteria.andEqualTo("selector", diaryRecord.getSelector());
+                        criteria.andEqualTo("diaryId", diaryRecord.getDiaryId());
+                        if (diaryRecord.getCommentId() != null) {
+                            criteria.andEqualTo("commentId", diaryRecord.getCommentId());
+                        }
+                        criteria.andEqualTo("category", "up");
+                        criteria.andEqualTo("status", "cancel");
+                        Calendar calendar = Calendar.getInstance();
+
+                        calendar.setTime(new Date());
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        Date start = calendar.getTime();
+                        criteria.andGreaterThan("createdAt", start);
+                        criteria.andEqualTo("category", "up");
+                        List<DiaryRecord> diaryRecordUpTodayList = queryList(example);
+
+                        if (diaryRecordUpTodayList.isEmpty()) {
+
+                            diary.setWeight(diary.getWeight() + 3);
+                        }
+
+                    } else if (type.equals("down")) {
+                        diary.setDownCount(diary.getUpCount() + 1);
+
+                    }
                     diaryMapper.updateByPrimaryKeySelective(diary);
                 }
 
             } else {
                 DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
-                if(diaryComment != null){
-                    if(diaryRecord.getCategory().equals("up")){
-                        diaryComment.setUpCount(diaryComment.getUpCount()+1);
 
-                    }else if(diaryRecord.getCategory().equals("down")){
-
-                        diaryComment.setDownCount(diaryComment.getDownCount()+1);
-
-                    }else if(diaryRecord.getCategory().equals("browse")){
-
-                        //评论不处理浏览
+                if (diaryComment != null) {
+                    if (type.equals("up")) {
+                        diaryComment.setUpCount(diaryComment.getUpCount() + 1);
+                    } else if (type.equals("down")) {
+                        diaryComment.setDownCount(diaryComment.getDownCount() + 1);
                     }
+                    diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
+
+                }
+            }
+
+        } else {  //踩过的状态
+
+            //取消踩/赞
+            if (type.equals("up")) {
+
+                for (DiaryRecord diaryRecord1 : diaryRecordDownList) {
+                    diaryRecord1.setStatus("cancel");
+                    update(diaryRecord1);
+                }
+            } else {
+                for (DiaryRecord diaryRecord1 : diaryRecordUpList) {
+                    diaryRecord1.setStatus("cancel");
+                    update(diaryRecord1);
                 }
 
-                diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
+                // 更新统计值
+                if (diaryRecord.getSelector().equals("diary")) {
+                    Diary diary = diaryMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+                    if (diary != null) {
+                        if (type.equals("up")) {
+                            diary.setDownCount(diary.getDownCount() - 1);
+                        } else {
+                            diary.setUpCount(diary.getUpCount() - 1);
+                        }
+                        diaryMapper.updateByPrimaryKeySelective(diary);
+                    }
+
+                } else {
+                    DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+
+                    if (diaryComment != null) {
+                        if (type.equals("up")) {
+                            diaryComment.setUpCount(diaryComment.getUpCount() - 1);
+                        } else {
+                            diaryComment.setDownCount(diaryComment.getDownCount() - 1);
+                        }
+                        diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
+                    }
+                }
             }
         }
-        return true;
 
     }
 }
