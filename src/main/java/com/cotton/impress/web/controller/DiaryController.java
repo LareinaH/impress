@@ -417,6 +417,9 @@ public class DiaryController extends ImpressBaseController {
         if (diaryExVOList != null) {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryExVOList);
+        }else{
+            restResponse.setCode(RestResponse.OK);
+            restResponse.setData(new LinkedList<DiaryExVO>());
         }
 
         return restResponse;
