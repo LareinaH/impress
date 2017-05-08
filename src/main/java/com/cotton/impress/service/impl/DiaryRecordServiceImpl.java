@@ -141,7 +141,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                 }
 
             } else {
-                DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+                DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getCommentId());
 
                 if (diaryComment != null) {
                     if (type.equals("up")) {

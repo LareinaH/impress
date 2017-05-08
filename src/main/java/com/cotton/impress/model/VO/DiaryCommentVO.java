@@ -34,6 +34,10 @@ public class DiaryCommentVO {
      */
     private String commentUserHeadPortrait;
 
+    /**
+     * 评论用户性别
+     */
+    private String commentUserSex;
 
     /**
      * 回复列表
@@ -80,6 +84,14 @@ public class DiaryCommentVO {
      */
     boolean downStatus;
 
+
+    public String getCommentUserSex() {
+        return commentUserSex;
+    }
+
+    public void setCommentUserSex(String commentUserSex) {
+        this.commentUserSex = commentUserSex;
+    }
 
     public Long getDiaryId() {
         return diaryId;

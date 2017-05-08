@@ -50,7 +50,8 @@
     a.createdAt,
     a.updateAt,
     b.`name` AS commentUserName,
-    b.headPortrait AS commentUserHeadPortrait
+    b.headPortrait AS commentUserHeadPortrait,
+    b.sex As commentUserSex
     FROM (SELECT * FROM  diary_comment
     <include refid="where1"></include>
     ) AS a
