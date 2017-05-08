@@ -88,8 +88,8 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
         diaryRecord.setCategory("down");
         List<DiaryRecord> diaryRecordDownList = queryList(diaryRecord);
 
-        //不踩不赞的状态
-        if (diaryRecordUpList.isEmpty() && diaryRecordDownList.isEmpty()) {
+
+        if (diaryRecordUpList.isEmpty() && diaryRecordDownList.isEmpty()) {  //A 不踩不赞的状态
 
             //2 插入日记记录
             diaryRecord.setCategory(type);
@@ -105,30 +105,32 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                         diary.setUpCount(diary.getUpCount() + 1);
 
                         //如果有当天的点赞记录，就不增加权重
-                        Example example = new Example(DiaryRecord.class);
-                        Example.Criteria criteria = example.createCriteria();
-                        criteria.andEqualTo("memberId", diaryRecord.getMemberId());
-                        criteria.andEqualTo("selector", diaryRecord.getSelector());
-                        criteria.andEqualTo("diaryId", diaryRecord.getDiaryId());
-                        if (diaryRecord.getCommentId() != null) {
-                            criteria.andEqualTo("commentId", diaryRecord.getCommentId());
-                        }
-                        criteria.andEqualTo("category", "up");
-                        criteria.andEqualTo("status", "cancel");
-                        Calendar calendar = Calendar.getInstance();
+                        {
+                            Example example = new Example(DiaryRecord.class);
+                            Example.Criteria criteria = example.createCriteria();
+                            criteria.andEqualTo("memberId", diaryRecord.getMemberId());
+                            criteria.andEqualTo("selector", diaryRecord.getSelector());
+                            criteria.andEqualTo("diaryId", diaryRecord.getDiaryId());
+                            if (diaryRecord.getCommentId() != null) {
+                                criteria.andEqualTo("commentId", diaryRecord.getCommentId());
+                            }
+                            criteria.andEqualTo("category", "up");
+                            criteria.andEqualTo("status", "cancel");
+                            Calendar calendar = Calendar.getInstance();
 
-                        calendar.setTime(new Date());
-                        calendar.set(Calendar.HOUR_OF_DAY, 0);
-                        calendar.set(Calendar.MINUTE, 0);
-                        calendar.set(Calendar.SECOND, 0);
-                        Date start = calendar.getTime();
-                        criteria.andGreaterThan("createdAt", start);
-                        criteria.andEqualTo("category", "up");
-                        List<DiaryRecord> diaryRecordUpTodayList = queryList(example);
+                            calendar.setTime(new Date());
+                            calendar.set(Calendar.HOUR_OF_DAY, 0);
+                            calendar.set(Calendar.MINUTE, 0);
+                            calendar.set(Calendar.SECOND, 0);
+                            Date start = calendar.getTime();
+                            criteria.andGreaterThan("createdAt", start);
+                            criteria.andEqualTo("category", "up");
+                            List<DiaryRecord> diaryRecordUpTodayList = queryList(example);
 
-                        if (diaryRecordUpTodayList.isEmpty()) {
+                            if (diaryRecordUpTodayList.isEmpty()) {
 
-                            diary.setWeight(diary.getWeight() + 3);
+                                diary.setWeight(diary.getWeight() + 3);
+                            }
                         }
 
                     } else if (type.equals("down")) {
@@ -152,30 +154,23 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                 }
             }
 
-        } else {  //踩过的状态
 
-            //取消踩/赞
-            if (type.equals("up")) {
+        } else if (!diaryRecordUpList.isEmpty()) {    //B 赞过的状态
 
-                for (DiaryRecord diaryRecord1 : diaryRecordDownList) {
-                    diaryRecord1.setStatus("cancel");
-                    update(diaryRecord1);
-                }
-            } else {
+            if (type.equals("down")) {
+
+                //赞过后踩，将赞清空，更新统计值
                 for (DiaryRecord diaryRecord1 : diaryRecordUpList) {
                     diaryRecord1.setStatus("cancel");
                     update(diaryRecord1);
                 }
 
-                // 更新统计值
                 if (diaryRecord.getSelector().equals("diary")) {
                     Diary diary = diaryMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
                     if (diary != null) {
-                        if (type.equals("up")) {
-                            diary.setDownCount(diary.getDownCount() - 1);
-                        } else {
-                            diary.setUpCount(diary.getUpCount() - 1);
-                        }
+
+                        diary.setUpCount((diary.getUpCount() - diaryRecordDownList.size()) > 0 ?
+                                (diary.getUpCount() - diaryRecordDownList.size()) : 0);
                         diaryMapper.updateByPrimaryKeySelective(diary);
                     }
 
@@ -183,16 +178,54 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                     DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
 
                     if (diaryComment != null) {
-                        if (type.equals("up")) {
-                            diaryComment.setUpCount(diaryComment.getUpCount() - 1);
-                        } else {
-                            diaryComment.setDownCount(diaryComment.getDownCount() - 1);
-                        }
+
+                        diaryComment.setDownCount((diaryComment.getDownCount() - diaryRecordUpList.size()) > 0 ?
+                                (diaryComment.getDownCount() - diaryRecordUpList.size()) : 0);
                         diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
                     }
                 }
-            }
-        }
 
+            } else if (type.equals("up")) {
+
+                //赞过继续赞不处理
+            }
+
+
+        } else if (!diaryRecordDownList.isEmpty()) {  //C 踩过的状态
+
+            //踩过后 赞取消踩
+            if (type.equals("up")) {
+
+                for (DiaryRecord diaryRecord1 : diaryRecordDownList) {
+                    diaryRecord1.setStatus("cancel");
+                    update(diaryRecord1);
+                }
+
+                //更新统计值
+                if (diaryRecord.getSelector().equals("diary")) {
+                    Diary diary = diaryMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+                    if (diary != null) {
+                        diary.setDownCount((diary.getDownCount() - diaryRecordDownList.size()) > 0 ?
+                                diary.getDownCount() - diaryRecordDownList.size() : 0);
+                        diaryMapper.updateByPrimaryKeySelective(diary);
+                    }
+
+                } else {
+                    DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+
+                    if (diaryComment != null) {
+                        diaryComment.setUpCount((diaryComment.getUpCount() - diaryRecordDownList.size()) > 0 ?
+                                (diaryComment.getUpCount() - diaryRecordDownList.size()) : 0);
+                        diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
+                    }
+                }
+
+            } else if (type.equals("down")) {
+
+                //踩过继续踩不处理
+            }
+
+        }
     }
+
 }
