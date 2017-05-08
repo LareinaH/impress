@@ -80,6 +80,12 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
 
     private void addUpOrDownRecord(DiaryRecord diaryRecord, String type) {
 
+        //坐标缓存
+        Double lbsX = diaryRecord.getLbsX();
+        Double lbsY = diaryRecord.getLbsY();
+        diaryRecord.setLbsX(null);
+        diaryRecord.setLbsY(null);
+
         //查询是否有赞过
         diaryRecord.setCategory("up");
         List<DiaryRecord> diaryRecordUpList = queryList(diaryRecord);
@@ -93,6 +99,9 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
 
             //2 插入日记记录
             diaryRecord.setCategory(type);
+            //2 插入日记记录
+            diaryRecord.setLbsX(lbsX);
+            diaryRecord.setLbsY(lbsY);
             insert(diaryRecord);
 
             //3 更新统计值
