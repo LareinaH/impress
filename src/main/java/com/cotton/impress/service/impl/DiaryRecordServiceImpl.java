@@ -188,8 +188,8 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
 
                     if (diaryComment != null) {
 
-                        diaryComment.setDownCount((diaryComment.getDownCount() - diaryRecordUpList.size()) > 0 ?
-                                (diaryComment.getDownCount() - diaryRecordUpList.size()) : 0);
+                        diaryComment.setUpCount((diaryComment.getUpCount() - diaryRecordUpList.size()) > 0 ?
+                                (diaryComment.getUpCount() - diaryRecordUpList.size()) : 0);
                         diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
                     }
                 }
@@ -223,8 +223,8 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                     DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getCommentId());
 
                     if (diaryComment != null) {
-                        diaryComment.setUpCount((diaryComment.getUpCount() - diaryRecordDownList.size()) > 0 ?
-                                (diaryComment.getUpCount() - diaryRecordDownList.size()) : 0);
+                        diaryComment.setDownCount((diaryComment.getDownCount() - diaryRecordDownList.size()) > 0 ?
+                                (diaryComment.getDownCount() - diaryRecordDownList.size()) : 0);
                         diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
                     }
                 }
