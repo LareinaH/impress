@@ -143,7 +143,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                         }
 
                     } else if (type.equals("down")) {
-                        diary.setDownCount(diary.getUpCount() + 1);
+                        diary.setDownCount(diary.getDownCount() + 1);
 
                     }
                     diaryMapper.updateByPrimaryKeySelective(diary);
@@ -184,7 +184,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                     }
 
                 } else {
-                    DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+                    DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getCommentId());
 
                     if (diaryComment != null) {
 
@@ -220,7 +220,7 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                     }
 
                 } else {
-                    DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getDiaryId());
+                    DiaryComment diaryComment = diaryCommentMapper.selectByPrimaryKey(diaryRecord.getCommentId());
 
                     if (diaryComment != null) {
                         diaryComment.setUpCount((diaryComment.getUpCount() - diaryRecordDownList.size()) > 0 ?
