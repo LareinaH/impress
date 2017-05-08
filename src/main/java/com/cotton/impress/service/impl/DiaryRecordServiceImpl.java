@@ -188,8 +188,8 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
 
                     if (diaryComment != null) {
 
-                        diaryComment.setDownCount((diaryComment.getDownCount() - diaryRecordDownList.size()) > 0 ?
-                                (diaryComment.getDownCount() - diaryRecordDownList.size()) : 0);
+                        diaryComment.setDownCount((diaryComment.getDownCount() - diaryRecordUpList.size()) > 0 ?
+                                (diaryComment.getDownCount() - diaryRecordUpList.size()) : 0);
                         diaryCommentMapper.updateByPrimaryKeySelective(diaryComment);
                     }
                 }
