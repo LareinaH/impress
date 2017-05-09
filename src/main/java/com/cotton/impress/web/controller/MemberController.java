@@ -174,7 +174,7 @@ public class MemberController extends ImpressBaseController {
             memberService.update(member);
             member.setUid(uid);
             member.setName(name);
-           // member.setSex(sex); 性别不可以改
+            // member.setSex(sex); 性别不可以改
             member.setHeadPortrait(headPortrait);
             MemberVO memberVO = new MemberVO();
             BeanUtils.copyProperties(member, memberVO);
@@ -329,6 +329,31 @@ public class MemberController extends ImpressBaseController {
 
     }
 
+
+    /**
+     * 设置分享
+     *
+     * @return
+     */
+    @RequestMapping(value = "/share")
+    @ResponseBody
+    public RestResponse<Void> share() {
+        RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        Member member = PermissionContext.getMember();
+        member.setFirstShare(1);
+
+        if (memberService.update(member)) {
+            restResponse.setCode(RestResponse.OK);
+
+        } else {
+            restResponse.setCode("error");
+            restResponse.setMessage("分享设置失败!");
+        }
+        return restResponse;
+
+    }
+
     /**
      * 我的好友（分页）
      *
@@ -449,8 +474,8 @@ public class MemberController extends ImpressBaseController {
 
             List<Message> messageList = messageService.queryList(model);
 
-            if(messageList != null && !messageList.isEmpty()){
-                for(Message message : messageList){
+            if (messageList != null && !messageList.isEmpty()) {
+                for (Message message : messageList) {
                     message.setProcessStatus("processed");
                     messageService.update(message);
                 }

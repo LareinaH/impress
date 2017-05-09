@@ -46,6 +46,7 @@
             <!--          <if test="map.shopId != null">and shopId = #{map.shopId}</if>
                       <if test="map.wechatNo != null">and shopId like "%${map.wechatNo}%"</if>
                       <if test="map.name != null">and shopId like "%${map.name}%"</if>-->
+            and `status` = 'normal'
         </where>
     </sql>
 
@@ -58,6 +59,7 @@
                     #{item}
                 </foreach>
             </if>
+            and `status`='normal'
         </where>
     </sql>
 
@@ -177,7 +179,7 @@
     <select id="getAdminByRand" resultMap="DiaryVOResultMap">
 
 
-        select * FROM diary where memberId = 17 ORDER BY rand() LIMIT #{pageSize}
+        select * FROM diary where memberId = 17 and status = 'normal' ORDER BY rand() LIMIT #{pageSize}
 
     </select>
 

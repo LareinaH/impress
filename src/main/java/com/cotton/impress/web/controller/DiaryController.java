@@ -51,8 +51,8 @@ public class DiaryController extends ImpressBaseController {
     private int dtX;
     @Value("${dtY}")
     private int dtY;
-    @Value("${adminId}")
-    private long adminId;
+    @Value("${shareUrl}")
+    private String shareUrl;
 
     /**
      * 左右印象
@@ -72,6 +72,13 @@ public class DiaryController extends ImpressBaseController {
                                                       @RequestParam(defaultValue = "1") int pageNum,
                                                       @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
+
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return restResponse;
+        }
 
         Member member = PermissionContext.getMember();
 
@@ -155,6 +162,13 @@ public class DiaryController extends ImpressBaseController {
                                                     @RequestParam(defaultValue = "1") int pageNum,
                                                     @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
+
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return restResponse;
+        }
 
         Member member = PermissionContext.getMember();
 
@@ -315,6 +329,7 @@ public class DiaryController extends ImpressBaseController {
 
         Diary model = new Diary();
         model.setMemberId(member.getId());
+        model.setStatus("normal");
 
         List<Diary> diaryList = diaryService.queryList(model);
 
@@ -342,15 +357,23 @@ public class DiaryController extends ImpressBaseController {
      */
     @RequestMapping(value = "/myFriendDetail")
     @ResponseBody
-    public RestResponse<Map<String, Object>> myFriendDetail(@RequestParam(defaultValue = "30.278992") String lbsX,
-                                                            @RequestParam(defaultValue = "120.167536") String lbsY,
+    public RestResponse<Map<String, Object>> myFriendDetail(@RequestParam(required = true) String lbsX,
+                                                            @RequestParam(required = true) String lbsY,
                                                             @RequestParam(required = true) long friendId) {
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
+
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return restResponse;
+        }
 
         Map<String, Object> map = new HashMap<String, Object>();
 
         Diary model = new Diary();
         model.setMemberId(friendId);
+        model.setStatus("normal");
         //获取好友个人信息
         Member member = memberService.getById(friendId);
         if (member != null) {
@@ -404,10 +427,17 @@ public class DiaryController extends ImpressBaseController {
     @ResponseBody
     public RestResponse<List<DiaryExVO>> friendUpDiaries(@RequestParam(defaultValue = "1") int pageNum,
                                                          @RequestParam(defaultValue = "20") int pageSize,
-                                                         @RequestParam(defaultValue = "30.278992") String lbsX,
-                                                         @RequestParam(defaultValue = "120.167536") String lbsY,
+                                                         @RequestParam(required = true) String lbsX,
+                                                         @RequestParam(required = true) String lbsY,
                                                          @RequestParam(required = true) long friendId) {
         RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
+
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return restResponse;
+        }
 
         Member member = PermissionContext.getMember();
 
@@ -417,7 +447,7 @@ public class DiaryController extends ImpressBaseController {
         if (diaryExVOList != null) {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryExVOList);
-        }else{
+        } else {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(new LinkedList<DiaryExVO>());
         }
@@ -432,6 +462,7 @@ public class DiaryController extends ImpressBaseController {
                                                        @RequestParam(required = true) long friendId,
                                                        @RequestParam(required = true) Member member,
                                                        @RequestParam(defaultValue = "up") String type) {
+
 
         DiaryRecord diaryRecord = new DiaryRecord();
         diaryRecord.setMemberId(friendId);
@@ -450,6 +481,7 @@ public class DiaryController extends ImpressBaseController {
                 diaryIdList.add(record.getDiaryId());
             }
             criteria.andIn("id", diaryIdList);
+            criteria.andEqualTo("status", "normal");
 
             PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
 
@@ -489,10 +521,17 @@ public class DiaryController extends ImpressBaseController {
     @ResponseBody
     public RestResponse<List<DiaryExVO>> friendBrowseDiaries(@RequestParam(defaultValue = "1") int pageNum,
                                                              @RequestParam(defaultValue = "20") int pageSize,
-                                                             @RequestParam(defaultValue = "30.278992") String lbsX,
-                                                             @RequestParam(defaultValue = "120.167536") String lbsY,
+                                                             @RequestParam(required = true) String lbsX,
+                                                             @RequestParam(required = true) String lbsY,
                                                              @RequestParam(required = true) long friendId) {
         RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
+
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return restResponse;
+        }
 
         Member member = PermissionContext.getMember();
 
@@ -502,7 +541,7 @@ public class DiaryController extends ImpressBaseController {
         if (diaryExVOList != null) {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryExVOList);
-        }else{
+        } else {
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(new LinkedList<DiaryExVO>());
         }
@@ -526,13 +565,14 @@ public class DiaryController extends ImpressBaseController {
 
         Member member = PermissionContext.getMember();
 
-        DiaryDetailVO diaryDetailVO = diaryService.getDiaryDetailVObyId(diaryId);
+        DiaryDetailVO diaryDetailVO = diaryService.getDiaryDetailVObyId(member.getId(), diaryId);
 
         if (diaryDetailVO != null) {
 
             buildDiaryExVOInfo(member.getId(), diaryDetailVO);
 
             if (diaryDetailVO.getDiaryCommentVOList() != null && !diaryDetailVO.getDiaryCommentVOList().isEmpty()) {
+
                 for (DiaryCommentVO diaryCommentVO : diaryDetailVO.getDiaryCommentVOList()) {
                     buildCommentVOInfo(member.getId(), diaryCommentVO);
                 }
@@ -541,9 +581,12 @@ public class DiaryController extends ImpressBaseController {
             if (format.equals("android")) {
 
                 diaryDetailVO.setContent(iosToAndroid(diaryDetailVO.getContent()));
-            }else {
+            } else {
                 diaryDetailVO.setContent(androidToIos(diaryDetailVO.getContent()));
             }
+
+            //设置分享url
+            diaryDetailVO.setShareUrl(shareUrl);
 
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryDetailVO);
@@ -601,6 +644,13 @@ public class DiaryController extends ImpressBaseController {
                                        @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
                                        @RequestParam(required = true) String content) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
+
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return restResponse;
+        }
 
 
         Member member = PermissionContext.getMember();
@@ -697,9 +747,11 @@ public class DiaryController extends ImpressBaseController {
         diary.setAnonymous(anonymous);
         diary.setAccuse(accessRight);
         diary.setAccessRight(accessRight);
-        diary.setLbsX(lbsX);
-        diary.setLbsY(lbsY);
 
+        if (checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
+            diary.setLbsX(lbsX);
+            diary.setLbsY(lbsY);
+        }
 
         if (diaryService.editDiary(diary, content)) {
             restResponse.setCode(RestResponse.OK);
@@ -870,6 +922,13 @@ public class DiaryController extends ImpressBaseController {
                                              @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
+        if(!checkLocation(Double.valueOf(lbsX),Double.valueOf(lbsY))){
+            restResponse.setCode("error");
+            restResponse.setMessage("坐标位置读取错误！");
+
+            return  restResponse;
+        }
+
         Member member = PermissionContext.getMember();
 
         Diary diary = diaryService.getById(diaryId);
@@ -1030,18 +1089,30 @@ public class DiaryController extends ImpressBaseController {
             Random random = new Random();
 
             if (random.nextBoolean()) {
-                diaryVO.setLbsX(lbsX + random.nextDouble()/10);
+                diaryVO.setLbsX(lbsX + random.nextDouble() / 10);
             } else {
-                diaryVO.setLbsX(lbsX - random.nextDouble()/10);
+                diaryVO.setLbsX(lbsX - random.nextDouble() / 10);
             }
 
             if (random.nextBoolean()) {
-                diaryVO.setLbsY(lbsY + random.nextDouble()/10);
+                diaryVO.setLbsY(lbsY + random.nextDouble() / 10);
             } else {
-                diaryVO.setLbsY(lbsY - random.nextDouble()/10);
+                diaryVO.setLbsY(lbsY - random.nextDouble() / 10);
             }
         }
 
+    }
+
+    private boolean checkLocation(double lbsX, double lbsY) {
+        if (lbsX < -180 || lbsX > 180 || lbsX == 0) {
+            return false;
+        }
+
+        if (lbsY < -90 || lbsY > 90 || lbsY == 0) {
+            return false;
+        }
+
+        return true;
     }
 
 

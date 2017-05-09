@@ -40,7 +40,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
     private DiaryRecordService diaryRecordService;
 
     @Override
-    public DiaryDetailVO getDiaryDetailVObyId(long id) {
+    public DiaryDetailVO getDiaryDetailVObyId(long currentUserID,long id) {
         Diary diary = getById(id);
 
         DiaryVO diaryVO = new DiaryVO();
@@ -84,7 +84,20 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         //查找评论
         if (diaryCommentVOList != null && diaryCommentVOList.size() > 0) {
 
+            //获取当前用户的所有好友
+            MemberFriend memberFriendModel = new MemberFriend();
+            memberFriendModel.setMemberId(currentUserID);
+            List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
 
+            List<Long> friendIdList = new LinkedList<Long>();
+
+            if(memberFriendList != null && !memberFriendList.isEmpty()) {
+
+                for(MemberFriend memberFriend : memberFriendList){
+                    friendIdList.add(memberFriend.getFriendMemberId());
+                }
+
+            }
 
             for (DiaryCommentVO diaryCommentVO : diaryCommentVOList) {
 
@@ -95,7 +108,26 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
                     List<DiaryCommentVO> childCommentVOList = diaryCommentMapper.selectDiaryCommentVOList(condition);
                     if (childCommentVOList != null) {
 
+                        //遍历回复
+                        for (DiaryCommentVO diaryCommentVOChild : childCommentVOList){
+                            //存在好友关系
+                            if(friendIdList.indexOf(diaryCommentVOChild.getCommentUserId()) >= 0 ||
+                                    diaryCommentVOChild.getCommentUserId() == currentUserID){
+
+                                diaryCommentVOChild.setbFriendComment(true);
+
+                            }
+                        }
+
                         diaryCommentVO.setReplayList(childCommentVOList);
+                    }
+
+                    //存在好友关系
+                    if(friendIdList.indexOf(diaryCommentVO.getCommentUserId()) >= 0 ||
+                            diaryCommentVO.getCommentUserId() == currentUserID){
+
+                        diaryCommentVO.setbFriendComment(true);
+
                     }
                     newDiaryCommentVOList.add(diaryCommentVO);
                 }

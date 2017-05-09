@@ -165,6 +165,11 @@ public class MessageController extends ImpressBaseController {
                         double distance = DistanceUtil.getTwopointsDistance(diaryVO.getLbsX().toString(), diaryVO.getLbsY().toString(), lbsX, lbsY);
                         diaryVO.setDistance((int) distance);
                         messageVO.setDiary(diaryVO);
+
+                        //消息变成已读
+                        Message message = new Message();
+                        message.setProcessStatus("processed");
+                        messageService.update(message);
                     }
                 }
                 restResponse.setCode(RestResponse.OK);

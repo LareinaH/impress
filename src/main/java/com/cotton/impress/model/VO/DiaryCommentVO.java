@@ -70,6 +70,11 @@ public class DiaryCommentVO {
     private String image;
 
     /**
+     * 是否是好友日记
+     */
+    boolean bFriendComment;
+
+    /**
      * 是否阅读状态
      */
     boolean readStatus;
@@ -219,5 +224,13 @@ public class DiaryCommentVO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isbFriendComment() {
+        return bFriendComment;
+    }
+
+    public void setbFriendComment(boolean bFriendComment) {
+        this.bFriendComment = bFriendComment;
     }
 }

@@ -15,6 +15,16 @@ public class DiaryDetailVO extends DiaryExVO{
      */
     List<DiaryCommentVO> diaryCommentVOList;
 
+    private String shareUrl;
+
+    public String getShareUrl() {
+        return shareUrl;
+    }
+
+    public void setShareUrl(String shareUrl) {
+        this.shareUrl = shareUrl;
+    }
+
     public String getContent() {
         return content;
     }

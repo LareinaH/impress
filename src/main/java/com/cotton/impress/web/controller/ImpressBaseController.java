@@ -28,16 +28,22 @@ public class ImpressBaseController extends BaseController {
     public void buildDiaryExVOInfo(Long currentMemberId, DiaryExVO diaryExVO) {
 
         //查看是否是好友日记
-        MemberFriend memberFriendModel = new MemberFriend();
-        memberFriendModel.setMemberId(currentMemberId);
-        memberFriendModel.setFriendMemberId(diaryExVO.getMemberId());
 
-        List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
-
-        if (memberFriendList != null && !memberFriendList.isEmpty()) {
+        //自己的日记也当做是好友日记处理
+        if (currentMemberId == diaryExVO.getMemberId()) {
             diaryExVO.setbFriendDiary(true);
         } else {
-            diaryExVO.setbFriendDiary(false);
+            MemberFriend memberFriendModel = new MemberFriend();
+            memberFriendModel.setMemberId(currentMemberId);
+            memberFriendModel.setFriendMemberId(diaryExVO.getMemberId());
+
+            List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
+
+            if (memberFriendList != null && !memberFriendList.isEmpty()) {
+                diaryExVO.setbFriendDiary(true);
+            } else {
+                diaryExVO.setbFriendDiary(false);
+            }
         }
 
         //查看是否阅读/点赞/踩
