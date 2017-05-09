@@ -458,19 +458,16 @@ public class MemberController extends ImpressBaseController {
         Member member = PermissionContext.getMember();
 
         if (memberFriendService.addFriend(member.getId(), friendId)) {
+
             restResponse.setCode(RestResponse.OK);
 
-        } else {
-
             //添加好友消息 变成 已处理
-
             Message model = new Message();
             model.setCategory("friend");
             model.setFromMemberId(friendId);
             model.setToMemberId(member.getId());
             model.setStatus("normal");
             model.setProcessStatus("unprocessed");
-            restResponse.setCode("error");
 
             List<Message> messageList = messageService.queryList(model);
 
@@ -480,8 +477,13 @@ public class MemberController extends ImpressBaseController {
                     messageService.update(message);
                 }
             }
+
+        } else {
+
+            restResponse.setCode("error");
             restResponse.setMessage("添加好友成功!");
         }
+
         return restResponse;
     }
 

@@ -19,6 +19,12 @@ public class MemberFriendServiceImpl extends BaseServiceImpl<MemberFriend> imple
         memberFriend1.setFriendMemberId(friendMemberId);
         memberFriend1.setStatus("normal");
 
+        //如果存在好友关系不再添加
+        if(queryList(memberFriend1).size() > 0){
+            return true;
+        }
+
+        //添加好友
         if(insert(memberFriend1)) {
             MemberFriend memberFriend2 = new MemberFriend();
             memberFriend2.setMemberId(friendMemberId);

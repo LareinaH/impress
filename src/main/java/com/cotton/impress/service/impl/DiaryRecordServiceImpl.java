@@ -145,6 +145,9 @@ public class DiaryRecordServiceImpl extends BaseServiceImpl<DiaryRecord> impleme
                     } else if (type.equals("down")) {
                         diary.setDownCount(diary.getDownCount() + 1);
 
+                        if(diary.getUpCount() - diary.getDownCount() <= -10){
+                            diary.setAccessRight("oneself");
+                        }
                     }
                     diaryMapper.updateByPrimaryKeySelective(diary);
                 }

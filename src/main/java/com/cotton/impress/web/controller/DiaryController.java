@@ -1104,11 +1104,11 @@ public class DiaryController extends ImpressBaseController {
     }
 
     private boolean checkLocation(double lbsX, double lbsY) {
-        if (lbsX < -180 || lbsX > 180 || lbsX == 0) {
+        if (lbsX < - 90 || lbsX > 90 || lbsX == 0) {
             return false;
         }
 
-        if (lbsY < -90 || lbsY > 90 || lbsY == 0) {
+        if (lbsY < -180 || lbsY > 180 || lbsY == 0) {
             return false;
         }
 

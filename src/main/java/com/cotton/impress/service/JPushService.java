@@ -7,4 +7,6 @@ public interface JPushService {
     boolean updatePassword(String username, String password);
 
     String getUserInfo(String username);
+
+
 }

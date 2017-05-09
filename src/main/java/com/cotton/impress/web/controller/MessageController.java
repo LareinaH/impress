@@ -168,6 +168,7 @@ public class MessageController extends ImpressBaseController {
 
                         //消息变成已读
                         Message message = new Message();
+                        message.setId(messageVO.getId());
                         message.setProcessStatus("processed");
                         messageService.update(message);
                     }
@@ -232,7 +233,6 @@ public class MessageController extends ImpressBaseController {
 
                 if (message != null) {
                     if (message.getProcessStatus().equals("unprocessed")) {
-
                         message.setProcessStatus("processed");
                         messageService.update(message);
                     }
