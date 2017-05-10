@@ -104,7 +104,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
                 //查找子评论
                 if (diaryCommentVO.getParentId() == null) {
 
-                    condition.put("diaryId",diaryCommentVO.getId());
+                    condition.put("parentId",diaryCommentVO.getId());
                     List<DiaryCommentVO> childCommentVOList = diaryCommentMapper.selectDiaryCommentVOList(condition);
                     if (childCommentVOList != null) {
 

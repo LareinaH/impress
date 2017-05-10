@@ -28,6 +28,7 @@
     <where>
       1=1
       <if test="map.diaryId != null">and diaryId = #{map.diaryId}</if>
+      <if test="map.parentId != null">and parentId = #{map.parentId}</if>
       <if test="map.status != null">and status = #{map.status}</if>
     </where>
   </sql>
