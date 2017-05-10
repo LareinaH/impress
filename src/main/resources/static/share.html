@@ -1,12 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>分享页面</title>
-</head>
-<body>
+<html>
 
-待实现！！
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<style>
+			html,
+			body {
+				padding: 0;
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+		<title>左右印象</title>
+	</head>
 
-</body>
+	<body>
+		<img src="img/content.png" style="width: 100%;" />
+		<div style="position: absolute;">
+			<img src="img/holder.png" style="width: 100%;" />
+			<img src="img/button.png" id="button" style="position: absolute; height: 100%; margin-left: 27.5%;" />
+		</div>
+		
+		<script>
+			(function(){
+				document.querySelector("#button").addEventListener("click",function(e){
+					location.href="http://www.baidu.com";
+				})
+			})()
+		</script>
+	</body>
+
 </html>

@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 会员相关
@@ -452,14 +450,27 @@ public class MemberController extends ImpressBaseController {
      */
     @RequestMapping(value = "/addFriends")
     @ResponseBody
-    public RestResponse<Void> addFriends(@RequestParam(required = true) long friendId) {
-        RestResponse<Void> restResponse = new RestResponse<Void>();
+    public RestResponse<Map<String,Object>> addFriends(@RequestParam(required = true) long friendId) {
+        RestResponse<Map<String,Object>> restResponse = new RestResponse<Map<String,Object>>();
 
         Member member = PermissionContext.getMember();
+
+        Member memberFriend = memberService.getById(friendId);
+
+        if(memberFriend == null){
+            restResponse.setCode("error");
+            restResponse.setMessage("该好友不存在!");
+        }
 
         if (memberFriendService.addFriend(member.getId(), friendId)) {
 
             restResponse.setCode(RestResponse.OK);
+
+            Map<String,Object> map = new HashMap<String, Object>();
+            MemberVO memberVO = new MemberVO();
+            BeanUtils.copyProperties(memberFriend,memberVO);
+            map.put("uuid",memberVO.getUuid());
+            restResponse.setData(map);
 
             //添加好友消息 变成 已处理
             Message model = new Message();
@@ -481,7 +492,7 @@ public class MemberController extends ImpressBaseController {
         } else {
 
             restResponse.setCode("error");
-            restResponse.setMessage("添加好友成功!");
+            restResponse.setMessage("添加好友失败!");
         }
 
         return restResponse;

@@ -1114,6 +1114,4 @@ public class DiaryController extends ImpressBaseController {
 
         return true;
     }
-
-
 }
