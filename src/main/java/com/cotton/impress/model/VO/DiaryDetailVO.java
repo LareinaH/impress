@@ -15,7 +15,25 @@ public class DiaryDetailVO extends DiaryExVO{
      */
     List<DiaryCommentVO> diaryCommentVOList;
 
+    /**
+     * 分享出去的url
+     */
     private String shareUrl;
+
+
+    /**
+     * 是否已经分享过
+     */
+    private Integer firstShare;
+
+
+    public Integer getFirstShare() {
+        return firstShare;
+    }
+
+    public void setFirstShare(Integer firstShare) {
+        this.firstShare = firstShare;
+    }
 
     public String getShareUrl() {
         return shareUrl;

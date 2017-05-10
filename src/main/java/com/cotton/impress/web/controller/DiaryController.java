@@ -587,6 +587,7 @@ public class DiaryController extends ImpressBaseController {
 
             //设置分享url
             diaryDetailVO.setShareUrl(shareUrl);
+            diaryDetailVO.setFirstShare(member.getFirstShare());
 
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(diaryDetailVO);
