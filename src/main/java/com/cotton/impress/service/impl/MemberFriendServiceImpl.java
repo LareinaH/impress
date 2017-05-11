@@ -1,10 +1,14 @@
 package com.cotton.impress.service.impl;
 
+import com.cotton.base.common.RestResponse;
 import com.cotton.base.service.impl.BaseServiceImpl;
 import com.cotton.impress.model.MemberFriend;
 import com.cotton.impress.service.MemberFriendService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -36,5 +40,40 @@ public class MemberFriendServiceImpl extends BaseServiceImpl<MemberFriend> imple
         }
 
         return false;
+    }
+
+    @Override
+    public boolean deleteFriend(long memberId, long friendMemberId) {
+
+        MemberFriend model = new MemberFriend();
+        model.setMemberId(memberId);
+        model.setFriendMemberId(friendMemberId);
+        model.setStatus("normal");
+
+        List<MemberFriend> memberFriendList = queryList(model);
+
+        if (memberFriendList != null) {
+
+            for (MemberFriend memberFriend : memberFriendList) {
+                memberFriend.setStatus("delete");
+                memberFriend.setUpdateAt(new Date());
+                update(memberFriend);
+            }
+        }
+
+        model.setMemberId(friendMemberId);
+        model.setFriendMemberId(memberId);
+
+        memberFriendList = queryList(model);
+
+        if (memberFriendList != null) {
+
+            for (MemberFriend memberFriend : memberFriendList) {
+                memberFriend.setStatus("delete");
+                memberFriend.setUpdateAt(new Date());
+                update(memberFriend);
+            }
+        }
+        return true;
     }
 }

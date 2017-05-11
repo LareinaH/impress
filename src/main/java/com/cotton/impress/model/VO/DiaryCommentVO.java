@@ -25,6 +25,11 @@ public class DiaryCommentVO {
     private Long commentUserId;
 
     /**
+     * 是否是悄悄话【0：不是，1：是】
+     */
+    private Integer isWhisper;
+
+    /**
      * 评论用户姓名
      */
     private String commentUserName;
@@ -89,6 +94,13 @@ public class DiaryCommentVO {
      */
     boolean downStatus;
 
+    public Integer getIsWhisper() {
+        return isWhisper;
+    }
+
+    public void setIsWhisper(Integer isWhisper) {
+        this.isWhisper = isWhisper;
+    }
 
     public String getCommentUserSex() {
         return commentUserSex;

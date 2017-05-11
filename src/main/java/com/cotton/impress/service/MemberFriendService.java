@@ -8,6 +8,7 @@ import com.cotton.impress.model.MemberFriend;
  */
 public interface MemberFriendService extends BaseService<MemberFriend> {
 
-    public boolean addFriend(long memberId, long friendMemberId);
+    boolean addFriend(long memberId, long friendMemberId);
 
+    boolean deleteFriend(long memberId, long friendMemberId);
 }

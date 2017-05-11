@@ -511,20 +511,9 @@ public class MemberController extends ImpressBaseController {
 
         Member member = PermissionContext.getMember();
 
-        MemberFriend model = new MemberFriend();
-        model.setMemberId(member.getId());
-        model.setFriendMemberId(friendId);
-        model.setStatus("normal");
+        if (memberFriendService.deleteFriend(member.getId(),friendId)) {
 
-        List<MemberFriend> memberFriendList = memberFriendService.queryList(model);
-
-        if (memberFriendList != null) {
-
-            for (MemberFriend memberFriend : memberFriendList) {
-                memberFriend.setStatus("delete");
-                memberFriendService.update(memberFriend);
-                restResponse.setCode(RestResponse.OK);
-            }
+            restResponse.setCode(RestResponse.OK);
 
         } else {
             restResponse.setCode("error");

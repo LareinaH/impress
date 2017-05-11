@@ -87,16 +87,14 @@ public class DiaryController extends ImpressBaseController {
         condition.put("lbY", Double.valueOf(lbsY));
         condition.put("radius", radius);
 
-        //TODO: 条件查询
-        //获取我的好友列表
-
-        //能够浏览到的日记的权限条件： 1  所有人可以看 2 我自己的日记 3 朋友不可见 不是好友 4 朋友可见 是好友
+        //访问权限条件
+        buildAccessRight(member, condition);
 
         PageInfo<DiaryVO> diaryPageInfo = diaryService.queryAboutDiaryList(pageNum, pageSize, condition);
 
         if (diaryPageInfo != null) {
 
-            //TODO: 伪造管理员数据
+            //伪造管理员数据
             if (diaryPageInfo.getList() == null) {
 
                 List<DiaryVO> diaryVOList = diaryService.getAdminByRand(pageSize);
@@ -114,8 +112,6 @@ public class DiaryController extends ImpressBaseController {
                 diaryPageInfo.getList().addAll(diaryVOList);
             }
 
-            Map<Long, String> tempInfluence = new HashMap<Long, String>();
-
             for (DiaryVO diaryVO : diaryPageInfo.getList()) {
 
                 //如果数据库中影响力字段没有值，去获取作者的影响力
@@ -124,7 +120,6 @@ public class DiaryController extends ImpressBaseController {
                     diaryVO.setInfluence(cacheService.getInfluence(diaryVO.getMemberId()));
                 }
             }
-
 
             //转换ExVO数据
             List<DiaryExVO> diaryVOList = new LinkedList<DiaryExVO>();
@@ -141,6 +136,29 @@ public class DiaryController extends ImpressBaseController {
             restResponse.setMessage("读取日记失败！");
         }
         return restResponse;
+    }
+
+    private void buildAccessRight(Member member, Map<String, Object> condition) {
+
+        //能够浏览到的日记的权限条件： 1  所有人可以看 2 我自己的日记 3 朋友不可见 不是好友 4 朋友可见 是好友
+
+        MemberFriend memberFriendModel = new MemberFriend();
+        memberFriendModel.setMemberId(member.getId());
+        memberFriendModel.setStatus("normal");
+
+        List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
+
+        if (memberFriendList != null && !memberFriendList.isEmpty()) {
+
+            List<Long> friendIdList = new LinkedList<Long>();
+            for (MemberFriend f : memberFriendList) {
+                friendIdList.add(f.getFriendMemberId());
+            }
+            condition.put("friendIdList", friendIdList);
+
+        }
+
+        condition.put("currentMemberId",member.getId());
     }
 
 
@@ -177,8 +195,14 @@ public class DiaryController extends ImpressBaseController {
         condition.put("lbX", Double.valueOf(lbsX));
         condition.put("lbY", Double.valueOf(lbsY));
 
+        buildAccessRight(member,condition);
 
-        if (type.equals("friend")) {
+        if(type.equals("all")){
+            condition.put("weight", "true");
+        }
+
+
+  /*      if (type.equals("friend")) {
 
             //获取好友列表
             MemberFriend memberFriendModel = new MemberFriend();
@@ -202,7 +226,7 @@ public class DiaryController extends ImpressBaseController {
 
         } else {
             condition.put("weight", "true");
-        }
+        }*/
 
         PageInfo<DiaryVO> diaryPageInfo = diaryService.querySunDiaryList(pageNum, pageSize, condition);
 
@@ -575,6 +599,23 @@ public class DiaryController extends ImpressBaseController {
 
                 for (DiaryCommentVO diaryCommentVO : diaryDetailVO.getDiaryCommentVOList()) {
                     buildCommentVOInfo(member.getId(), diaryCommentVO);
+
+                    //处理回复的悄悄话
+                    if(diaryCommentVO.getReplayList() != null && !diaryCommentVO.getReplayList().isEmpty()) {
+
+                        List<DiaryCommentVO> whisperList = new LinkedList<DiaryCommentVO>();
+
+                        for(DiaryCommentVO child : diaryCommentVO.getReplayList()){
+                            if(child.getIsWhisper() == 1
+                                    && member.getId() != child.getCommentUserId()
+                                    && member.getId() != diaryCommentVO.getCommentUserId()){
+                                whisperList.add(child);
+                            }
+                        }
+
+                        //删除别人的悄悄话内容
+                        diaryCommentVO.getReplayList().removeAll(whisperList);
+                    }
                 }
             }
 

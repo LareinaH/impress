@@ -36,30 +36,57 @@
         <where>
             1=1
             <if test="map.radius != null">and distance &lt; #{map.radius}</if>
+
+
         </where>
     </sql>
 
+    <sql id="whereAccessRight">
+
+        AND(
+
+        accessRight='all'
+
+        <if test="map.currentMemberId != null">OR  memberId=#{map.currentMemberId}</if>
+
+        <if test="map.friendIdList != null">
+          OR accessRight='excludeFriend' and memberId NOT IN
+            <foreach collection="map.friendIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+            </foreach>
+          OR accessRight='friend' and memberId in
+            <foreach collection="map.friendIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+            </foreach>
+        </if>
+        )
+
+    </sql>
 
     <sql id="where2">
         <where>
             1=1
-            <!--          <if test="map.shopId != null">and shopId = #{map.shopId}</if>
-                      <if test="map.wechatNo != null">and shopId like "%${map.wechatNo}%"</if>
-                      <if test="map.name != null">and shopId like "%${map.name}%"</if>-->
+
             and `status` = 'normal'
+
+            <include refid="whereAccessRight"></include>
+
         </where>
     </sql>
 
     <sql id="whereMemberIdList">
         <where>
             1=1
-            <if test="map.friendIdList != null">and memberId in
+            <if test="map.friendIdList != null  &amp;&amp; map.weight == null">and memberId in
 
                 <foreach collection="map.friendIdList" index="index" item="item" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
             and `status`='normal'
+
+            <include refid="whereAccessRight"></include>
+
         </where>
     </sql>
 
