@@ -59,7 +59,7 @@ public class DiaryController extends ImpressBaseController {
      *
      * @param lbsX
      * @param lbsY
-     * @param radius
+     * @param bFirst
      * @param pageNum
      * @param pageSize
      * @return
@@ -68,7 +68,7 @@ public class DiaryController extends ImpressBaseController {
     @ResponseBody
     public RestResponse<List<DiaryExVO>> aboutDiaries(@RequestParam(required = true) String lbsX,
                                                       @RequestParam(required = true) String lbsY,
-                                                      @RequestParam(required = true) String radius,
+                                                      @RequestParam(defaultValue = "false") boolean bFirst,
                                                       @RequestParam(defaultValue = "1") int pageNum,
                                                       @RequestParam(defaultValue = "20") int pageSize) {
         RestResponse<List<DiaryExVO>> restResponse = new RestResponse<List<DiaryExVO>>();
@@ -85,32 +85,32 @@ public class DiaryController extends ImpressBaseController {
         Map<String, Object> condition = new HashMap<String, Object>();
         condition.put("lbX", Double.valueOf(lbsX));
         condition.put("lbY", Double.valueOf(lbsY));
-        condition.put("radius", radius);
 
         //访问权限条件
         buildAccessRight(member, condition);
 
+        //伪造管理员数据
+        if(bFirst){
+
+            //查看半径十公里内有多少条日记
+            condition.put("radius", "10000");
+            PageInfo<DiaryVO> diaryPageInfo = diaryService.queryAboutDiaryList(pageNum, pageSize, condition);
+
+            int adminSize = 3;
+            if(diaryPageInfo != null && diaryPageInfo.getList() != null && diaryPageInfo.getList().size()<5){
+                adminSize = 5;
+            }
+
+            List<DiaryVO> diaryVOList = diaryService.getAdminByRand(adminSize);
+            forgePosition(diaryVOList, Double.valueOf(lbsX), Double.valueOf(lbsY));
+
+            condition.remove("radius");
+        }
+
+        //查询左右印象
         PageInfo<DiaryVO> diaryPageInfo = diaryService.queryAboutDiaryList(pageNum, pageSize, condition);
 
         if (diaryPageInfo != null) {
-
-            //伪造管理员数据
-            if (diaryPageInfo.getList() == null) {
-
-                List<DiaryVO> diaryVOList = diaryService.getAdminByRand(pageSize);
-
-                forgePosition(diaryVOList, Double.valueOf(lbsX), Double.valueOf(lbsY));
-
-                diaryPageInfo.setList(diaryVOList);
-
-            } else if (diaryPageInfo.getList().size() < pageSize) {
-
-                List<DiaryVO> diaryVOList = diaryService.getAdminByRand(pageSize - diaryPageInfo.getList().size());
-
-                forgePosition(diaryVOList, Double.valueOf(lbsX), Double.valueOf(lbsY));
-
-                diaryPageInfo.getList().addAll(diaryVOList);
-            }
 
             for (DiaryVO diaryVO : diaryPageInfo.getList()) {
 
@@ -190,7 +190,6 @@ public class DiaryController extends ImpressBaseController {
 
         Member member = PermissionContext.getMember();
 
-
         Map<String, Object> condition = new HashMap<String, Object>();
         condition.put("lbX", Double.valueOf(lbsX));
         condition.put("lbY", Double.valueOf(lbsY));
@@ -200,33 +199,6 @@ public class DiaryController extends ImpressBaseController {
         if(type.equals("all")){
             condition.put("weight", "true");
         }
-
-
-  /*      if (type.equals("friend")) {
-
-            //获取好友列表
-            MemberFriend memberFriendModel = new MemberFriend();
-            memberFriendModel.setMemberId(member.getId());
-            memberFriendModel.setStatus("normal");
-
-            List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
-
-            if (memberFriendList != null && !memberFriendList.isEmpty()) {
-
-                List<Long> friendIdList = new LinkedList<Long>();
-                for (MemberFriend f : memberFriendList) {
-                    friendIdList.add(f.getFriendMemberId());
-                }
-                condition.put("friendIdList", friendIdList);
-
-            } else {
-                restResponse.setCode(RestResponse.OK);
-                return restResponse;
-            }
-
-        } else {
-            condition.put("weight", "true");
-        }*/
 
         PageInfo<DiaryVO> diaryPageInfo = diaryService.querySunDiaryList(pageNum, pageSize, condition);
 
@@ -1141,6 +1113,13 @@ public class DiaryController extends ImpressBaseController {
             } else {
                 diaryVO.setLbsY(lbsY - random.nextDouble() / 10);
             }
+
+            //更新管理员坐标位置
+            Diary diary = new Diary();
+            diary.setId(diaryVO.getId());
+            diary.setLbsX(diaryVO.getLbsX());
+            diary.setLbsY(diaryVO.getLbsY());
+            diaryService.update(diary);
         }
 
     }
