@@ -839,7 +839,7 @@ public class DiaryController extends ImpressBaseController {
 
             if (parentComment != null) {
                 Message message2 = new Message();
-                message.setDiaryId(diaryId);
+                message2.setDiaryId(diaryId);
                 message2.setStatus("normal");
                 message2.setCategory("comment");
                 message2.setFromMemberId(member.getId());
