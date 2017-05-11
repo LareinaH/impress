@@ -198,6 +198,13 @@ public class DiaryController extends ImpressBaseController {
 
         if(type.equals("all")){
             condition.put("weight", "true");
+        }else {
+            if(condition.get("friendIdList") == null){
+                List<DiaryExVO> result = new LinkedList<DiaryExVO>();
+                restResponse.setCode(RestResponse.OK);
+                restResponse.setData(result);
+                return restResponse;
+            }
         }
 
         PageInfo<DiaryVO> diaryPageInfo = diaryService.querySunDiaryList(pageNum, pageSize, condition);
