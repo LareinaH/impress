@@ -837,7 +837,7 @@ public class DiaryController extends ImpressBaseController {
             message.setUpdateAt(new Date());
             messageService.insert(message);
 
-            if (parentComment != null) {
+            if (parentComment != null && diary.getMemberId() != parentComment.getCommentUserId()) {
                 Message message2 = new Message();
                 message2.setDiaryId(diaryId);
                 message2.setStatus("normal");
