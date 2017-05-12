@@ -87,6 +87,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
             //获取当前用户的所有好友
             MemberFriend memberFriendModel = new MemberFriend();
             memberFriendModel.setMemberId(currentUserID);
+            memberFriendModel.setStatus("normal");
             List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
 
             List<Long> friendIdList = new LinkedList<Long>();
