@@ -838,6 +838,7 @@ public class DiaryController extends ImpressBaseController {
             message.setDiaryId(diaryId);
             message.setStatus("normal");
             message.setCategory("comment");
+            message.setCommentId(diaryComment.getId());
             message.setFromMemberId(member.getId());
             message.setToMemberId(diary.getMemberId());
             message.setProcessStatus("unprocessed");
@@ -849,6 +850,7 @@ public class DiaryController extends ImpressBaseController {
                 message2.setDiaryId(diaryId);
                 message2.setStatus("normal");
                 message2.setCategory("comment");
+                message2.setCommentId(diaryComment.getId());
                 message2.setFromMemberId(member.getId());
                 message2.setToMemberId(parentComment.getCommentUserId());
                 message2.setProcessStatus("unprocessed");
@@ -912,6 +914,10 @@ public class DiaryController extends ImpressBaseController {
 
                 diaryComment.setStatus("delete");
                 diaryCommentService.update(diaryComment);
+
+                //日记评论数目减1
+                diary.setCommentCount(diary.getCommentCount() -1);
+                diaryService.update(diary);
                 restResponse.setCode(RestResponse.OK);
             } else {
                 restResponse.setCode("error");

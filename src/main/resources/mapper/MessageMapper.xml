@@ -49,7 +49,7 @@
     <include refid="where1" />
     )
     AS a
-    LEFT JOIN member AS b ON a.toMemberId = b.id
+    LEFT JOIN member AS b ON a.fromMemberId = b.id
     LEFT JOIN diary_comment AS c ON a.commentId = c.id
   </select>
 
