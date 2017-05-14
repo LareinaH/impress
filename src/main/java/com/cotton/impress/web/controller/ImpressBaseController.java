@@ -77,6 +77,7 @@ public class ImpressBaseController extends BaseController {
         DiaryRecord diaryRecordModel = new DiaryRecord();
         diaryRecordModel.setDiaryId(diaryCommentVO.getDiaryId());
         diaryRecordModel.setMemberId(currentMemberId);
+        diaryRecordModel.setCommentId(diaryCommentVO.getId());
         diaryRecordModel.setSelector("comment");
         diaryRecordModel.setStatus("normal");
         List<DiaryRecord> diaryRecordList = diaryRecordService.queryList(diaryRecordModel);
