@@ -43,6 +43,10 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
     public DiaryDetailVO getDiaryDetailVObyId(long currentUserID,long id) {
         Diary diary = getById(id);
 
+        if(diary == null || !diary.getStatus().equals("normal")){
+            return null;
+        }
+
         DiaryVO diaryVO = new DiaryVO();
         BeanUtils.copyProperties(diary,diaryVO);
         //获取用户信息

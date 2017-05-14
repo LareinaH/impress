@@ -36,6 +36,7 @@ public class ImpressBaseController extends BaseController {
             MemberFriend memberFriendModel = new MemberFriend();
             memberFriendModel.setMemberId(currentMemberId);
             memberFriendModel.setFriendMemberId(diaryExVO.getMemberId());
+            memberFriendModel.setStatus("normal");
 
             List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
 

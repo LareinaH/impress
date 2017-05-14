@@ -75,6 +75,11 @@ public class DiaryVO {
     private Double lbsY;
 
     /**
+     * 日记状态【normal 正常 delete 删除】
+     */
+    private String status;
+
+    /**
      * 创建时间
      */
     private Date createdAt;
@@ -123,6 +128,13 @@ public class DiaryVO {
         return "0m";
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
