@@ -1,9 +1,12 @@
 package com.cotton.impress.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -33,9 +36,12 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactory sqlSessionFactoryBean() {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+	/*	List<String>  sql = new ArrayList<String>();
+		sql.add("set names utf8mb4;");
+		DruidDataSource druidDataSource = (DruidDataSource)dataSource;
+		druidDataSource.setConnectionInitSqls(sql);*/
 		bean.setDataSource(dataSource);
 		bean.setTypeAliasesPackage("com.cotton.impress.model");
-
 		// 分页插件
 		PageHelper pageHelper = new PageHelper();
 		Properties properties = new Properties();

@@ -49,10 +49,17 @@
         </dependency>
 
         <!--druid -->
+
+  <!--      <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.2.2</version>
+        </dependency>-->
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.0.11</version>
+            <version>1.0.29</version>
         </dependency>
 
         <!--Mybatis -->
@@ -175,6 +182,14 @@
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>2.8.3</version>
+        </dependency>
+
+
+        <!--微信-->
+        <dependency>
+            <groupId>com.github.liyiorg</groupId>
+            <artifactId>weixin-popular</artifactId>
+            <version>2.8.9</version>
         </dependency>
 
     </dependencies>
