@@ -2,6 +2,7 @@ package com.cotton.impress.config;
 
 /**
  * Created by Administrator on 2017-05-15.
+ * 用于druid监控
  */
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
@@ -9,9 +10,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-/**
- * Created by liangchong998 on 2016/8/18.
- */
 @Configuration
 public class DruidConfig {
     @Bean

@@ -142,8 +142,20 @@ public class DiaryController extends ImpressBaseController {
 
         //能够浏览到的日记的权限条件： 1  所有人可以看 2 我自己的日记 3 朋友不可见 不是好友 4 朋友可见 是好友
 
+        List<Long> friendIdList = getFriendIdList(member.getId());
+
+        if (friendIdList != null ){
+            condition.put("friendIdList", friendIdList);
+
+        }
+        condition.put("currentMemberId",member.getId());
+    }
+
+
+    private List<Long> getFriendIdList (long memberId){
+
         MemberFriend memberFriendModel = new MemberFriend();
-        memberFriendModel.setMemberId(member.getId());
+        memberFriendModel.setMemberId(memberId);
         memberFriendModel.setStatus("normal");
 
         List<MemberFriend> memberFriendList = memberFriendService.queryList(memberFriendModel);
@@ -154,11 +166,11 @@ public class DiaryController extends ImpressBaseController {
             for (MemberFriend f : memberFriendList) {
                 friendIdList.add(f.getFriendMemberId());
             }
-            condition.put("friendIdList", friendIdList);
 
+            return friendIdList;
         }
 
-        condition.put("currentMemberId",member.getId());
+        return null;
     }
 
 
@@ -486,6 +498,35 @@ public class DiaryController extends ImpressBaseController {
             criteria.andIn("id", diaryIdList);
             criteria.andEqualTo("status", "normal");
 
+
+
+            //获取我的好友列表
+            List<Long> friendIdList = getFriendIdList(member.getId());
+
+            if(friendIdList != null && !friendIdList.isEmpty()){
+
+                StringBuilder result=new StringBuilder();
+                boolean flag=false;
+                for (Long id : friendIdList) {
+                    if (flag) {
+                        result.append(",");
+                    }else {
+                        flag=true;
+                    }
+                    result.append(String.valueOf(id));
+                }
+                String friendIds = result.toString();
+
+                criteria.andCondition("(" +
+                        "accessRight = 'all' OR " +
+                        "accessRight='excludeFriend' and memberId NOT IN ("+ friendIds + ") OR " +
+                        "accessRight='friend' and memberId in ("+ friendIds + ")" +
+                        ")");
+            }else {
+                criteria.andCondition("(accessRight = 'all' OR accessRight='excludeFriend')");
+            }
+
+
             PageInfo<Diary> diaryPageInfo = diaryService.query(pageNum, pageSize, example);
 
 
@@ -495,11 +536,19 @@ public class DiaryController extends ImpressBaseController {
                 for (Diary diary : diaryPageInfo.getList()) {
                     DiaryVO diaryVO = new DiaryVO();
                     BeanUtils.copyProperties(diary, diaryVO);
+
+                    //如果数据库中影响力字段没有值，去获取作者的影响力
+                    if (diaryVO.getInfluence() == null || diaryVO.getInfluence().equals("0")) {
+
+                        diaryVO.setInfluence(cacheService.getInfluence(diaryVO.getMemberId()));
+                    }
+
                     DiaryExVO diaryExVO = getDiaryExVO(member, diaryVO);
 
                     //计算当前坐标位置
                     double distance = DistanceUtil.getTwopointsDistance(diaryExVO.getLbsX().toString(), diaryExVO.getLbsY().toString(), lbsX, lbsY);
                     diaryExVO.setDistance((int) distance);
+
 
                     diaryVOList.add(diaryExVO);
                 }
@@ -673,6 +722,9 @@ public class DiaryController extends ImpressBaseController {
             return restResponse;
         }
 
+        //处理入参
+        brief = brief.replaceAll("<br>"," ");
+
 
         Member member = PermissionContext.getMember();
 
@@ -766,7 +818,6 @@ public class DiaryController extends ImpressBaseController {
         diary.setFirstImage(firstImage);
         diary.setContentHeight(contentHeight);
         diary.setAnonymous(anonymous);
-        diary.setAccuse(accessRight);
         diary.setAccessRight(accessRight);
 
         if (checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
