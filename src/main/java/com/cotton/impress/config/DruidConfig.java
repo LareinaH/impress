@@ -1,4 +1,4 @@
-package com.cotton.inject;
+package com.cotton.impress.config;
 
 /**
  * Created by Administrator on 2017-05-15.

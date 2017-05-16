@@ -36,10 +36,6 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactory sqlSessionFactoryBean() {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-	/*	List<String>  sql = new ArrayList<String>();
-		sql.add("set names utf8mb4;");
-		DruidDataSource druidDataSource = (DruidDataSource)dataSource;
-		druidDataSource.setConnectionInitSqls(sql);*/
 		bean.setDataSource(dataSource);
 		bean.setTypeAliasesPackage("com.cotton.impress.model");
 		// 分页插件
