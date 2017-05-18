@@ -166,6 +166,14 @@ public class MessageController extends ImpressBaseController {
                         diaryVO.setDistance((int) distance);
                         messageVO.setDiary(diaryVO);
 
+                        //如果评论或者点赞来日日记主人
+                        if(diary.getMemberId() == messageVO.getFromMemberId()){
+
+                            messageVO.setFromMemberHeadPortrait(null);
+                            messageVO.setFromMemberName("日记主人");
+
+                        }
+
                         //消息变成已读
                         Message message = new Message();
                         message.setId(messageVO.getId());
