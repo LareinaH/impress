@@ -19,7 +19,7 @@ public class FlmWebAppConfigurer extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(checkLoginInterceptor()).addPathPatterns("/**").
-                excludePathPatterns("/member/un/*","wechat");
+                excludePathPatterns("/member/un/*","/wechat/*");
         super.addInterceptors(registry);
     }
 }
