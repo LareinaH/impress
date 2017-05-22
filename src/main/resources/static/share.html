@@ -48,10 +48,10 @@
 							var data = d.data;
 							wx.config({
 								debug: true,
-								appId: d.appId,
-								timestamp: d.timestamp,
-								nonceStr: d.nonceStr,
-								signature: d.signature,
+								appId: data.appId,
+								timestamp: data.timestamp,
+								nonceStr: data.nonceStr,
+								signature: data.signature,
 								jsApiList: ["onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareWeibo", "onMenuShareQZone"]
 							});
 							wx.ready(function() {
