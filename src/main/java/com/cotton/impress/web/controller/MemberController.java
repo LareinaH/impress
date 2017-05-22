@@ -424,13 +424,37 @@ public class MemberController extends ImpressBaseController {
 
         Member member = PermissionContext.getMember();
 
+        //如果已经是好友，报错
+        MemberFriend model = new MemberFriend();
+        model.setFriendMemberId(friendId);
+        model.setMemberId(member.getId());
+        model.setStatus("normal");
+
+        List<MemberFriend> memberFriends = memberFriendService.queryList(model);
+        if(memberFriends != null && !memberFriends.isEmpty()){
+            restResponse.setCode("error");
+            restResponse.setMessage("好友已存在!");
+            return restResponse;
+        }
+
+        //如果已经申请好友，报错
         Message message = new Message();
         message.setStatus("normal");
         message.setCategory("friend");
         message.setFromMemberId(member.getId());
         message.setToMemberId(friendId);
         message.setProcessStatus("unprocessed");
+
+        List<Message> messageList = messageService.queryList(message);
+
+        if(messageList != null && !messageList.isEmpty()){
+            restResponse.setCode("error");
+            restResponse.setMessage("已经发送过好友申请!");
+            return restResponse;
+        }
+
         message.setUpdateAt(new Date());
+        message.setCreatedAt(new Date());
 
         if (messageService.insert(message)) {
             restResponse.setCode(RestResponse.OK);

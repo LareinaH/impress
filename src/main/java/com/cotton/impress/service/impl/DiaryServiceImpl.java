@@ -122,7 +122,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
                                 diaryCommentVOChild.setbFriendComment(true);
 
                             }
-                            
+
                             //如果是 日记主人评论
                             if(diary.getMemberId() == diaryCommentVOChild.getCommentUserId()){
                                 diaryCommentVOChild.setCommentUserName("日记主人");

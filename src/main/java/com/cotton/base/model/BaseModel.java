@@ -19,7 +19,15 @@ public class BaseModel implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Date createdAt;
+	private Date updateAt;
 
+	public Date getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(Date updateAt) {
+		this.updateAt = updateAt;
+	}
 	public Long getId() {
 		return id;
 	}

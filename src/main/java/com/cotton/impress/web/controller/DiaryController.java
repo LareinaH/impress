@@ -847,7 +847,7 @@ public class DiaryController extends ImpressBaseController {
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
     @ResponseBody
     public RestResponse<Void> addComment(@RequestParam(required = true) Long diaryId, Long parentId,
-                                         @RequestParam(defaultValue = "1") int isWhisper,
+                                         @RequestParam(defaultValue = "0") int isWhisper,
                                          @RequestParam(required = true) String commentText,
                                          String image) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
@@ -877,7 +877,12 @@ public class DiaryController extends ImpressBaseController {
         diaryComment.setDiaryId(diaryId);
         diaryComment.setParentId(parentId);
         diaryComment.setCommentUserId(member.getId());
-        diaryComment.setIsWhisper(isWhisper);
+        if(parentId == null) {
+            //评论没有悄悄话，只有回复有
+            diaryComment.setIsWhisper(0);
+        }else {
+            diaryComment.setIsWhisper(isWhisper);
+        }
         diaryComment.setCommentText(commentText);
         diaryComment.setImage(image);
         diaryComment.setStatus("normal");

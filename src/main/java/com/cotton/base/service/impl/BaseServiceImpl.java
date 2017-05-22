@@ -23,6 +23,7 @@ public class BaseServiceImpl<ModelType extends BaseModel> implements BaseService
 
 	@Override
 	public boolean update(ModelType model) {
+		model.setUpdateAt(new Date());
 		return mapper.updateByPrimaryKeySelective(model) > 0;
 	}
 
