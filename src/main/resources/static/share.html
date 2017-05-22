@@ -23,11 +23,53 @@
 			<img src="img/holder.png" style="width: 100%;" />
 			<img src="img/button.png" id="button" style="position: absolute; height: 100%; margin-left: 27.5%;" />
 		</div>
-		
+		<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+		<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 		<script>
-			(function(){
-				document.querySelector("#button").addEventListener("click",function(e){
-					location.href="http://www.baidu.com";
+			(function() {
+				var imgUrl = "http://47.92.29.192:8081/img/icon.png";	//分享小窗体图片地址
+				var getWechatConfig = "http://47.92.29.192:8081/wechat/wechatConfig";	//获取微信jsapi地址
+				var getAppAddress = "http://www.baidu.com";	//腾讯应用商店地址
+				
+				
+				var info = {
+					title: "日记我只给最好的朋友看，我最好的朋友都在这里，我在左右印象。",
+					link: location.href,
+					imgUrl: imgUrl,
+					desc: "日记我只给最好的朋友看，我最好的朋友都在这里，我在左右印象。",
+					success: function() {},
+					cancel: function() {}
+				}
+				$.ajax({
+					type: "get",
+					url: getWechatConfig,
+					success: function(d) {
+						if(d.code === "ok") {
+							var data = d.data;
+							wx.config({
+								debug: true,
+								appId: d.appId,
+								timestamp: d.timestamp,
+								nonceStr: d.nonceStr,
+								signature: d.signature,
+								jsApiList: ["onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareWeibo", "onMenuShareQZone"]
+							});
+							wx.ready(function() {
+								wx.onMenuShareTimeline(info);
+								wx.onMenuShareAppMessage(info);
+								wx.onMenuShareQQ(info);
+								wx.onMenuShareWeibo(info);
+								wx.onMenuShareQZone(info);
+							});
+						} else {
+							alert(d.message);
+						}
+					},
+					async: true
+				});
+
+				document.querySelector("#button").addEventListener("click", function(e) {
+					location.href = getAppAddress;
 				})
 			})()
 		</script>
