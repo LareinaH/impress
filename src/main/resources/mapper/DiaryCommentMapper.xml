@@ -57,5 +57,6 @@
     <include refid="where1"></include>
     ) AS a
     LEFT JOIN member AS b ON a.commentUserId = b.id
+    ORDER BY a.commentCount DESC,a.upCount DESC,a.createdAt DESC
   </select>
 </mapper>

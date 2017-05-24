@@ -171,7 +171,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
     }
 
     @Override
-    public boolean addDiary(long memberId, String sex, String publishTime, String tag, String brief, String firstImage, String contentHeight, Integer anonymous, String accessRight, double lbsX, double lbsY, String content) {
+    public long addDiary(long memberId, String sex, String publishTime, String tag, String brief, String firstImage, String contentHeight, Integer anonymous, String accessRight, double lbsX, double lbsY, String content) {
 
         Diary diary = new Diary();
         diary.setMemberId(memberId);
@@ -201,7 +201,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         diaryContent.setCreatedAt(diary.getCreatedAt());
         diaryContentMapper.insert(diaryContent);
 
-        return true;
+        return diary.getId();
     }
 
     @Override

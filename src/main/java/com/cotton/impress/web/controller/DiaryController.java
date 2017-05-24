@@ -707,13 +707,13 @@ public class DiaryController extends ImpressBaseController {
      */
     @RequestMapping(value = "/addDiary", method = RequestMethod.POST)
     @ResponseBody
-    public RestResponse<Void> addDiary(@RequestParam(defaultValue = "ios") String format,
+    public RestResponse<Map<String,Object>> addDiary(@RequestParam(defaultValue = "ios") String format,
                                        @RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
                                        String brief, String firstImage, String contentHeight,
                                        @RequestParam(required = true) Integer anonymous, @RequestParam(required = true) String accessRight,
                                        @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
                                        @RequestParam(required = true) String content) {
-        RestResponse<Void> restResponse = new RestResponse<Void>();
+        RestResponse<Map<String,Object>> restResponse = new RestResponse<Map<String,Object>>();
 
         if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
             restResponse.setCode("error");
@@ -732,9 +732,14 @@ public class DiaryController extends ImpressBaseController {
 
             content = androidToIos(content);
         }
-        if (diaryService.addDiary(member.getId(), member.getSex(), publishTime, tag, brief, firstImage, contentHeight, anonymous,
-                accessRight, lbsX, lbsY, content)) {
+
+        long diaryId = diaryService.addDiary(member.getId(), member.getSex(), publishTime, tag, brief, firstImage, contentHeight, anonymous,
+                accessRight, lbsX, lbsY, content);
+        if ( diaryId >0) {
+            Map<String,Object> map = new HashMap<String, Object>();
+            map.put("diaryId",diaryId);
             restResponse.setCode(RestResponse.OK);
+            restResponse.setData(map);
         } else {
             restResponse.setCode("error");
             restResponse.setMessage("添加日记失败！");

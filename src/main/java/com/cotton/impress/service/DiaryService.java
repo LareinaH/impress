@@ -16,7 +16,7 @@ public interface DiaryService extends BaseService<Diary> {
 
     DiaryDetailVO getDiaryDetailVObyId(long currentUserID, long id);
 
-    boolean addDiary(long memberId, String sex, String publishTime, String tag, String brief, String firstImage,String contentHeight,
+    long addDiary(long memberId, String sex, String publishTime, String tag, String brief, String firstImage,String contentHeight,
                      Integer anonymous, String accessRight, double lbsX, double lbsY,
                      String content);
 
