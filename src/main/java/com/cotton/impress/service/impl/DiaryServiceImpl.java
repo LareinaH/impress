@@ -8,16 +8,15 @@ import com.cotton.impress.model.*;
 import com.cotton.impress.model.VO.DiaryCommentVO;
 import com.cotton.impress.model.VO.DiaryDetailVO;
 import com.cotton.impress.model.VO.DiaryVO;
-import com.cotton.impress.service.DiaryRecordService;
-import com.cotton.impress.service.DiaryService;
-import com.cotton.impress.service.MemberFriendService;
-import com.cotton.impress.service.MemberService;
+import com.cotton.impress.service.*;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -37,28 +36,29 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
     @Autowired
     private MemberFriendService memberFriendService;
     @Autowired
-    private DiaryRecordService diaryRecordService;
+    private JPushService jPushService;
+
 
     @Override
-    public DiaryDetailVO getDiaryDetailVObyId(long currentUserID,long id) {
+    public DiaryDetailVO getDiaryDetailVObyId(long currentUserID, long id) {
         Diary diary = getById(id);
 
-        if(diary == null || !diary.getStatus().equals("normal")){
+        if (diary == null || !diary.getStatus().equals("normal")) {
             return null;
         }
 
         DiaryVO diaryVO = new DiaryVO();
-        BeanUtils.copyProperties(diary,diaryVO);
+        BeanUtils.copyProperties(diary, diaryVO);
         //获取用户信息
         Member member = memberService.getById(diaryVO.getMemberId());
 
-        if(member!= null){
+        if (member != null) {
             diaryVO.setHeadPortrait(member.getHeadPortrait());
             diaryVO.setFriendName(member.getName());
         }
 
         //处理影响力
-        if(diaryVO.getInfluence() == null || diaryVO.getInfluence().equals("0")){
+        if (diaryVO.getInfluence() == null || diaryVO.getInfluence().equals("0")) {
             diaryVO.setInfluence(memberService.getInfluence(diaryVO.getMemberId()));
         }
 
@@ -77,9 +77,9 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
 
         //日记评论
 
-        Map<String,Object> condition = new HashMap<String, Object>();
-        condition.put("diaryId",id);
-        condition.put("status","normal");
+        Map<String, Object> condition = new HashMap<String, Object>();
+        condition.put("diaryId", id);
+        condition.put("status", "normal");
 
         List<DiaryCommentVO> diaryCommentVOList = diaryCommentMapper.selectDiaryCommentVOList(condition);
 
@@ -96,9 +96,9 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
 
             List<Long> friendIdList = new LinkedList<Long>();
 
-            if(memberFriendList != null && !memberFriendList.isEmpty()) {
+            if (memberFriendList != null && !memberFriendList.isEmpty()) {
 
-                for(MemberFriend memberFriend : memberFriendList){
+                for (MemberFriend memberFriend : memberFriendList) {
                     friendIdList.add(memberFriend.getFriendMemberId());
                 }
 
@@ -109,22 +109,22 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
                 //查找子评论
                 if (diaryCommentVO.getParentId() == null) {
 
-                    condition.put("parentId",diaryCommentVO.getId());
+                    condition.put("parentId", diaryCommentVO.getId());
                     List<DiaryCommentVO> childCommentVOList = diaryCommentMapper.selectDiaryCommentVOList(condition);
                     if (childCommentVOList != null) {
 
                         //遍历回复
-                        for (DiaryCommentVO diaryCommentVOChild : childCommentVOList){
+                        for (DiaryCommentVO diaryCommentVOChild : childCommentVOList) {
                             //存在好友关系
-                            if(friendIdList.indexOf(diaryCommentVOChild.getCommentUserId()) >= 0 ||
-                                    diaryCommentVOChild.getCommentUserId() == currentUserID){
+                            if (friendIdList.indexOf(diaryCommentVOChild.getCommentUserId()) >= 0 ||
+                                    diaryCommentVOChild.getCommentUserId() == currentUserID) {
 
                                 diaryCommentVOChild.setbFriendComment(true);
 
                             }
 
                             //如果是 日记主人评论
-                            if(diary.getMemberId() == diaryCommentVOChild.getCommentUserId()){
+                            if (diary.getMemberId() == diaryCommentVOChild.getCommentUserId()) {
                                 diaryCommentVOChild.setCommentUserName("日记主人");
                                 diaryCommentVOChild.setCommentUserHeadPortrait(null);
                             }
@@ -134,15 +134,15 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
                     }
 
                     //存在好友关系
-                    if(friendIdList.indexOf(diaryCommentVO.getCommentUserId()) >= 0 ||
-                            diaryCommentVO.getCommentUserId() == currentUserID){
+                    if (friendIdList.indexOf(diaryCommentVO.getCommentUserId()) >= 0 ||
+                            diaryCommentVO.getCommentUserId() == currentUserID) {
 
                         diaryCommentVO.setbFriendComment(true);
 
                     }
 
                     //如果是 日记主人评论
-                    if(diary.getMemberId() == diaryCommentVO.getCommentUserId()){
+                    if (diary.getMemberId() == diaryCommentVO.getCommentUserId()) {
                         diaryCommentVO.setCommentUserName("日记主人");
                         diaryCommentVO.setCommentUserHeadPortrait(null);
                     }
@@ -284,5 +284,18 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         diaryMapper.resetWeight();
     }
 
+    @Override
+    public void sendJPush() {
 
+        //发送每个用户当天日出印象第一篇日记
+        Example example = new Example(Diary.class);
+        example.setOrderByClause("weight desc");
+
+        PageInfo<Diary> diaries = query(1, 1, example);
+
+        if (diaries != null && diaries.getList() != null && !diaries.getList().isEmpty()) {
+            jPushService.setPushMessage(true, null, "今日好印象" + diaries.getList().get(0).getBrief());
+        }
+
+    }
 }

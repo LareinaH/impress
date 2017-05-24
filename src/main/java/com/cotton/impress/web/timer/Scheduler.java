@@ -28,4 +28,18 @@ public class Scheduler {
 
         logger.info("清空日出印象权重。结束。");
     }
+
+
+    /**
+     * 发送极光消息 - 每天晚上触发
+     */
+    @Scheduled(cron="0 0 20 * * ?")
+    public void senJPush() {
+
+        logger.info("发送极光消息。开始……");
+
+        diaryService.resetWeight();
+
+        logger.info("发送极光消息。结束。");
+    }
 }

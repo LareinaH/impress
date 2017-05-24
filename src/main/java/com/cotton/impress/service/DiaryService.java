@@ -39,4 +39,9 @@ public interface DiaryService extends BaseService<Diary> {
 
     void resetWeight();
 
+    void sendJPush();
+
 }
+
+
+

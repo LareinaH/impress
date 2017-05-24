@@ -43,6 +43,8 @@ public class DiaryController extends ImpressBaseController {
     private DiaryCommentService diaryCommentService;
     @Autowired
     private DiaryRecordService diaryRecordService;
+    @Autowired
+    private JPushService jPushService;
 
     @Autowired
     private CacheService cacheService;
@@ -90,14 +92,14 @@ public class DiaryController extends ImpressBaseController {
         buildAccessRight(member, condition);
 
         //伪造管理员数据
-        if(bFirst){
+        if (bFirst) {
 
             //查看半径十公里内有多少条日记
             condition.put("radius", "10000");
             PageInfo<DiaryVO> diaryPageInfo = diaryService.queryAboutDiaryList(pageNum, pageSize, condition);
 
             int adminSize = 3;
-            if(diaryPageInfo != null && diaryPageInfo.getList() != null && diaryPageInfo.getList().size()<5){
+            if (diaryPageInfo != null && diaryPageInfo.getList() != null && diaryPageInfo.getList().size() < 5) {
                 adminSize = 5;
             }
 
@@ -144,15 +146,15 @@ public class DiaryController extends ImpressBaseController {
 
         List<Long> friendIdList = getFriendIdList(member.getId());
 
-        if (friendIdList != null ){
+        if (friendIdList != null) {
             condition.put("friendIdList", friendIdList);
 
         }
-        condition.put("currentMemberId",member.getId());
+        condition.put("currentMemberId", member.getId());
     }
 
 
-    private List<Long> getFriendIdList (long memberId){
+    private List<Long> getFriendIdList(long memberId) {
 
         MemberFriend memberFriendModel = new MemberFriend();
         memberFriendModel.setMemberId(memberId);
@@ -206,12 +208,12 @@ public class DiaryController extends ImpressBaseController {
         condition.put("lbX", Double.valueOf(lbsX));
         condition.put("lbY", Double.valueOf(lbsY));
 
-        buildAccessRight(member,condition);
+        buildAccessRight(member, condition);
 
-        if(type.equals("all")){
+        if (type.equals("all")) {
             condition.put("weight", "true");
-        }else {
-            if(condition.get("friendIdList") == null){
+        } else {
+            if (condition.get("friendIdList") == null) {
                 List<DiaryExVO> result = new LinkedList<DiaryExVO>();
                 restResponse.setCode(RestResponse.OK);
                 restResponse.setData(result);
@@ -499,19 +501,18 @@ public class DiaryController extends ImpressBaseController {
             criteria.andEqualTo("status", "normal");
 
 
-
             //获取我的好友列表
             List<Long> friendIdList = getFriendIdList(member.getId());
 
-            if(friendIdList != null && !friendIdList.isEmpty()){
+            if (friendIdList != null && !friendIdList.isEmpty()) {
 
-                StringBuilder result=new StringBuilder();
-                boolean flag=false;
+                StringBuilder result = new StringBuilder();
+                boolean flag = false;
                 for (Long id : friendIdList) {
                     if (flag) {
                         result.append(",");
-                    }else {
-                        flag=true;
+                    } else {
+                        flag = true;
                     }
                     result.append(String.valueOf(id));
                 }
@@ -519,10 +520,10 @@ public class DiaryController extends ImpressBaseController {
 
                 criteria.andCondition("(" +
                         "accessRight = 'all' OR " +
-                        "accessRight='excludeFriend' and memberId NOT IN ("+ friendIds + ") OR " +
-                        "accessRight='friend' and memberId in ("+ friendIds + ")" +
+                        "accessRight='excludeFriend' and memberId NOT IN (" + friendIds + ") OR " +
+                        "accessRight='friend' and memberId in (" + friendIds + ")" +
                         ")");
-            }else {
+            } else {
                 criteria.andCondition("(accessRight = 'all' OR accessRight='excludeFriend')");
             }
 
@@ -629,14 +630,14 @@ public class DiaryController extends ImpressBaseController {
                     buildCommentVOInfo(member.getId(), diaryCommentVO);
 
                     //处理回复的悄悄话
-                    if(diaryCommentVO.getReplayList() != null && !diaryCommentVO.getReplayList().isEmpty()) {
+                    if (diaryCommentVO.getReplayList() != null && !diaryCommentVO.getReplayList().isEmpty()) {
 
                         List<DiaryCommentVO> whisperList = new LinkedList<DiaryCommentVO>();
 
-                        for(DiaryCommentVO child : diaryCommentVO.getReplayList()){
-                            if(child.getIsWhisper() == 1
+                        for (DiaryCommentVO child : diaryCommentVO.getReplayList()) {
+                            if (child.getIsWhisper() == 1
                                     && member.getId() != child.getCommentUserId()
-                                    && member.getId() != diaryCommentVO.getCommentUserId()){
+                                    && member.getId() != diaryCommentVO.getCommentUserId()) {
                                 whisperList.add(child);
                             }
                         }
@@ -707,13 +708,13 @@ public class DiaryController extends ImpressBaseController {
      */
     @RequestMapping(value = "/addDiary", method = RequestMethod.POST)
     @ResponseBody
-    public RestResponse<Map<String,Object>> addDiary(@RequestParam(defaultValue = "ios") String format,
-                                       @RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
-                                       String brief, String firstImage, String contentHeight,
-                                       @RequestParam(required = true) Integer anonymous, @RequestParam(required = true) String accessRight,
-                                       @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
-                                       @RequestParam(required = true) String content) {
-        RestResponse<Map<String,Object>> restResponse = new RestResponse<Map<String,Object>>();
+    public RestResponse<Map<String, Object>> addDiary(@RequestParam(defaultValue = "ios") String format,
+                                                      @RequestParam(required = true) String publishTime, @RequestParam(required = true) String tag,
+                                                      String brief, String firstImage, String contentHeight,
+                                                      @RequestParam(required = true) Integer anonymous, @RequestParam(required = true) String accessRight,
+                                                      @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY,
+                                                      @RequestParam(required = true) String content) {
+        RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
         if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
             restResponse.setCode("error");
@@ -723,7 +724,7 @@ public class DiaryController extends ImpressBaseController {
         }
 
         //处理入参
-        brief = brief.replaceAll("<br>"," ");
+        brief = brief.replaceAll("<br>", " ");
 
 
         Member member = PermissionContext.getMember();
@@ -735,9 +736,9 @@ public class DiaryController extends ImpressBaseController {
 
         long diaryId = diaryService.addDiary(member.getId(), member.getSex(), publishTime, tag, brief, firstImage, contentHeight, anonymous,
                 accessRight, lbsX, lbsY, content);
-        if ( diaryId >0) {
-            Map<String,Object> map = new HashMap<String, Object>();
-            map.put("diaryId",diaryId);
+        if (diaryId > 0) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("diaryId", diaryId);
             restResponse.setCode(RestResponse.OK);
             restResponse.setData(map);
         } else {
@@ -878,14 +879,15 @@ public class DiaryController extends ImpressBaseController {
             }
         }
 
+
         DiaryComment diaryComment = new DiaryComment();
         diaryComment.setDiaryId(diaryId);
         diaryComment.setParentId(parentId);
         diaryComment.setCommentUserId(member.getId());
-        if(parentId == null) {
+        if (parentId == null) {
             //评论没有悄悄话，只有回复有
             diaryComment.setIsWhisper(0);
-        }else {
+        } else {
             diaryComment.setIsWhisper(isWhisper);
         }
         diaryComment.setCommentText(commentText);
@@ -906,6 +908,13 @@ public class DiaryController extends ImpressBaseController {
             message.setUpdateAt(new Date());
             messageService.insert(message);
 
+            //发送极光消息
+            Member diaryMember = memberService.getById(diary.getMemberId());
+            if (diaryMember != null) {
+                String sendMessage = member.getName() + "评论了你的印象：" + diary.getBrief();
+                jPushService.setPushMessage(false, diaryMember.getUuid().replaceAll("-",""), sendMessage);
+            }
+
             if (parentComment != null && diary.getMemberId() != parentComment.getCommentUserId()) {
                 Message message2 = new Message();
                 message2.setDiaryId(diaryId);
@@ -917,6 +926,20 @@ public class DiaryController extends ImpressBaseController {
                 message2.setProcessStatus("unprocessed");
                 message2.setUpdateAt(new Date());
                 messageService.insert(message2);
+
+                //发送极光消息
+                Member diaryCommentMember = memberService.getById(diaryComment.getCommentUserId());
+                if (diaryCommentMember != null) {
+                    //日记主人的回复
+                    String xxx;
+                    if (diaryComment.getCommentUserId() == diary.getMemberId()) {
+                        xxx = "日记主人";
+                    } else {
+                        xxx = member.getName();
+                    }
+                    String sendMessage = xxx + "回复了你的评论：" + diaryComment.getCommentText();
+                    jPushService.setPushMessage(false, diaryCommentMember.getUuid().replaceAll("-",""), sendMessage);
+                }
             }
 
             restResponse.setCode(RestResponse.OK);
@@ -977,7 +1000,7 @@ public class DiaryController extends ImpressBaseController {
                 diaryCommentService.update(diaryComment);
 
                 //日记评论数目减1
-                diary.setCommentCount(diary.getCommentCount() -1);
+                diary.setCommentCount(diary.getCommentCount() - 1);
                 diaryService.update(diary);
                 restResponse.setCode(RestResponse.OK);
             } else {
@@ -1010,11 +1033,11 @@ public class DiaryController extends ImpressBaseController {
                                              @RequestParam(required = true) double lbsX, @RequestParam(required = true) double lbsY) {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
-        if(!checkLocation(Double.valueOf(lbsX),Double.valueOf(lbsY))){
+        if (!checkLocation(Double.valueOf(lbsX), Double.valueOf(lbsY))) {
             restResponse.setCode("error");
             restResponse.setMessage("坐标位置读取错误！");
 
-            return  restResponse;
+            return restResponse;
         }
 
         Member member = PermissionContext.getMember();
@@ -1060,13 +1083,31 @@ public class DiaryController extends ImpressBaseController {
                 message.setProcessStatus("unprocessed");
                 message.setUpdateAt(new Date());
 
+                String uuid = "";
+                String sendMessage = "";
                 if (type.equals("diary")) {
                     message.setToMemberId(diary.getMemberId());
 
+                    //发送极光推送
+                    Member diaryMember = memberService.getById(diary.getMemberId());
+                    if (diaryMember != null) {
+                        uuid = diaryMember.getUuid().replaceAll("-","");
+                        sendMessage = member.getName() + "点赞了你的印象：" + diary.getBrief();
+
+                    }
+
                 } else {
+                    //发送极光推送
                     message.setToMemberId(diaryComment.getCommentUserId());
+                    Member diaryCommentMember = memberService.getById(diaryComment.getCommentUserId());
+                    if (diaryCommentMember != null) {
+                        sendMessage = member.getName() + "点赞了你的评论：" + diaryComment.getCommentText();
+                        uuid = diaryCommentMember.getUuid().replaceAll("-","");
+                    }
                 }
                 messageService.insert(message);
+                jPushService.setPushMessage(false, uuid, sendMessage);
+
             }
             restResponse.setCode(RestResponse.OK);
         } else {
@@ -1199,7 +1240,7 @@ public class DiaryController extends ImpressBaseController {
     }
 
     private boolean checkLocation(double lbsX, double lbsY) {
-        if (lbsX < - 90 || lbsX > 90 || lbsX == 0) {
+        if (lbsX < -90 || lbsX > 90 || lbsX == 0) {
             return false;
         }
 

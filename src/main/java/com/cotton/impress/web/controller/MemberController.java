@@ -12,6 +12,8 @@ import com.cotton.impress.service.MessageService;
 import com.cotton.impress.web.PermissionContext;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,7 @@ public class MemberController extends ImpressBaseController {
     private MessageService messageService;
     @Autowired
     public JPushService jPushService;
+    protected static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
     /**
      * 接口测试
@@ -49,10 +52,11 @@ public class MemberController extends ImpressBaseController {
     public RestResponse<Void> test() {
         RestResponse<Void> restResponse = new RestResponse<Void>();
 
-        jPushService.createUser("13325910685", "123456");
+        //jPushService.createUser("13325910685", "123456");
 
         //String name = jPushService.getUserInfo("f479b3e1-1a66-48d2-9c5f-d5b7c2f89df6");
         //restResponse.setMessage(name);
+        jPushService.setPushMessage(false,"1db500f839ed4d549f5b0ef450464412","测试推送消息");
         return restResponse;
     }
 
@@ -342,6 +346,7 @@ public class MemberController extends ImpressBaseController {
         member.setFirstShare(1);
 
         if (memberService.update(member)) {
+            logger.info("分享成功回调");
             restResponse.setCode(RestResponse.OK);
 
         } else {
@@ -424,6 +429,14 @@ public class MemberController extends ImpressBaseController {
 
         Member member = PermissionContext.getMember();
 
+        Member friendMember = memberService.getById(friendId);
+
+        if(member == null || friendMember == null){
+            restResponse.setCode("error");
+            restResponse.setMessage("该用户不存在!");
+            return restResponse;
+        }
+
         //如果已经是好友，报错
         MemberFriend model = new MemberFriend();
         model.setFriendMemberId(friendId);
@@ -458,6 +471,10 @@ public class MemberController extends ImpressBaseController {
 
         if (messageService.insert(message)) {
             restResponse.setCode(RestResponse.OK);
+
+            //推送消息
+            String sendMessage = member.getName() + "请求加你为好友！";
+            jPushService.setPushMessage(false,friendMember.getUuid().replaceAll("-",""),sendMessage);
 
         } else {
             restResponse.setCode("error");
