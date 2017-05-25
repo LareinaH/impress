@@ -799,12 +799,12 @@ public class DiaryController extends ImpressBaseController {
      */
     @RequestMapping(value = "/editDiary", method = RequestMethod.POST)
     @ResponseBody
-    public RestResponse<Void> editDiary(@RequestParam(defaultValue = "ios") String format,
+    public RestResponse<Map<String, Object>> editDiary(@RequestParam(defaultValue = "ios") String format,
                                         @RequestParam(required = true) long diaryId, String publishTime, String tag, String brief, String firstImage,
                                         String contentHeight, Integer anonymous, String accessRight,
                                         double lbsX, double lbsY, String content) {
 
-        RestResponse<Void> restResponse = new RestResponse<Void>();
+        RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
         Diary diary = diaryService.getById(diaryId);
 
@@ -832,6 +832,9 @@ public class DiaryController extends ImpressBaseController {
         }
 
         if (diaryService.editDiary(diary, content)) {
+            Map<String,Object> map = new HashMap<String, Object>();
+            map.put("diaryId",diary.getId());
+            restResponse.setData(map);
             restResponse.setCode(RestResponse.OK);
         } else {
             restResponse.setCode("error");
