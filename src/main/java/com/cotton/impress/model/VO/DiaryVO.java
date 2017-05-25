@@ -30,6 +30,11 @@ public class DiaryVO {
     private String tag;
 
     /**
+     * 访问权限【all：所有人可见，excludeFriend：朋友不可见，friend：朋友可见，oneself：仅自己可见】
+     */
+    private String accessRight;
+
+    /**
      * 日记摘要
      */
     private String brief;
@@ -126,6 +131,15 @@ public class DiaryVO {
         }
 
         return "0m";
+    }
+
+
+    public String getAccessRight() {
+        return accessRight;
+    }
+
+    public void setAccessRight(String accessRight) {
+        this.accessRight = accessRight;
     }
 
     public String getStatus() {

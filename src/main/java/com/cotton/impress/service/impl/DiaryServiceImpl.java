@@ -294,7 +294,7 @@ public class DiaryServiceImpl extends BaseServiceImpl<Diary> implements DiarySer
         PageInfo<Diary> diaries = query(1, 1, example);
 
         if (diaries != null && diaries.getList() != null && !diaries.getList().isEmpty()) {
-            jPushService.setPushMessage(true, null, "今日好印象" + diaries.getList().get(0).getBrief());
+            jPushService.setPushMessage(true, null, "今日好印象: " + diaries.getList().get(0).getBrief());
         }
 
     }
