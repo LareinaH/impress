@@ -88,7 +88,7 @@ public class MemberController extends ImpressBaseController {
             member.setCellphone(cellphone);
             member.setPassword(passWord);
             member.setStatus("normal");
-            member.setSex("unknow");
+            member.setSex("unknown");
             member.setTicket(RandomStringUtils.randomAlphanumeric(15));
 
             if (jPushService.createUser(member.getUuid(), member.getPassword())) {
